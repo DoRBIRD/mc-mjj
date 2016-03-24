@@ -1,1 +1,1 @@
-# mc-mjj
+# Mobile Computing - LibGDX Flight Game
