@@ -109,7 +109,7 @@ public class GameScreen implements Screen {
 		}
 		else if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
 			float accelX = -Gdx.input.getAccelerometerX() * 3;
-			if(accelX > 1 || accelX < -1) {
+			if(accelX > 1.5f || accelX < -1.5f) {
 				updatePlayerPosition(accelX, inputTypeAccelerometer);
 			}
 			else {
@@ -173,10 +173,19 @@ public class GameScreen implements Screen {
 
 	private void updatePlayerPosition(float newX, String inputType) {
 		float oldX = player.x;
+		float velocity = 6;
+		float marginoferror = 2f;
 
 		if(inputType.equals(inputTypeAccelerometer)) {
 			newX = oldX + newX;
+		}else{
+			if(newX > oldX + marginoferror){
+				newX = oldX + velocity;
+			}else if(newX < oldX - marginoferror){
+				newX = oldX - velocity;
+			}
 		}
+
 
 		if (newX > oldX) {
 			playerImage = mcGame.assetManager.get("images/player_right.png", Texture.class);
