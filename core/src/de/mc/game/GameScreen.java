@@ -37,9 +37,13 @@ public class GameScreen implements Screen {
 
 		// load the images
 		mcGame.assetManager.load("images/barrier.jpg", Texture.class);
+		/*
 		mcGame.assetManager.load("images/player_normal.png", Texture.class);
 		mcGame.assetManager.load("images/player_left.png", Texture.class);
-		mcGame.assetManager.load("images/player_right.png", Texture.class);
+		mcGame.assetManager.load("images/player_right.png", Texture.class);*/
+		mcGame.assetManager.load("images/player_normal_b.png", Texture.class);
+		mcGame.assetManager.load("images/player_left_b.png", Texture.class);
+		mcGame.assetManager.load("images/player_right_b.png", Texture.class);
 
 		// load the sound effects
 		mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
@@ -50,8 +54,8 @@ public class GameScreen implements Screen {
 		player = new Rectangle();
 		player.x = mcGame.width / 2 - 64 / 2;
 		player.y = 20;
-		player.width = 64;
-		player.height = 64;
+		player.width = 44;
+		player.height = 56;
 
 		timerBarrier = 0;
 		timerScore = 0;
@@ -113,11 +117,13 @@ public class GameScreen implements Screen {
 				updatePlayerPosition(accelX, inputTypeAccelerometer);
 			}
 			else {
-				playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
+				playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
+				//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
 			}
 		}
 		else {
-			playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
+			playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
+			//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
 		}
 
 		// keyboard input
@@ -174,7 +180,7 @@ public class GameScreen implements Screen {
 	private void updatePlayerPosition(float newX, String inputType) {
 		float oldX = player.x;
 		float velocity = 6;
-		float marginoferror = 2f;
+		float marginoferror = 3f;
 
 		if(inputType.equals(inputTypeAccelerometer)) {
 			newX = oldX + newX;
@@ -188,13 +194,16 @@ public class GameScreen implements Screen {
 
 
 		if (newX > oldX) {
-			playerImage = mcGame.assetManager.get("images/player_right.png", Texture.class);
+			playerImage = mcGame.assetManager.get("images/player_right_b.png", Texture.class);
+			//playerImage = mcGame.assetManager.get("images/player_right.png", Texture.class);
 		}
 		else if (newX < oldX){
-			playerImage = mcGame.assetManager.get("images/player_left.png", Texture.class);
+			playerImage = mcGame.assetManager.get("images/player_left_b.png", Texture.class);
+			//playerImage = mcGame.assetManager.get("images/player_left.png", Texture.class);
 		}
 		else {
-			playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
+			playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
+			//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
 		}
 		// stay player in screen
 		if(newX < 0) newX = 0;
