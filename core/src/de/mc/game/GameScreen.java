@@ -184,7 +184,7 @@ public class GameScreen implements Screen {
 
 		if(inputType.equals(inputTypeAccelerometer)) {
 			newX = oldX + newX;
-		}else{
+		}else if (inputType.equals(inputTypeTouch)){
 			if(newX > oldX + marginoferror){
 				newX = oldX + velocity;
 			}else if(newX < oldX - marginoferror){
