@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
 			*/
 		}
 	}
-
+		//test
 	private void checkInputs() {
 		// touch or accelerator input
 		if(Gdx.input.isTouched()) {
