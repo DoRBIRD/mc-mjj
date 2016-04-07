@@ -18,12 +18,13 @@ public class GameScreen implements Screen {
 
 	final McGame mcGame;
 
+	private Barrier barrier;
 	private Texture barrierImage;
 	private Texture playerImage;
 	private Sound collisionSound;
 	private OrthographicCamera camera;
 	private Rectangle player;
-	private Array<Rectangle> barriers;
+	private Array<Barrier> barriers;
 	private int score;
 	private boolean gameStarted;
 	private float timerBarrier;
@@ -60,7 +61,7 @@ public class GameScreen implements Screen {
 		timerBarrier = 0;
 		timerScore = 0;
 
-		barriers = new Array<Rectangle>();
+		barriers = new Array<Barrier>();
 	}
 
 	@Override
@@ -140,8 +141,9 @@ public class GameScreen implements Screen {
 		mcGame.batch.draw(playerImage, player.x, player.y);
 
 		barrierImage = mcGame.assetManager.get("images/barrier.jpg", Texture.class);
-		for(Rectangle barrier: barriers) {
-			mcGame.batch.draw(barrierImage, barrier.x, barrier.y);
+		//this.barrier.setTexture(mcGame.assetManager.get("images/barrier.jpg", Texture.class));
+		for(Barrier b: barriers) {
+			mcGame.batch.draw(barrierImage, b.getX(), b.getY());
 		}
 
 		mcGame.batch.end();
@@ -149,13 +151,13 @@ public class GameScreen implements Screen {
 
 	private void moveGameObjects() {
 		// move barrier
-		Iterator<Rectangle> iter = barriers.iterator();
+		Iterator<Barrier> iter = barriers.iterator();
 		while(iter.hasNext()) {
-			Rectangle barrier = iter.next();
-			barrier.y -= 200 * Gdx.graphics.getDeltaTime();
-			if(barrier.y + 14 < 0) iter.remove();
+			Barrier b = iter.next();
+			b.setX(b.getX()- (200 * Gdx.graphics.getDeltaTime()));
+			if(b.getY() + 14 < 0) iter.remove();
 			// check for overlapping/collision
-			if(barrier.overlaps(player)) {
+			if(b.getBounding().overlaps(player)) {
 				collisionSound = mcGame.assetManager.get("sounds/plop.ogg", Sound.class);
 				collisionSound.play();
 				score = 0;
@@ -168,11 +170,7 @@ public class GameScreen implements Screen {
 		timerBarrier += Gdx.graphics.getDeltaTime();
 		if(gameStarted && timerBarrier >= 1) {
 			timerBarrier -= 1;
-			Rectangle barrier = new Rectangle();
-			barrier.x = MathUtils.random(0, mcGame.width - 64);
-			barrier.y = mcGame.height;
-			barrier.width = 64;
-			barrier.height = 14;
+			barrier = new Barrier(this.mcGame);
 			barriers.add(barrier);
 		}
 	}
@@ -246,7 +244,9 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		barrierImage.dispose();
+		for(int i = 0; i<this.barriers.size;i++){
+			this.barriers.get(i).dispose();
+		}
 		playerImage.dispose();
 		collisionSound.dispose();
 	}
