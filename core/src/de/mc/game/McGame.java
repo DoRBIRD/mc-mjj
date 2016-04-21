@@ -3,6 +3,7 @@ package de.mc.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -13,6 +14,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.I18NBundle;
 
 import java.util.Locale;
+
+import de.mc.game.views.GameScreen;
+import de.mc.game.views.MainMenuScreen;
 
 public class McGame extends Game implements InputProcessor {
 
@@ -30,6 +34,7 @@ public class McGame extends Game implements InputProcessor {
     public I18NBundle languageStrings;
     public float width;
     public float height;
+    public InputMultiplexer inputMultiplexer;
 
     public void create() {
         batch = new SpriteBatch();
@@ -38,41 +43,49 @@ public class McGame extends Game implements InputProcessor {
         width = w;
         height = h;
 
+        inputMultiplexer = new InputMultiplexer(this);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+        Gdx.input.setCatchBackKey(true);
+
         // init fonts
         glyphLayout = new GlyphLayout();
 
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/DroidSans.ttf"));
 
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+        parameter.size = 50;
         droidSansSmall = generator.generateFont(parameter);
 
-        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 30;
+        parameter.size = 100;
         droidSansMedium = generator.generateFont(parameter);
 
-        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 40;
+        parameter.size = 150;
         droidSansLarge = generator.generateFont(parameter);
 
         Locale locale = new Locale("de", "en");
         languageStrings = I18NBundle.createBundle(Gdx.files.internal("strings/strings"), locale);
 
-        Gdx.input.setInputProcessor(this);
-        Gdx.input.setCatchBackKey(true);
-
         assetManager = new AssetManager();
 
         mainMenuScreen = new MainMenuScreen(this);
         gameScreen = new GameScreen(this);
-        switchScreen(mainMenuScreen);
+        setScreen(mainMenuScreen);
     }
 
-    public void switchScreen(Screen s) {
-        currentScreen = s;
-        setScreen(currentScreen);
+    public void render() {
+        super.render();
     }
 
+    public void dispose() {
+        batch.dispose();
+        droidSansSmall.dispose();
+        droidSansMedium.dispose();
+        droidSansLarge.dispose();
+        generator.dispose();
+        assetManager.dispose();
+    }
+
+    @Override
     public boolean keyDown(int keycode) {
         return false;
     }
@@ -80,9 +93,8 @@ public class McGame extends Game implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if(keycode == Input.Keys.BACK){
-            System.out.println(currentScreen);
-            if(currentScreen == gameScreen ) {
-                switchScreen(mainMenuScreen);
+            if(screen == gameScreen ) {
+                setScreen(mainMenuScreen);
             }
             else {
                 Gdx.app.exit();
@@ -119,18 +131,5 @@ public class McGame extends Game implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
-    }
-
-    public void render() {
-        super.render();
-    }
-
-    public void dispose() {
-        batch.dispose();
-        droidSansSmall.dispose();
-        droidSansMedium.dispose();
-        droidSansLarge.dispose();
-        generator.dispose();
-        assetManager.dispose();
     }
 }

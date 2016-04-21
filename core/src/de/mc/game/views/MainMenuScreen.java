@@ -1,0 +1,57 @@
+package de.mc.game.views;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+
+import de.mc.game.Constants;
+import de.mc.game.McGame;
+
+public class MainMenuScreen extends CustomScreenAdapter {
+
+    public MainMenuScreen(final McGame g) {
+        super(g);
+
+        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(mcGame.droidSansLarge, Color.WHITE);
+        Label.LabelStyle labelStyleSmall = new Label.LabelStyle(mcGame.droidSansSmall, Color.WHITE);
+
+        final Label labelAppName = new Label(mcGame.languageStrings.get("appName"), labelStyleLarge);
+        labelAppName.setPosition(Constants.WIDTH / 2 - labelAppName.getWidth() / 2, Constants.HEIGHT + 100 - labelAppName.getHeight() / 2);
+        labelAppName.addAction(Actions.moveBy(0, -Constants.HEIGHT / 2, 1.5f));
+
+        final Label labelTapToStart = new Label(mcGame.languageStrings.get("tapToStart"), labelStyleSmall);
+        labelTapToStart.setPosition(Constants.WIDTH / 2 - labelTapToStart.getWidth() / 2, -100 - labelTapToStart.getHeight() / 2);
+        labelTapToStart.addAction(Actions.moveBy(0, Constants.HEIGHT / 2, 1.5f));
+
+        stage.addActor(labelAppName);
+        stage.addActor((labelTapToStart));
+        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1.5f)));
+        stage.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons){
+                mcGame.setScreen(mcGame.gameScreen);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void show() {
+        super.show();
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+
+        if (Gdx.input.justTouched()) {
+
+        }
+    }
+
+    public void dispose() {
+        super.dispose();
+    }
+}
