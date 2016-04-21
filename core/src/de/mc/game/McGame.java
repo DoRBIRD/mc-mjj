@@ -92,11 +92,10 @@ public class McGame extends Game implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if(keycode == Input.Keys.BACK){
-            if(screen == gameScreen ) {
+        if (keycode == Input.Keys.BACK) {
+            if (screen == gameScreen) {
                 setScreen(mainMenuScreen);
-            }
-            else {
+            } else {
                 Gdx.app.exit();
             }
         }

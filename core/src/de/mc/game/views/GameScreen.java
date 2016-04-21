@@ -24,8 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.Iterator;
-
 import de.mc.game.Constants;
 import de.mc.game.McGame;
 import de.mc.game.models.GameWorld;
@@ -116,9 +114,10 @@ public class GameScreen extends CustomScreenAdapter {
         }
         super.render(delta);
     }
-    private void createHitBoxArray(){
+
+    private void createHitBoxArray() {
         TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        mapHitBoxes= new Array<Rectangle>();
+        mapHitBoxes = new Array<Rectangle>();
         //iterrate through map
         for (int x = 0; x < mapLayer.getWidth(); x++) {
             for (int y = 0; y < mapLayer.getHeight(); y++) {
@@ -127,13 +126,14 @@ public class GameScreen extends CustomScreenAdapter {
                 Object tmp = tile.getProperties().get("terrain");
                 //Wenn tile kein eis enthält -> add to hitbox array
                 if (tmp != null && !tmp.toString().contains("0")) {
-                    mapHitBoxes.add( new Rectangle(x * mapLayer.getTileWidth(), y * mapLayer.getTileHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight()));
+                    mapHitBoxes.add(new Rectangle(x * mapLayer.getTileWidth(), y * mapLayer.getTileHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight()));
                 }
             }
         }
     }
+
     private void checkCollision() {
-        for(Rectangle hb: mapHitBoxes){
+        for (Rectangle hb : mapHitBoxes) {
             if (Intersector.overlaps(hb, player.getHitBox())) player.setPositionY(0);
         }
     }
