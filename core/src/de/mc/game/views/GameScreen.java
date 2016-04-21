@@ -11,7 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import de.mc.game.Constants;
 import de.mc.game.McGame;
 import de.mc.game.models.GameWorld;
+import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
 
@@ -33,51 +34,33 @@ public class GameScreen extends CustomScreenAdapter {
 		GAME_OVER = 3;
 	}
 
+	private final String inputTypeAccelerometer = "ACCELEROMETER";
+	private final String inputTypeTouch = "TOUCH";
 	private GameWorld gameWorld;
 	private Texture playerImage;
 	private Sound collisionSound;
-	private Rectangle player;
+	private Player player;
 	private int score;
 	private int gameState;
 	private float timerScore;
-
 	private TiledMap tiledMap;
 	private TiledMapRenderer tiledMapRenderer;
-
     private Label labelScore;
-
-	private final String inputTypeAccelerometer = "ACCELEROMETER";
-	private final String inputTypeTouch = "TOUCH";
 
 	public GameScreen(final McGame g) {
 		super(g);
 
-		// load the images
-		//mcGame.assetManager.load("images/gameWorld.jpg", Texture.class);
-		/*
-		mcGame.assetManager.load("images/player_normal.png", Texture.class);
-		mcGame.assetManager.load("images/player_left.png", Texture.class);
-		mcGame.assetManager.load("images/player_right.png", Texture.class);*/
-		mcGame.assetManager.load("images/player_normal_b.png", Texture.class);
-		mcGame.assetManager.load("images/player_left_b.png", Texture.class);
-		mcGame.assetManager.load("images/player_right_b.png", Texture.class);
-
 		// load the sound effects
 		mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
 
-		player = new Rectangle();
-		player.x = Constants.MAP_WIDTH/ 2 - 64 / 2;
-		player.y = 20;
-		player.width = 44;
-		player.height = 56;
-
+		player = new Player(g);
 
 		//WIP MAP
 		camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
 		//camera.setToOrtho(false,w,h);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("maps/Map-v1.tmx");
-		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap,2f/3f);
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
 		gameState = GAME_READY;
 	}
@@ -99,9 +82,10 @@ public class GameScreen extends CustomScreenAdapter {
 
 			updateCameraPosition();
 			//TEMP
-			float yVelocity = 2;
-			player.y+=yVelocity;
+			float yVelocity = 6;
 			drawGameObjects();
+			player.translate(new Vector2(0,yVelocity));
+			if(player.getPosition().y>Constants.MAP_HEIGHT)player.setPositionY(0);
 
 			updateScore();
 		}
@@ -132,22 +116,20 @@ public class GameScreen extends CustomScreenAdapter {
 			float accelX = -Gdx.input.getAccelerometerX() * 3;
 			if(accelX > 1.5f || accelX < -1.5f) {
 				updatePlayerPosition(accelX, inputTypeAccelerometer);
+
+			}else {
+				player.updateImage(Player.Direction.STRAIGHT);
 			}
-			else {
-				playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
-				//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
-			}
+		}else {
+			player.updateImage(Player.Direction.STRAIGHT);
 		}
-		else {
-			playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
-			//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
-		}
+
 	}
 
 	private void drawGameObjects() {
 		mcGame.batch.begin();
-
-		mcGame.batch.draw(playerImage, player.x, player.y);
+		player.draw(mcGame.batch,0);
+		//mcGame.batch.draw(playerImage, player.getPosition().x, player.getPosition().y);
 
 		mcGame.batch.end();
 	}
@@ -156,16 +138,14 @@ public class GameScreen extends CustomScreenAdapter {
 		float xOffset=0f;
 		float yOffset=0f;
 
-		camera.position.x = player.x + xOffset;
-		camera.position.y = player.y + yOffset;
+		camera.position.x = player.getPosition().x + xOffset;
+		camera.position.y = player.getPosition().y + yOffset;
 	}
 
 	private void updatePlayerPosition(float newX, String inputType) {
-		float oldX = player.x;
+		float oldX = player.getPosition().x;
 		float velocity = 6;
 		float marginoferror = 3f;
-
-
 
 		if(inputType.equals(inputTypeAccelerometer)) {
 			newX = oldX + newX;
@@ -179,21 +159,21 @@ public class GameScreen extends CustomScreenAdapter {
 
 
 		if (newX > oldX) {
-			playerImage = mcGame.assetManager.get("images/player_right_b.png", Texture.class);
-			//playerImage = mcGame.assetManager.get("images/player_right.png", Texture.class);
+			player.updateImage(Player.Direction.RIGHT);
+			//playerImage = mcGame.assetManager.get("images/player_right_b.png", Texture.class);
 		}
 		else if (newX < oldX){
-			playerImage = mcGame.assetManager.get("images/player_left_b.png", Texture.class);
-			//playerImage = mcGame.assetManager.get("images/player_left.png", Texture.class);
+			player.updateImage(Player.Direction.LEFT);
+			//playerImage = mcGame.assetManager.get("images/player_left_b.png", Texture.class);
 		}
 		else {
-			playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
-			//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
+			player.updateImage(Player.Direction.STRAIGHT);
+			//playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
 		}
 		// stay player in screen
 		if(newX < 0) newX = 0;
 		if(newX > Constants.MAP_WIDTH - 64) newX = Constants.MAP_HEIGHT - 64;
-		player.x = newX;
+		player.setPositionX(newX);
 	}
 
 	private void updateScore() {
