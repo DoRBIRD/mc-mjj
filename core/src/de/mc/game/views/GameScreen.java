@@ -1,43 +1,51 @@
-package de.mc.game;
+package de.mc.game.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.util.Iterator;
+import de.mc.game.Constants;
+import de.mc.game.McGame;
+import de.mc.game.models.GameWorld;
 
-public class GameScreen implements Screen {
+public class GameScreen extends CustomScreenAdapter {
 
-	final McGame mcGame;
+	static final int GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER;
+	static {
+		GAME_READY = 0;
+		GAME_RUNNING = 1;
+		GAME_PAUSED = 2;
+		GAME_OVER = 3;
+	}
 
-	private Barrier barrier;
-	private Texture barrierImage;
+	private GameWorld gameWorld;
 	private Texture playerImage;
 	private Sound collisionSound;
-	private OrthographicCamera camera;
 	private Rectangle player;
-	private Array<Barrier> barriers;
 	private int score;
-	private boolean gameStarted;
-	private float timerBarrier;
+	private int gameState;
 	private float timerScore;
+
+    private Label labelScore;
 
 	private final String inputTypeAccelerometer = "ACCELEROMETER";
 	private final String inputTypeTouch = "TOUCH";
 
 	public GameScreen(final McGame g) {
-		mcGame = g;
+		super(g);
 
 		// load the images
-		mcGame.assetManager.load("images/barrier.jpg", Texture.class);
+		//mcGame.assetManager.load("images/gameWorld.jpg", Texture.class);
 		/*
 		mcGame.assetManager.load("images/player_normal.png", Texture.class);
 		mcGame.assetManager.load("images/player_left.png", Texture.class);
@@ -49,40 +57,26 @@ public class GameScreen implements Screen {
 		// load the sound effects
 		mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
 
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, mcGame.width, mcGame.height);
-
 		player = new Rectangle();
-		player.x = mcGame.width / 2 - 64 / 2;
+		player.x = Constants.WIDTH / 2 - 64 / 2;
 		player.y = 20;
 		player.width = 44;
 		player.height = 56;
 
-		timerBarrier = 0;
 		timerScore = 0;
 
-		barriers = new Array<Barrier>();
+		gameState = GAME_READY;
 	}
 
 	@Override
 	public void render (float delta) {
-		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		// tell the camera to update its matrices.
-		camera.update();
-
-		// tell the SpriteBatch to render in the
-		// coordinate system specified by the camera.
-		mcGame.batch.setProjectionMatrix(camera.combined);
+		super.render(delta);
 
 		// wait for assetManager loading all sources
 		if(mcGame.assetManager.update()) {
 			// we are done loading, do some action!
 
 			checkInputs();
-
-			spawnBarrier();
 
 			moveGameObjects();
 
@@ -126,35 +120,22 @@ public class GameScreen implements Screen {
 			playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
 			//playerImage = mcGame.assetManager.get("images/player_normal.png", Texture.class);
 		}
-
-		// keyboard input
-		//if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.x -= 200 * Gdx.graphics.getDeltaTime();
-		//if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.x += 200 * Gdx.graphics.getDeltaTime();
 	}
 
 	private void drawGameObjects() {
 		mcGame.batch.begin();
 
-		mcGame.glyphLayout.setText(mcGame.droidSansMedium, mcGame.languageStrings.get("score") + ": " + score);
-		mcGame.droidSansMedium.draw(mcGame.batch, mcGame.glyphLayout, 20, mcGame.height - 20);
-
 		mcGame.batch.draw(playerImage, player.x, player.y);
-
-		barrierImage = mcGame.assetManager.get("images/barrier.jpg", Texture.class);
-		//this.barrier.setTexture(mcGame.assetManager.get("images/barrier.jpg", Texture.class));
-		for(Barrier b: barriers) {
-			mcGame.batch.draw(barrierImage, b.getX(), b.getY());
-		}
 
 		mcGame.batch.end();
 	}
 
 	private void moveGameObjects() {
-		// move barrier
-		Iterator<Barrier> iter = barriers.iterator();
+		// move gameWorld
+		/*
 		while(iter.hasNext()) {
-			Barrier b = iter.next();
-			b.setX(b.getX()- (200 * Gdx.graphics.getDeltaTime()));
+			GameWorld b = iter.next();
+			b.setX(b.getX() - (200 * Gdx.graphics.getDeltaTime()));
 			if(b.getY() + 14 < 0) iter.remove();
 			// check for overlapping/collision
 			if(b.getBounding().overlaps(player)) {
@@ -164,15 +145,7 @@ public class GameScreen implements Screen {
 				iter.remove();
 			}
 		}
-	}
-
-	private void spawnBarrier() {
-		timerBarrier += Gdx.graphics.getDeltaTime();
-		if(gameStarted && timerBarrier >= 1) {
-			timerBarrier -= 1;
-			barrier = new Barrier(this.mcGame);
-			barriers.add(barrier);
-		}
+		*/
 	}
 
 	private void updatePlayerPosition(float newX, String inputType) {
@@ -205,49 +178,82 @@ public class GameScreen implements Screen {
 		}
 		// stay player in screen
 		if(newX < 0) newX = 0;
-		if(newX > mcGame.width - 64) newX = mcGame.width - 64;
+		if(newX > Constants.WIDTH - 64) newX = Constants.WIDTH - 64;
 		player.x = newX;
 	}
 
 	private void updateScore() {
 		timerScore += Gdx.graphics.getDeltaTime();
-		if(gameStarted && timerScore >= 0.1){
+		if(gameState == GAME_RUNNING && timerScore >= 0.1){
 			// 1/10 second just passed
 			timerScore -= 0.1; // reset our timer
 			score++;
+            labelScore.setText(mcGame.languageStrings.get("score") + ": " + score);
 		}
-	}
-
-	@Override
-	public void resize(int width, int height) {
 	}
 
 	@Override
 	public void show() {
-		gameStarted = true;
+		super.show();
+
+		gameState = GAME_RUNNING;
+
+		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		Skin skin = new Skin();
+		TextureAtlas buttonAtlas = new TextureAtlas("buttons/default-button.pack");
+		skin.addRegions(buttonAtlas);
+		textButtonStyle.up = skin.getDrawable("button");
+		textButtonStyle.over = skin.getDrawable("button_pressed");
+		textButtonStyle.down = skin.getDrawable("button_pressed");
+		textButtonStyle.font = mcGame.droidSansMedium;
+		textButtonStyle.fontColor = Color.BLUE;
+		final TextButton btnMenu = new TextButton("Menü", textButtonStyle);
+		btnMenu.setWidth(btnMenu.getWidth() + 30);
+		btnMenu.setHeight(btnMenu.getHeight() + 20);
+		btnMenu.setPosition(Constants.WIDTH - btnMenu.getWidth() - 20, Constants.HEIGHT - btnMenu.getHeight() - 20);
+		btnMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				mcGame.setScreen(mcGame.mainMenuScreen);
+			}
+		});
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.WHITE);
+		labelScore = new Label(mcGame.languageStrings.get("score") + ": " + score, labelStyle);
+        labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
+
+		stage.addActor(btnMenu);
+        stage.addActor(labelScore);
 	}
 
 	@Override
 	public void hide() {
-		gameStarted = false;
+		super.hide();
+
+		gameState = GAME_PAUSED;
 	}
 
 	@Override
 	public void pause() {
-		gameStarted = false;
+		super.pause();
+
+		gameState = GAME_PAUSED;
 	}
 
 	@Override
 	public void resume() {
-		gameStarted = true;
+		super.resume();
+
+		gameState = GAME_RUNNING;
 	}
 
 	@Override
 	public void dispose() {
-		for(int i = 0; i<this.barriers.size;i++){
-			this.barriers.get(i).dispose();
-		}
+		super.dispose();
+
 		playerImage.dispose();
 		collisionSound.dispose();
+		gameState = GAME_OVER;
 	}
 }
