@@ -84,7 +84,7 @@ public class GameScreen extends CustomScreenAdapter {
 
 	@Override
 	public void render (float delta) {
-		super.render(delta);
+
 		camera.update();
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
@@ -114,6 +114,7 @@ public class GameScreen extends CustomScreenAdapter {
 			mcGame.batch.end();
 			*/
 		}
+		super.render(delta);
 	}
 		//test
 	private void checkInputs() {
