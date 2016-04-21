@@ -4,12 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -66,14 +66,14 @@ public class GameScreen extends CustomScreenAdapter {
 		mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
 
 		player = new Rectangle();
-		player.x = Constants.WIDTH / 2 - 64 / 2;
+		player.x = Constants.MAP_WIDTH/ 2 - 64 / 2;
 		player.y = 20;
 		player.width = 44;
 		player.height = 56;
 
 
 		//WIP MAP
-		camera.setToOrtho(false, Constants.WIDTH, Constants.WIDTH);
+		camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
 		//camera.setToOrtho(false,w,h);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("maps/Map-v1.tmx");
@@ -84,7 +84,8 @@ public class GameScreen extends CustomScreenAdapter {
 
 	@Override
 	public void render (float delta) {
-
+		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
@@ -96,8 +97,10 @@ public class GameScreen extends CustomScreenAdapter {
 
 			checkInputs();
 
-			moveGameObjects();
-
+			updateCameraPosition();
+			//TEMP
+			float yVelocity = 2;
+			player.y+=yVelocity;
 			drawGameObjects();
 
 			updateScore();
@@ -149,45 +152,20 @@ public class GameScreen extends CustomScreenAdapter {
 		mcGame.batch.end();
 	}
 
-	private void moveGameObjects() {
-		// move gameWorld
-		/*
-		while(iter.hasNext()) {
-			GameWorld b = iter.next();
-			b.setX(b.getX() - (200 * Gdx.graphics.getDeltaTime()));
-			if(b.getY() + 14 < 0) iter.remove();
-			// check for overlapping/collision
-			if(b.getBounding().overlaps(player)) {
-				collisionSound = mcGame.assetManager.get("sounds/plop.ogg", Sound.class);
-				collisionSound.play();
-				score = 0;
-				iter.remove();
-			}
-		}
+	private void updateCameraPosition() {
+		float xOffset=0f;
+		float yOffset=0f;
 
-		camera.position.y += 2;
-
-
-	}
-
-	private void spawnBarrier() {
-		timerBarrier += Gdx.graphics.getDeltaTime();
-		if(gameStarted && timerBarrier >= 1) {
-			timerBarrier -= 1;
-			Rectangle barrier = new Rectangle();
-			barrier.x = MathUtils.random(0, mcGame.width - 64);
-			barrier.y = mcGame.height;
-			barrier.width = 64;
-			barrier.height = 14;
-			barriers.add(barrier);
-		}
-		*/
+		camera.position.x = player.x + xOffset;
+		camera.position.y = player.y + yOffset;
 	}
 
 	private void updatePlayerPosition(float newX, String inputType) {
 		float oldX = player.x;
 		float velocity = 6;
 		float marginoferror = 3f;
+
+
 
 		if(inputType.equals(inputTypeAccelerometer)) {
 			newX = oldX + newX;
@@ -214,7 +192,7 @@ public class GameScreen extends CustomScreenAdapter {
 		}
 		// stay player in screen
 		if(newX < 0) newX = 0;
-		if(newX > Constants.WIDTH - 64) newX = Constants.WIDTH - 64;
+		if(newX > Constants.MAP_WIDTH - 64) newX = Constants.MAP_HEIGHT - 64;
 		player.x = newX;
 	}
 
