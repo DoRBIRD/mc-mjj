@@ -99,6 +99,9 @@ public class Player extends Actor {
         if(mcGame.assetManager.update()) {mcGame.batch.draw(playerImage, hitBox.x, hitBox.y);}
     }
 
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
 
 
     public enum Direction {
