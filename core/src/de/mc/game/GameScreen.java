@@ -7,6 +7,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -29,6 +33,9 @@ public class GameScreen implements Screen {
 	private float timerBarrier;
 	private float timerScore;
 
+	private TiledMap tiledMap;
+	private TiledMapRenderer tiledMapRenderer;
+
 	private final String inputTypeAccelerometer = "ACCELEROMETER";
 	private final String inputTypeTouch = "TOUCH";
 
@@ -45,6 +52,9 @@ public class GameScreen implements Screen {
 		mcGame.assetManager.load("images/player_left_b.png", Texture.class);
 		mcGame.assetManager.load("images/player_right_b.png", Texture.class);
 
+// once the asset manager is done loading
+
+
 		// load the sound effects
 		mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
 
@@ -56,6 +66,17 @@ public class GameScreen implements Screen {
 		player.y = 20;
 		player.width = 44;
 		player.height = 56;
+
+
+		//WIP MAP
+		float w = Gdx.graphics.getWidth();
+		float h = Gdx.graphics.getHeight();
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, mcGame.width, mcGame.height);
+		//camera.setToOrtho(false,w,h);
+		camera.update();
+		tiledMap = new TmxMapLoader().load("maps/map1.tmx");
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap,3F);
 
 		timerBarrier = 0;
 		timerScore = 0;
@@ -74,6 +95,14 @@ public class GameScreen implements Screen {
 		// tell the SpriteBatch to render in the
 		// coordinate system specified by the camera.
 		mcGame.batch.setProjectionMatrix(camera.combined);
+
+		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		camera.update();
+		tiledMapRenderer.setView(camera);
+		tiledMapRenderer.render();
+
 
 		// wait for assetManager loading all sources
 		if(mcGame.assetManager.update()) {
@@ -162,6 +191,10 @@ public class GameScreen implements Screen {
 				iter.remove();
 			}
 		}
+
+		camera.position.y += 2;
+
+
 	}
 
 	private void spawnBarrier() {
@@ -219,6 +252,7 @@ public class GameScreen implements Screen {
 			score++;
 		}
 	}
+
 
 	@Override
 	public void resize(int width, int height) {

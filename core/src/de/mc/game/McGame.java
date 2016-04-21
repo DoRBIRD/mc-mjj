@@ -28,14 +28,15 @@ public class McGame extends Game implements InputProcessor {
     public Screen gameScreen;
     public AssetManager assetManager;
     public I18NBundle languageStrings;
-    public int width;
-    public int height;
+    public float width;
+    public float height;
 
     public void create() {
         batch = new SpriteBatch();
-
-        width = 480;
-        height = 800;
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        width = w;
+        height = h;
 
         // init fonts
         glyphLayout = new GlyphLayout();
