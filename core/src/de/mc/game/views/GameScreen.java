@@ -95,7 +95,7 @@ public class GameScreen extends CustomScreenAdapter {
             float yVelocity = 6;
             drawGameObjects();
             player.translate(new Vector2(0, yVelocity));
-            if (player.getPosition().y > Constants.MAP_HEIGHT) player.setPositionY(0);
+            if (player.getY() > Constants.MAP_HEIGHT) player.setY(0);
 
             updateScore();
 
@@ -134,7 +134,7 @@ public class GameScreen extends CustomScreenAdapter {
 
     private void checkCollision() {
         for (Rectangle hb : mapHitBoxes) {
-            if (Intersector.overlaps(hb, player.getHitBox())) player.setPositionY(0);
+            if (Intersector.overlaps(hb, player.getHitBox())) player.setY(0);
         }
     }
 
@@ -172,12 +172,12 @@ public class GameScreen extends CustomScreenAdapter {
         float xOffset = 0f;
         float yOffset = Constants.HEIGHT * 1 / 3;
 
-        camera.position.x = player.getPosition().x + xOffset;
-        camera.position.y = player.getPosition().y + yOffset;
+        camera.position.x = player.getX() + xOffset;
+        camera.position.y = player.getY() + yOffset;
     }
 
     private void updatePlayerPosition(float newX, String inputType) {
-        float oldX = player.getPosition().x;
+        float oldX = player.getX();
         float velocity = 6;
         float marginoferror = 3f;
 
@@ -205,7 +205,7 @@ public class GameScreen extends CustomScreenAdapter {
         // stay player in screen
         if (newX < 0) newX = 0;
         if (newX > Constants.MAP_WIDTH - 64) newX = Constants.MAP_HEIGHT - 64;
-        player.setPositionX(newX);
+        player.setX(newX);
     }
 
     private void updateScore() {

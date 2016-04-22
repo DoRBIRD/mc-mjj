@@ -14,56 +14,32 @@ public class Player extends Actor {
     private float hitBoxWidth;
     private float hitBoxHeight;
     private Texture playerImage;
-    private Vector2 position;
     private McGame mcGame;
 
     public Player(final McGame g) {
         super();
         mcGame = g;
         hitBox = new Rectangle();
-        position = new Vector2(Constants.MAP_WIDTH / 2, 0);
+        setPosition(Constants.MAP_WIDTH / 2, 0);
 
         hitBoxWidth = 44;
         hitBoxHeight = 56;
-        updateHitBox();
         hitBox.width = hitBoxWidth;
-        hitBox.height = hitBoxWidth;
+        hitBox.height = hitBoxHeight;
         mcGame.assetManager.load("images/player_normal_b.png", Texture.class);
         mcGame.assetManager.load("images/player_left_b.png", Texture.class);
         mcGame.assetManager.load("images/player_right_b.png", Texture.class);
-        //playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
     }
 
-    private void updateHitBox() {
-        hitBox.x = position.x - hitBoxWidth / 2;
-        hitBox.y = position.y - hitBoxHeight / 2;
+    @Override
+    protected void positionChanged() {
+        super.positionChanged();
+        hitBox.x = getX() - hitBoxWidth / 2;
+        hitBox.y = getY() - hitBoxHeight / 2;
     }
 
-    public void setPositionX(float x) {
-        setPosition(new Vector2(x, getPosition().y));
-    }
-
-    public void setPositionY(float y) {
-        setPosition(new Vector2(getPosition().x, y));
-    }
-
-    public void setPosition(float x, float y) {
-        setPosition(new Vector2(x, y));
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 newPosition) {
-        position = newPosition;
-        updateHitBox();
-    }
-
-    public void translate(Vector2 delta) {
-        position.x += delta.x;
-        position.y += delta.y;
-        updateHitBox();
+    public void translate(Vector2 position) {
+        setPosition(getX() + position.x, getY() + position.y);
     }
 
     public void updateImage(Direction dir) {
@@ -95,7 +71,7 @@ public class Player extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
         if (mcGame.assetManager.update()) {
-            mcGame.batch.draw(playerImage, hitBox.x, hitBox.y);
+            batch.draw(playerImage, hitBox.x, hitBox.y);
         }
     }
 
