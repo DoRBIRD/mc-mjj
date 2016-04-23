@@ -5,8 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -43,7 +43,6 @@ public class GameScreen extends CustomScreenAdapter {
     private final String inputTypeAccelerometer = "ACCELEROMETER";
     private final String inputTypeTouch = "TOUCH";
     private GameWorld gameWorld;
-    private Texture playerImage;
     private Sound collisionSound;
     private Player player;
     private int score;
@@ -61,7 +60,36 @@ public class GameScreen extends CustomScreenAdapter {
         // load the sound effects
         mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
 
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        Skin skin = new Skin();
+        TextureAtlas buttonAtlas = new TextureAtlas("buttons/default-button.pack");
+        skin.addRegions(buttonAtlas);
+        textButtonStyle.up = skin.getDrawable("button");
+        textButtonStyle.over = skin.getDrawable("button_pressed");
+        textButtonStyle.down = skin.getDrawable("button_pressed");
+        textButtonStyle.font = mcGame.droidSansMedium;
+        textButtonStyle.fontColor = Color.BLUE;
+        final TextButton btnMenu = new TextButton("Menü", textButtonStyle);
+        btnMenu.setWidth(btnMenu.getWidth() + 30);
+        btnMenu.setHeight(btnMenu.getHeight() + 20);
+        btnMenu.setPosition(Constants.WIDTH - btnMenu.getWidth() - 20, Constants.HEIGHT - btnMenu.getHeight() - 20);
+        btnMenu.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                mcGame.setScreen(mcGame.mainMenuScreen);
+            }
+        });
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.WHITE);
+        labelScore = new Label(mcGame.languageStrings.get("score") + ": " + score, labelStyle);
+        labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
+
         player = new Player(g);
+
+        stage.addActor(btnMenu);
+        stage.addActor(labelScore);
+        stage.addActor(player);
 
         //WIP MAP
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
@@ -79,27 +107,31 @@ public class GameScreen extends CustomScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.update();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
-
 
         // wait for assetManager loading all sources
         if (mcGame.assetManager.update()) {
             // we are done loading, do some action!
 
-            checkInputs();
+            drawGameObjects();
 
-            updateCameraPosition();
             //TEMP
             float yVelocity = 6;
-            drawGameObjects();
-            player.translate(new Vector2(0, yVelocity));
-            if (player.getY() > Constants.MAP_HEIGHT) player.setY(0);
 
-            updateScore();
 
-            checkCollision();
+            if(gameState == GAME_RUNNING) {
+                checkInputs();
+
+                player.moveBy(0, yVelocity);
+                if (player.getY() > Constants.MAP_HEIGHT) player.setY(0);
+
+                updateScore();
+
+                checkCollision();
+            }
+
+            updateCameraPosition();
         } else {
             // display loading information
             float progress = mcGame.assetManager.getProgress();
@@ -163,9 +195,12 @@ public class GameScreen extends CustomScreenAdapter {
     private void drawGameObjects() {
         mcGame.batch.begin();
         player.draw(mcGame.batch, 0);
-        //mcGame.batch.draw(playerImage, player.getPosition().x, player.getPosition().y);
-
         mcGame.batch.end();
+    }
+
+    private void gameOver() {
+
+       // gameState == GAME_OVER;
     }
 
     private void updateCameraPosition() {
@@ -174,6 +209,7 @@ public class GameScreen extends CustomScreenAdapter {
 
         camera.position.x = player.getX() + xOffset;
         camera.position.y = player.getY() + yOffset;
+        camera.update();
     }
 
     private void updatePlayerPosition(float newX, String inputType) {
@@ -194,13 +230,10 @@ public class GameScreen extends CustomScreenAdapter {
 
         if (newX > oldX) {
             player.updateImage(Player.Direction.RIGHT);
-            //playerImage = mcGame.assetManager.get("images/player_right_b.png", Texture.class);
         } else if (newX < oldX) {
             player.updateImage(Player.Direction.LEFT);
-            //playerImage = mcGame.assetManager.get("images/player_left_b.png", Texture.class);
         } else {
             player.updateImage(Player.Direction.STRAIGHT);
-            //playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
         }
         // stay player in screen
         if (newX < 0) newX = 0;
@@ -222,35 +255,53 @@ public class GameScreen extends CustomScreenAdapter {
     public void show() {
         super.show();
 
-        gameState = GAME_RUNNING;
+        gameState = GAME_PAUSED;
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        Skin skin = new Skin();
-        TextureAtlas buttonAtlas = new TextureAtlas("buttons/default-button.pack");
-        skin.addRegions(buttonAtlas);
-        textButtonStyle.up = skin.getDrawable("button");
-        textButtonStyle.over = skin.getDrawable("button_pressed");
-        textButtonStyle.down = skin.getDrawable("button_pressed");
-        textButtonStyle.font = mcGame.droidSansMedium;
-        textButtonStyle.fontColor = Color.BLUE;
-        final TextButton btnMenu = new TextButton("Menü", textButtonStyle);
-        btnMenu.setWidth(btnMenu.getWidth() + 30);
-        btnMenu.setHeight(btnMenu.getHeight() + 20);
-        btnMenu.setPosition(Constants.WIDTH - btnMenu.getWidth() - 20, Constants.HEIGHT - btnMenu.getHeight() - 20);
-        btnMenu.addListener(new ClickListener() {
+        mcGame.inputMultiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                mcGame.setScreen(mcGame.mainMenuScreen);
+            public boolean touchDown(float x, float y, int pointer, int button) {
+                return false;
             }
-        });
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.WHITE);
-        labelScore = new Label(mcGame.languageStrings.get("score") + ": " + score, labelStyle);
-        labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
+            @Override
+            public boolean tap(float x, float y, int count, int button) {
+                return false;
+            }
 
-        stage.addActor(btnMenu);
-        stage.addActor(labelScore);
+            @Override
+            public boolean longPress(float x, float y) {
+                return false;
+            }
+
+            @Override
+            public boolean fling(float velocityX, float velocityY, int button) {
+                Gdx.app.log("log", "drin");
+                if(gameState == GAME_PAUSED && velocityY <= -1500) {
+                    gameState = GAME_RUNNING;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean pan(float x, float y, float deltaX, float deltaY) {
+                return false;
+            }
+
+            @Override
+            public boolean panStop(float x, float y, int pointer, int button) {
+                return false;
+            }
+
+            @Override
+            public boolean zoom(float initialDistance, float distance) {
+                return false;
+            }
+
+            @Override
+            public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+                return false;
+            }
+        }));
     }
 
     @Override
@@ -278,7 +329,6 @@ public class GameScreen extends CustomScreenAdapter {
     public void dispose() {
         super.dispose();
 
-        playerImage.dispose();
         collisionSound.dispose();
         gameState = GAME_OVER;
     }

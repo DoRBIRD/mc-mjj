@@ -3,7 +3,6 @@ package de.mc.game.models;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import de.mc.game.Constants;
@@ -21,6 +20,8 @@ public class Player extends Actor {
         mcGame = g;
         hitBox = new Rectangle();
         setPosition(Constants.MAP_WIDTH / 2, 0);
+        hitBox.x = getX();
+        hitBox.y = getY();
 
         hitBoxWidth = 44;
         hitBoxHeight = 56;
@@ -36,10 +37,6 @@ public class Player extends Actor {
         super.positionChanged();
         hitBox.x = getX() - hitBoxWidth / 2;
         hitBox.y = getY() - hitBoxHeight / 2;
-    }
-
-    public void translate(Vector2 position) {
-        setPosition(getX() + position.x, getY() + position.y);
     }
 
     public void updateImage(Direction dir) {
@@ -69,8 +66,7 @@ public class Player extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        if (mcGame.assetManager.update()) {
+        if (mcGame.assetManager.update() && playerImage != null) {
             batch.draw(playerImage, hitBox.x, hitBox.y);
         }
     }
