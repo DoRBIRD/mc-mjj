@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -49,6 +50,7 @@ public class GameScreen extends CustomScreenAdapter {
     private int gameState;
     private float timerScore;
     private TiledMap tiledMap;
+    private TiledMap tiledMap2;
     private TiledMapRenderer tiledMapRenderer;
     private Label labelScore;
 
@@ -96,11 +98,38 @@ public class GameScreen extends CustomScreenAdapter {
         //camera.setToOrtho(false,w,h);
         camera.update();
         tiledMap = new TmxMapLoader().load("maps/Map-v1.tmx");
+        tiledMap2 = new TmxMapLoader().load("maps/Map-v1.tmx");
+        tiledMap = addBlockToMap(tiledMap, tiledMap2);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
         gameState = GAME_READY;
-
         createHitBoxArray();
+    }
+
+    public TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
+        TiledMap newMap = new TiledMap();
+        MapLayers layers = newMap.getLayers();
+        //TODO check if same width
+        int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
+        int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
+        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
+        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
+        TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tiledMap2.getLayers().get(0);
+        TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
+        TiledMapTileLayer newMaplayer = new TiledMapTileLayer(((TiledMapTileLayer) tm1.getLayers().get(0)).getWidth(), newHeight, tileWidth, tileHeight);
+
+        for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
+            for (int y = 0; y < newHeight; y++) {
+                TiledMapTileLayer.Cell cell;
+                if (y < oldHeight) {
+                    cell = oldMapLayer.getCell(x, y);
+                } else {
+                    cell = toAddMapLayer.getCell(x, y - oldHeight);
+                }
+                newMaplayer.setCell(x, y, cell);
+            }
+        }
+        layers.add(newMaplayer);
+        return newMap;
     }
 
     @Override
