@@ -18,8 +18,8 @@ public class Player extends Actor {
         super();
         mcGame = g;
         hitBox = new Rectangle();
-        hitBoxWidth = 44;
-        hitBoxHeight = 56;
+        hitBoxWidth = 107;
+        hitBoxHeight = 159;
         hitBox.width = hitBoxWidth;
         hitBox.height = hitBoxHeight;
 
@@ -28,9 +28,7 @@ public class Player extends Actor {
         hitBox.x = getX();
         hitBox.y = getY();
 
-        mcGame.assetManager.load("images/player_normal_b.png", Texture.class);
-        mcGame.assetManager.load("images/player_left_b.png", Texture.class);
-        mcGame.assetManager.load("images/player_right_b.png", Texture.class);
+        mcGame.assetManager.load("images/player.gif", Texture.class);
     }
 
     @Override
@@ -43,16 +41,16 @@ public class Player extends Actor {
     public void updateImage(Direction dir) {
         switch (dir) {
             case LEFT:
-                playerImage = mcGame.assetManager.get("images/player_left_b.png", Texture.class);
+                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
                 break;
             case RIGHT:
-                playerImage = mcGame.assetManager.get("images/player_right_b.png", Texture.class);
+                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
                 break;
             case STRAIGHT:
-                playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
+                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
                 break;
             default:
-                playerImage = mcGame.assetManager.get("images/player_normal_b.png", Texture.class);
+                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
                 break;
         }
     }

@@ -2,11 +2,10 @@ package de.mc.game.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -25,7 +24,6 @@ import com.badlogic.gdx.utils.Array;
 
 import de.mc.game.Constants;
 import de.mc.game.McGame;
-import de.mc.game.models.GameWorld;
 import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
@@ -36,8 +34,7 @@ public class GameScreen extends CustomScreenAdapter {
 
     private final String inputTypeAccelerometer = "ACCELEROMETER";
     private final String inputTypeTouch = "TOUCH";
-    private GameWorld gameWorld;
-    private Sound collisionSound;
+    private GameOverOverlay gameOverOverlay;
     private Player player;
     private int score;
     private int lastScore;
@@ -55,9 +52,6 @@ public class GameScreen extends CustomScreenAdapter {
     public GameScreen(final McGame g) {
         super(g);
 
-        // load the sound effects
-        mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
-
         final TextButton btnMenu = new TextButton("Menü", mcGame.defaultTextButtonStyle);
         btnMenu.setWidth(btnMenu.getWidth() + 30);
         btnMenu.setHeight(btnMenu.getHeight() + 20);
@@ -65,8 +59,11 @@ public class GameScreen extends CustomScreenAdapter {
         btnMenu.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
                 mcGame.setScreen(mcGame.mainMenuScreen);
+                if(gameOverOverlay != null) {
+                    setReady();
+                    gameOverOverlay.dispose();
+                }
             }
         });
 
@@ -137,7 +134,7 @@ public class GameScreen extends CustomScreenAdapter {
             drawGameObjects();
 
             if(state == State.GAME_OVER) {
-                new GameOverOverlay(mcGame, this, lastScore);
+                gameOverOverlay = new GameOverOverlay(mcGame, this, lastScore);
 
                 state = State.WAIT_FOR_USER_INPUT;
             }
@@ -370,7 +367,6 @@ public class GameScreen extends CustomScreenAdapter {
     public void dispose() {
         super.dispose();
 
-        collisionSound.dispose();
         state = null;
     }
 }
