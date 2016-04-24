@@ -148,7 +148,7 @@ public class GameScreen extends CustomScreenAdapter {
                 //TEMP
                 float yVelocity = 6;
                 player.moveBy(0, yVelocity);
-                if (player.getY() > Constants.MAP_HEIGHT) player.setY(cameraOffsetY);
+                if (player.getY() > Constants.MAP_HEIGHT * 2) player.setY(cameraOffsetY);
 
                 updateScore();
 
