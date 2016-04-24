@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -19,7 +18,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -31,13 +29,8 @@ import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
 
-    static final int GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER;
-
-    static {
-        GAME_READY = 0;
-        GAME_RUNNING = 1;
-        GAME_PAUSED = 2;
-        GAME_OVER = 3;
+    public enum State {
+        GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER, WAIT_FOR_USER_INPUT
     }
 
     private final String inputTypeAccelerometer = "ACCELEROMETER";
@@ -46,13 +39,16 @@ public class GameScreen extends CustomScreenAdapter {
     private Sound collisionSound;
     private Player player;
     private int score;
-    private int gameState;
+    private int lastScore;
+    private State state;
     private float timerScore;
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
-    private Label labelScore;
+    private Label labelScore, labelSwipe;
 
     private Array<Rectangle> mapHitBoxes;
+
+    private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
 
     public GameScreen(final McGame g) {
         super(g);
@@ -60,16 +56,7 @@ public class GameScreen extends CustomScreenAdapter {
         // load the sound effects
         mcGame.assetManager.load("sounds/plop.ogg", Sound.class);
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        Skin skin = new Skin();
-        TextureAtlas buttonAtlas = new TextureAtlas("buttons/default-button.pack");
-        skin.addRegions(buttonAtlas);
-        textButtonStyle.up = skin.getDrawable("button");
-        textButtonStyle.over = skin.getDrawable("button_pressed");
-        textButtonStyle.down = skin.getDrawable("button_pressed");
-        textButtonStyle.font = mcGame.droidSansMedium;
-        textButtonStyle.fontColor = Color.BLUE;
-        final TextButton btnMenu = new TextButton("Menü", textButtonStyle);
+        final TextButton btnMenu = new TextButton("Menü", mcGame.defaultTextButtonStyle);
         btnMenu.setWidth(btnMenu.getWidth() + 30);
         btnMenu.setHeight(btnMenu.getHeight() + 20);
         btnMenu.setPosition(Constants.WIDTH - btnMenu.getWidth() - 20, Constants.HEIGHT - btnMenu.getHeight() - 20);
@@ -81,24 +68,28 @@ public class GameScreen extends CustomScreenAdapter {
             }
         });
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.BLACK);
         labelScore = new Label(mcGame.languageStrings.get("score") + ": " + score, labelStyle);
         labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
 
+        labelSwipe = new Label("Swipe up to start", labelStyle);
+        labelSwipe.setPosition(Constants.WIDTH / 2 - labelSwipe.getWidth() / 2, Constants.HEIGHT / 2 - labelSwipe.getHeight() / 2);
+
         player = new Player(g);
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, cameraOffsetY);
 
         stage.addActor(btnMenu);
         stage.addActor(labelScore);
         stage.addActor(player);
+        stage.addActor(labelSwipe);
 
         //WIP MAP
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
-        //camera.setToOrtho(false,w,h);
         camera.update();
         tiledMap = new TmxMapLoader().load("maps/Map-v1.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        gameState = GAME_READY;
+        setReady();
 
         createHitBoxArray();
     }
@@ -116,15 +107,19 @@ public class GameScreen extends CustomScreenAdapter {
 
             drawGameObjects();
 
-            //TEMP
-            float yVelocity = 6;
+            if(state == State.GAME_OVER) {
+                new GameOverOverlay(mcGame, this, lastScore);
 
+                state = State.WAIT_FOR_USER_INPUT;
+            }
 
-            if(gameState == GAME_RUNNING) {
+            if(state == State.GAME_RUNNING) {
                 checkInputs();
 
+                //TEMP
+                float yVelocity = 6;
                 player.moveBy(0, yVelocity);
-                if (player.getY() > Constants.MAP_HEIGHT) player.setY(0);
+                if (player.getY() > Constants.MAP_HEIGHT) player.setY(cameraOffsetY);
 
                 updateScore();
 
@@ -166,7 +161,7 @@ public class GameScreen extends CustomScreenAdapter {
 
     private void checkCollision() {
         for (Rectangle hb : mapHitBoxes) {
-            if (Intersector.overlaps(hb, player.getHitBox())) player.setY(0);
+            if (Intersector.overlaps(hb, player.getHitBox())) gameOver();
         }
     }
 
@@ -193,22 +188,39 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     private void drawGameObjects() {
+        if(state != State.GAME_RUNNING) {
+            player.updateImage(Player.Direction.STRAIGHT);
+        }
         mcGame.batch.begin();
         player.draw(mcGame.batch, 0);
         mcGame.batch.end();
     }
 
     private void gameOver() {
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, cameraOffsetY);
+        resetScore();
+        state = State.GAME_OVER;
+    }
 
-       // gameState == GAME_OVER;
+    private void resetScore() {
+        lastScore = score;
+        score = 0;
+        labelScore.setText(mcGame.languageStrings.get("score") + ": " + score);
+    }
+
+    public void setReady() {
+        state = State.GAME_READY;
+        stage.addActor(labelSwipe);
+    }
+
+    private void startGame() {
+        state = State.GAME_RUNNING;
+        labelSwipe.remove();
     }
 
     private void updateCameraPosition() {
-        float xOffset = 0f;
-        float yOffset = Constants.HEIGHT * 1 / 3;
-
-        camera.position.x = player.getX() + xOffset;
-        camera.position.y = player.getY() + yOffset;
+        camera.position.x = player.getX();
+        camera.position.y = player.getY() + cameraOffsetY;
         camera.update();
     }
 
@@ -237,13 +249,13 @@ public class GameScreen extends CustomScreenAdapter {
         }
         // stay player in screen
         if (newX < 0) newX = 0;
-        if (newX > Constants.MAP_WIDTH - 64) newX = Constants.MAP_HEIGHT - 64;
+        if (newX > Constants.MAP_WIDTH - player.getWidth()) newX = Constants.MAP_HEIGHT - player.getWidth();
         player.setX(newX);
     }
 
     private void updateScore() {
         timerScore += Gdx.graphics.getDeltaTime();
-        if (gameState == GAME_RUNNING && timerScore >= 0.1) {
+        if (state == State.GAME_RUNNING && timerScore >= 0.1) {
             // 1/10 second just passed
             timerScore -= 0.1; // reset our timer
             score++;
@@ -255,7 +267,7 @@ public class GameScreen extends CustomScreenAdapter {
     public void show() {
         super.show();
 
-        gameState = GAME_PAUSED;
+        setReady();
 
         mcGame.inputMultiplexer.addProcessor(new GestureDetector(new GestureDetector.GestureListener() {
             @Override
@@ -275,9 +287,9 @@ public class GameScreen extends CustomScreenAdapter {
 
             @Override
             public boolean fling(float velocityX, float velocityY, int button) {
-                Gdx.app.log("log", "drin");
-                if(gameState == GAME_PAUSED && velocityY <= -1500) {
-                    gameState = GAME_RUNNING;
+                if((state == State.GAME_PAUSED || state == State.GAME_OVER || state == State.GAME_READY) && velocityY <= -1500) {
+                    startGame();
+                    return true;
                 }
                 return false;
             }
@@ -308,21 +320,21 @@ public class GameScreen extends CustomScreenAdapter {
     public void hide() {
         super.hide();
 
-        gameState = GAME_PAUSED;
+        state = State.GAME_PAUSED;
     }
 
     @Override
     public void pause() {
         super.pause();
 
-        gameState = GAME_PAUSED;
+        state = State.GAME_PAUSED;
     }
 
     @Override
     public void resume() {
         super.resume();
 
-        gameState = GAME_RUNNING;
+        setReady();
     }
 
     @Override
@@ -330,6 +342,6 @@ public class GameScreen extends CustomScreenAdapter {
         super.dispose();
 
         collisionSound.dispose();
-        gameState = GAME_OVER;
+        state = null;
     }
 }

@@ -7,10 +7,14 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.I18NBundle;
 
 import java.util.Locale;
@@ -35,6 +39,8 @@ public class McGame extends Game implements InputProcessor {
     public float width;
     public float height;
     public InputMultiplexer inputMultiplexer;
+
+    public TextButton.TextButtonStyle defaultTextButtonStyle;
 
     public void create() {
         batch = new SpriteBatch();
@@ -62,6 +68,8 @@ public class McGame extends Game implements InputProcessor {
         parameter.size = 150;
         droidSansLarge = generator.generateFont(parameter);
 
+        loadDefaultStyles();
+
         Locale locale = new Locale("de", "en");
         languageStrings = I18NBundle.createBundle(Gdx.files.internal("strings/strings"), locale);
 
@@ -83,6 +91,20 @@ public class McGame extends Game implements InputProcessor {
         droidSansLarge.dispose();
         generator.dispose();
         assetManager.dispose();
+    }
+
+    private void loadDefaultStyles() {
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        Skin skin = new Skin();
+        TextureAtlas buttonAtlas = new TextureAtlas("buttons/default-button.pack");
+        skin.addRegions(buttonAtlas);
+        textButtonStyle.up = skin.getDrawable("button");
+        textButtonStyle.over = skin.getDrawable("button_pressed");
+        textButtonStyle.down = skin.getDrawable("button_pressed");
+        textButtonStyle.font = droidSansMedium;
+        textButtonStyle.fontColor = Color.BLACK;
+
+        defaultTextButtonStyle = textButtonStyle;
     }
 
     @Override

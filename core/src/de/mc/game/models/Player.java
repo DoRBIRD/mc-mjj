@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import de.mc.game.Constants;
 import de.mc.game.McGame;
 
 public class Player extends Actor {
@@ -19,14 +18,16 @@ public class Player extends Actor {
         super();
         mcGame = g;
         hitBox = new Rectangle();
-        setPosition(Constants.MAP_WIDTH / 2, 0);
-        hitBox.x = getX();
-        hitBox.y = getY();
-
         hitBoxWidth = 44;
         hitBoxHeight = 56;
         hitBox.width = hitBoxWidth;
         hitBox.height = hitBoxHeight;
+
+        setBounds(0, 0, hitBoxWidth, hitBoxHeight);
+
+        hitBox.x = getX();
+        hitBox.y = getY();
+
         mcGame.assetManager.load("images/player_normal_b.png", Texture.class);
         mcGame.assetManager.load("images/player_left_b.png", Texture.class);
         mcGame.assetManager.load("images/player_right_b.png", Texture.class);
