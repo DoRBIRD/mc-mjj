@@ -5,12 +5,12 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 /**
  * Created by Jonas on 28/04/2016.
  */
-public class MapBlock {
+public class MapBlockTMP {
     private TiledMap map;
     private String connectionBottom;
     private String connectionTop;
 
-    public MapBlock(TiledMap block, String bot, String top) {
+    public MapBlockTMP(TiledMap block, String bot, String top) {
         map = block;
         connectionBottom = bot;
         connectionTop = top;

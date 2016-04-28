@@ -14,7 +14,7 @@ import java.util.Random;
  * Created by Jonas on 28/04/2016.
  */
 public class MapManager {
-    private Array<MapBlock> mapBlocks = new Array<MapBlock>();
+    private Array<MapBlockTMP> mapBlocks = new Array<MapBlockTMP>();
     private String lastconnection = "A";
     private TiledMap tiledMap;
     private Array<Rectangle> mapHitBoxes;
@@ -70,7 +70,7 @@ public class MapManager {
             String bot = mbp.substring(5, 6);
             String top = mbp.substring(7, 8);
             TiledMap map = new TmxMapLoader().load(folder + mbp + ending);
-            mapBlocks.add(new MapBlock(map, bot, top));
+            mapBlocks.add(new MapBlockTMP(map, bot, top));
             System.out.println("New mapblock name:" + mbp + " bot connection: " + bot + " top connection: " + top);
         }
     }
@@ -93,9 +93,9 @@ public class MapManager {
     }
 
 
-    public Array<MapBlock> getMapWithBotConnection(String connection) {
-        Array<MapBlock> result = new Array<MapBlock>();
-        for (MapBlock block : mapBlocks) {
+    public Array<MapBlockTMP> getMapWithBotConnection(String connection) {
+        Array<MapBlockTMP> result = new Array<MapBlockTMP>();
+        for (MapBlockTMP block : mapBlocks) {
             if (block.getConnectionBottom().equals(connection)) {
                 result.add(block);
             }
@@ -105,10 +105,10 @@ public class MapManager {
     }
 
     public TiledMap getNextBlock() {
-        Array<MapBlock> tmp = getMapWithBotConnection(lastconnection);
+        Array<MapBlockTMP> tmp = getMapWithBotConnection(lastconnection);
         Random randomGenerator = new Random();
-        MapBlock block = tmp.get(tmp.size - randomGenerator.nextInt(tmp.size) - 1);
-        //MapBlock block = tmp.get(0);
+        MapBlockTMP block = tmp.get(tmp.size - randomGenerator.nextInt(tmp.size) - 1);
+        //MapBlockTMP block = tmp.get(0);
         lastconnection = block.getConnectionTop();
         return block.getMap();
     }
