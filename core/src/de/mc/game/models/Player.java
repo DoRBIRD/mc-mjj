@@ -25,8 +25,8 @@ public class Player extends Actor {
 
         setBounds(0, 0, hitBoxWidth, hitBoxHeight);
 
-        hitBox.x = getX();
-        hitBox.y = getY();
+        hitBox.x = getX() - hitBoxWidth / 2;
+        hitBox.y = getY() - hitBoxHeight / 2;
 
         mcGame.assetManager.load("images/player.gif", Texture.class);
     }

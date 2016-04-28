@@ -22,8 +22,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Random;
+
 import de.mc.game.Constants;
 import de.mc.game.McGame;
+import de.mc.game.models.MapBlock;
+import de.mc.game.models.MapManager;
 import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
@@ -40,14 +44,13 @@ public class GameScreen extends CustomScreenAdapter {
     private int lastScore;
     private State state;
     private float timerScore;
-    private TiledMap tiledMap;
-    private TiledMap tiledMap2;
+
+    private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private Label labelScore, labelSwipe;
 
-    private Array<Rectangle> mapHitBoxes;
-
     private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
+
 
     public GameScreen(final McGame g) {
         super(g);
@@ -75,49 +78,20 @@ public class GameScreen extends CustomScreenAdapter {
         labelSwipe.setPosition(Constants.WIDTH / 2 - labelSwipe.getWidth() / 2, Constants.HEIGHT / 2 - labelSwipe.getHeight() / 2);
 
         player = new Player(g);
-        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, cameraOffsetY);
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 300);
 
         stage.addActor(btnMenu);
         stage.addActor(labelScore);
-        stage.addActor(player);
+        //stage.addActor(player);
         stage.addActor(labelSwipe);
 
         //WIP MAP
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
-        tiledMap = new TmxMapLoader().load("maps/Map-v1.tmx");
-        tiledMap2 = new TmxMapLoader().load("maps/Map-v1.tmx");
-        tiledMap = addBlockToMap(tiledMap, tiledMap2);
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+        mapManager = new MapManager();
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(mapManager.getTiledMap());
         setReady();
-        createHitBoxArray();
-    }
-
-    public TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
-        TiledMap newMap = new TiledMap();
-        MapLayers layers = newMap.getLayers();
-        //TODO check if same width
-        int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
-        int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
-        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
-        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
-        TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tiledMap2.getLayers().get(0);
-        TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        TiledMapTileLayer newMaplayer = new TiledMapTileLayer(((TiledMapTileLayer) tm1.getLayers().get(0)).getWidth(), newHeight, tileWidth, tileHeight);
-
-        for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
-            for (int y = 0; y < newHeight; y++) {
-                TiledMapTileLayer.Cell cell;
-                if (y < oldHeight) {
-                    cell = oldMapLayer.getCell(x, y);
-                } else {
-                    cell = toAddMapLayer.getCell(x, y - oldHeight);
-                }
-                newMaplayer.setCell(x, y, cell);
-            }
-        }
-        layers.add(newMaplayer);
-        return newMap;
     }
 
     @Override
@@ -143,9 +117,9 @@ public class GameScreen extends CustomScreenAdapter {
                 checkInputs();
 
                 //TEMP
-                float yVelocity = 6;
+                float yVelocity = 500 * delta;
                 player.moveBy(0, yVelocity);
-                if (player.getY() > Constants.MAP_HEIGHT * 2) player.setY(cameraOffsetY);
+                if (player.getY() > mapManager.getMapHeigth()) player.setY(300);
 
                 updateScore();
 
@@ -168,25 +142,10 @@ public class GameScreen extends CustomScreenAdapter {
         super.render(delta);
     }
 
-    private void createHitBoxArray() {
-        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        mapHitBoxes = new Array<Rectangle>();
-        //iterrate through map
-        for (int x = 0; x < mapLayer.getWidth(); x++) {
-            for (int y = 0; y < mapLayer.getHeight(); y++) {
-                TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
-                TiledMapTile tile = cell.getTile();
-                Object tmp = tile.getProperties().get("terrain");
-                //Wenn tile kein eis enthält -> add to hitbox array
-                if (tmp != null && !tmp.toString().contains("0")) {
-                    mapHitBoxes.add(new Rectangle(x * mapLayer.getTileWidth(), y * mapLayer.getTileHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight()));
-                }
-            }
-        }
-    }
+
 
     private void checkCollision() {
-        for (Rectangle hb : mapHitBoxes) {
+        for (Rectangle hb : mapManager.getHitBoxes()) {
             if (Intersector.overlaps(hb, player.getHitBox())) gameOver();
         }
     }
