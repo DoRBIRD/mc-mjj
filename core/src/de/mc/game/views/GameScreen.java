@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -54,7 +53,7 @@ public class GameScreen extends CustomScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 mcGame.setScreen(mcGame.mainMenuScreen);
-                if(gameOverOverlay != null) {
+                if (gameOverOverlay != null) {
                     setReady();
                     gameOverOverlay.dispose();
                 }
@@ -81,7 +80,7 @@ public class GameScreen extends CustomScreenAdapter {
         camera.update();
 
         mapManager = new MapManager();
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(mapManager.getTiledMap());
+        tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
 
@@ -89,28 +88,30 @@ public class GameScreen extends CustomScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        tiledMapRenderer = mapManager.getTiledMapRenderer();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
-
         // wait for assetManager loading all sources
         if (mcGame.assetManager.update()) {
             // we are done loading, do some action!
 
             drawGameObjects();
 
-            if(state == State.GAME_OVER) {
+            if (state == State.GAME_OVER) {
                 gameOverOverlay = new GameOverOverlay(mcGame, this, lastScore);
 
                 state = State.WAIT_FOR_USER_INPUT;
             }
 
-            if(state == State.GAME_RUNNING) {
+            if (state == State.GAME_RUNNING) {
                 checkInputs();
-
                 //TEMP
                 float yVelocity = 500 * delta;
                 player.moveBy(0, yVelocity);
-                if (player.getY() > mapManager.getMapHeigth()) player.setY(300);
+                if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
+                    mapManager.addNextBlock();
+                    System.out.println("added new block");
+                }
 
                 updateScore();
 
@@ -132,7 +133,6 @@ public class GameScreen extends CustomScreenAdapter {
         }
         super.render(delta);
     }
-
 
 
     private void checkCollision() {
@@ -164,7 +164,7 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     private void drawGameObjects() {
-        if(state != State.GAME_RUNNING) {
+        if (state != State.GAME_RUNNING) {
             player.updateImage(Player.Direction.STRAIGHT);
         }
         mcGame.batch.begin();
@@ -225,7 +225,8 @@ public class GameScreen extends CustomScreenAdapter {
         }
         // stay player in screen
         if (newX < 0) newX = 0;
-        if (newX > Constants.MAP_WIDTH - player.getWidth()) newX = Constants.MAP_HEIGHT - player.getWidth();
+        if (newX > Constants.MAP_WIDTH - player.getWidth())
+            newX = Constants.MAP_HEIGHT - player.getWidth();
         player.setX(newX);
     }
 
@@ -263,7 +264,7 @@ public class GameScreen extends CustomScreenAdapter {
 
             @Override
             public boolean fling(float velocityX, float velocityY, int button) {
-                if((state == State.GAME_PAUSED || state == State.GAME_OVER || state == State.GAME_READY) && velocityY <= -1500) {
+                if ((state == State.GAME_PAUSED || state == State.GAME_OVER || state == State.GAME_READY) && velocityY <= -1500) {
                     startGame();
                     return true;
                 }

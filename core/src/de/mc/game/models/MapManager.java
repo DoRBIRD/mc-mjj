@@ -2,9 +2,11 @@ package de.mc.game.models;
 
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
@@ -18,27 +20,31 @@ public class MapManager {
     private String lastconnection = "A";
     private TiledMap tiledMap;
     private Array<Rectangle> mapHitBoxes;
+    private TiledMapRenderer tiledMapRenderer;
 
     public MapManager() {
         initMapBlocks();
         tiledMap = getNextBlock();
-        for (int i = 0; i < 2; i++) {
-            tiledMap = addBlockToMap(tiledMap, getNextBlock());
-        }
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         createHitBoxArray();
     }
 
-    public TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
+    public void addNextBlock() {
+        tiledMap = addBlockToMap(tiledMap, getNextBlock());
+        createHitBoxArray();
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+    }
+
+    private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
         TiledMap newMap = new TiledMap();
         MapLayers layers = newMap.getLayers();
-        //TODO check if same width
         int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
         int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
         int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
         int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
         TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(0);
         TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(0);
-        TiledMapTileLayer newMaplayer = new TiledMapTileLayer(((TiledMapTileLayer) tm1.getLayers().get(0)).getWidth(), newHeight, tileWidth, tileHeight);
+        TiledMapTileLayer newMapLayer = new TiledMapTileLayer(((TiledMapTileLayer) tm1.getLayers().get(0)).getWidth(), newHeight, tileWidth, tileHeight);
 
         for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
             for (int y = 0; y < newHeight; y++) {
@@ -48,10 +54,10 @@ public class MapManager {
                 } else {
                     cell = toAddMapLayer.getCell(x, y - oldHeight);
                 }
-                newMaplayer.setCell(x, y, cell);
+                newMapLayer.setCell(x, y, cell);
             }
         }
-        layers.add(newMaplayer);
+        layers.add(newMapLayer);
         return newMap;
     }
 
@@ -93,7 +99,7 @@ public class MapManager {
     }
 
 
-    public Array<MapBlock> getMapWithBotConnection(String connection) {
+    private Array<MapBlock> getMapWithBotConnection(String connection) {
         Array<MapBlock> result = new Array<MapBlock>();
         for (MapBlock block : mapBlocks) {
             if (block.getConnectionBottom().equals(connection)) {
@@ -104,7 +110,7 @@ public class MapManager {
         return result;
     }
 
-    public TiledMap getNextBlock() {
+    private TiledMap getNextBlock() {
         Array<MapBlock> tmp = getMapWithBotConnection(lastconnection);
         Random randomGenerator = new Random();
         MapBlock block = tmp.get(tmp.size - randomGenerator.nextInt(tmp.size) - 1);
@@ -120,5 +126,8 @@ public class MapManager {
 
     public Array<Rectangle> getHitBoxes() {
         return mapHitBoxes;
+    }
+    public TiledMapRenderer getTiledMapRenderer() {
+        return tiledMapRenderer;
     }
 }
