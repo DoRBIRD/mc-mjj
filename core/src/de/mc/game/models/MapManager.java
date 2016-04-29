@@ -24,7 +24,7 @@ public class MapManager {
 
     public MapManager() {
         initMapBlocks();
-        tiledMap = getNextBlock();
+        tiledMap = mapBlocks.get(0).getMap();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         createHitBoxArray();
     }
