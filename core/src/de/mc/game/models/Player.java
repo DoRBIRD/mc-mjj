@@ -29,6 +29,8 @@ public class Player extends Actor {
         hitBox.y = getY();
 
         mcGame.assetManager.load("images/player.gif", Texture.class);
+        mcGame.assetManager.load("images/player-left.gif", Texture.class);
+        mcGame.assetManager.load("images/player-right.gif", Texture.class);
     }
 
     @Override
@@ -41,10 +43,10 @@ public class Player extends Actor {
     public void updateImage(Direction dir) {
         switch (dir) {
             case LEFT:
-                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
+                playerImage = mcGame.assetManager.get("images/player-left.gif", Texture.class);
                 break;
             case RIGHT:
-                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
+                playerImage = mcGame.assetManager.get("images/player-right.gif", Texture.class);
                 break;
             case STRAIGHT:
                 playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
