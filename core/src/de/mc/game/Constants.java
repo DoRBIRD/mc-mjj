@@ -7,7 +7,7 @@ public final class Constants {
     public static final float w = Gdx.graphics.getWidth();
     public static final float h = Gdx.graphics.getHeight();
 
-    public static final float SCALING = 1;
+    public static final float SCALING = 1.2f;
     public static final float WIDTH = 1080 * SCALING;
     public static final float HEIGHT = WIDTH * (h / w);
 

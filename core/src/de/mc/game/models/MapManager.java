@@ -16,15 +16,20 @@ import java.util.Random;
  * Created by Jonas on 28/04/2016.
  */
 public class MapManager {
-    private Array<MapBlock> mapBlocks = new Array<MapBlock>();
     private String lastconnection = "A";
     private TiledMap tiledMap;
     private Array<Rectangle> mapHitBoxes;
     private TiledMapRenderer tiledMapRenderer;
+    private Array<Array<MapBlock>> blocks;
 
     public MapManager() {
+        blocks = new Array<Array<MapBlock>>();
+        blocks.add(new Array<MapBlock>());
+        blocks.add(new Array<MapBlock>());
+        blocks.add(new Array<MapBlock>());
+        blocks.add(new Array<MapBlock>());
         initMapBlocks();
-        tiledMap = mapBlocks.get(0).getMap();
+        tiledMap = blocks.get(0).get(0).getMap();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         createHitBoxArray();
     }
@@ -61,10 +66,6 @@ public class MapManager {
         return newMap;
     }
 
-    public int getMapHeigth() {
-        return (int) (((TiledMapTileLayer) tiledMap.getLayers().get(0)).getHeight() * ((TiledMapTileLayer) tiledMap.getLayers().get(0)).getTileHeight());
-    }
-
     private void initMapBlocks() {
         String folder = "maps/";
         String mappaths[] = {"blockA_A_1", "blockA_B_1", "blockB_A_1", "blockA_C_1", "blockC_A_1", "blockA_D_1",
@@ -76,9 +77,47 @@ public class MapManager {
             String bot = mbp.substring(5, 6);
             String top = mbp.substring(7, 8);
             TiledMap map = new TmxMapLoader().load(folder + mbp + ending);
-            mapBlocks.add(new MapBlock(map, bot, top));
+            int index;
+            switch (bot.charAt(0)) {
+                case 'A':
+                    index = 0;
+                    break;
+                case 'B':
+                    index = 1;
+                    break;
+                case 'C':
+                    index = 2;
+                    break;
+                case 'D':
+                    index = 3;
+                    break;
+                default:
+                    index = 0;
+            }
+            blocks.get(index).add(new MapBlock(map, bot, top));
             System.out.println("New mapblock name:" + mbp + " bot connection: " + bot + " top connection: " + top);
         }
+    }
+
+    private Array<MapBlock> getMapWithBotConnection(String connection) {
+        int index;
+        switch (connection.charAt(0)) {
+            case 'A':
+                index = 0;
+                break;
+            case 'B':
+                index = 1;
+                break;
+            case 'C':
+                index = 2;
+                break;
+            case 'D':
+                index = 3;
+                break;
+            default:
+                index = 0;
+        }
+        return blocks.get(index);
     }
 
     private void createHitBoxArray() {
@@ -99,17 +138,6 @@ public class MapManager {
     }
 
 
-    private Array<MapBlock> getMapWithBotConnection(String connection) {
-        Array<MapBlock> result = new Array<MapBlock>();
-        for (MapBlock block : mapBlocks) {
-            if (block.getConnectionBottom().equals(connection)) {
-                result.add(block);
-            }
-        }
-        System.out.println("Found" + result.size + " with bot connection: " + connection);
-        return result;
-    }
-
     private TiledMap getNextBlock() {
         Array<MapBlock> tmp = getMapWithBotConnection(lastconnection);
         Random randomGenerator = new Random();
@@ -127,7 +155,12 @@ public class MapManager {
     public Array<Rectangle> getHitBoxes() {
         return mapHitBoxes;
     }
+
     public TiledMapRenderer getTiledMapRenderer() {
         return tiledMapRenderer;
+    }
+
+    public int getMapHeigth() {
+        return (int) (((TiledMapTileLayer) tiledMap.getLayers().get(0)).getHeight() * ((TiledMapTileLayer) tiledMap.getLayers().get(0)).getTileHeight());
     }
 }
