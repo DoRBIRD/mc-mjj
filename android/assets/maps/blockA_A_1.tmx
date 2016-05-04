@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="9">
  <tileset firstgid="1" name="tileSet" tilewidth="160" tileheight="160" tilecount="100" columns="10">
   <image source="tileSet.gif" trans="ff0000" width="1600" height="1600"/>
   <terraintypes>
@@ -48,6 +48,9 @@
   <tile id="54" terrain="1,1,0,0"/>
   <tile id="55" terrain="1,0,0,0"/>
   <tile id="56" terrain="0,0,0,0"/>
+ </tileset>
+ <tileset firstgid="101" name="Iceberg" tilewidth="160" tileheight="160" tilecount="1" columns="1">
+  <image source="Iceberg.gif" width="160" height="160"/>
  </tileset>
  <layer name="Kachelebene 1" width="20" height="50">
   <data encoding="csv">
@@ -103,4 +106,10 @@
 15,44,26,57,27,37,7,57,47,7,17,57,57,57,7,17,27,41,45,42
 </data>
  </layer>
+ <objectgroup name="Object Layer 1">
+  <object id="1" gid="101" x="585.722" y="3281.78" width="692" height="770.548" rotation="45.6017"/>
+  <object id="2" gid="101" x="2016" y="3004" width="160" height="160"/>
+  <object id="3" gid="101" x="2328" y="4756" width="160" height="160"/>
+  <object id="4" gid="101" x="367.091" y="5579.09" width="696" height="780"/>
+ </objectgroup>
 </map>
