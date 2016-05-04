@@ -17,7 +17,7 @@ import de.mc.game.McGame;
  * Created by Jonas on 28/04/2016.
  */
 public class MapManager {
-    private String lastconnection = "A";
+    private String lastconnection;
     private TiledMap tiledMap;
     private Array<Rectangle> mapHitBoxes;
     private TiledMapRenderer tiledMapRenderer;
@@ -41,7 +41,13 @@ public class MapManager {
         loadMaps();
         mcGame.assetManager.finishLoading();
         initMapBlocks();
+        resetMap();
+    }
+
+    public void resetMap() {
+        tiledMap = null;
         tiledMap = blocks.get(0).get(0).getMap();
+        lastconnection = "A";
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         createHitBoxArray();
     }
@@ -86,8 +92,8 @@ public class MapManager {
 
     private void initMapBlocks() {
         for (String mbp : mappaths) {
-            String bot = mbp.substring(5, 6);
-            String top = mbp.substring(7, 8);
+            String bot = mbp.substring(0, 1);
+            String top = mbp.substring(2, 3);
             TiledMap map = mcGame.assetManager.get(folder + mbp + sub, TiledMap.class);
             //TiledMap map = new TmxMapLoader().load(folder + mbp + sub);
             int index;

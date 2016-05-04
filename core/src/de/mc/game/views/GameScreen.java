@@ -61,7 +61,7 @@ public class GameScreen extends CustomScreenAdapter {
         labelSwipe.setPosition(Constants.WIDTH / 2 - labelSwipe.getWidth() / 2, Constants.HEIGHT / 2 - labelSwipe.getHeight() / 2);
 
         player = new Player(g);
-        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 300);
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
         stage.addActor(btnMenu);
         stage.addActor(labelScore);
@@ -165,7 +165,9 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     private void gameOver() {
-        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, cameraOffsetY);
+
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
+        mapManager.resetMap();
         resetScore();
         state = State.GAME_OVER;
     }
