@@ -18,8 +18,8 @@ public class Player extends Actor {
         super();
         mcGame = g;
         hitBox = new Rectangle();
-        hitBoxWidth = 107;
-        hitBoxHeight = 159;
+        hitBoxWidth = 214;
+        hitBoxHeight = 318;
         hitBox.width = hitBoxWidth;
         hitBox.height = hitBoxHeight;
 
