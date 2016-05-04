@@ -5,31 +5,49 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
+import de.mc.game.McGame;
+
 /**
  * Created by Jonas on 28/04/2016.
  */
 public class MapManager {
-    private String lastconnection = "A";
+    private String lastconnection;
     private TiledMap tiledMap;
     private Array<Rectangle> mapHitBoxes;
     private TiledMapRenderer tiledMapRenderer;
     private Array<Array<MapBlock>> blocks;
+    private McGame mcGame;
 
-    public MapManager() {
+    private String folder = "maps/block";
+    private String mappaths[] = {"A_A_1", "A_B_1", "B_A_1", "A_C_1", "C_A_1", "A_D_1",
+            "B_A_1", "B_B_1", "B_A_1", "B_C_1", "C_A_1", "B_D_1",
+            "C_A_1", "C_B_1", "C_A_1", "C_C_1", "C_A_1", "C_D_1",
+            "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
+    private String sub = ".tmx";
+
+    public MapManager(McGame g) {
+        mcGame = g;
         blocks = new Array<Array<MapBlock>>();
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
+        loadMaps();
+        mcGame.assetManager.finishLoading();
         initMapBlocks();
+        resetMap();
+    }
+
+    public void resetMap() {
+        tiledMap = null;
         tiledMap = blocks.get(0).get(0).getMap();
+        lastconnection = "A";
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         createHitBoxArray();
     }
@@ -66,17 +84,18 @@ public class MapManager {
         return newMap;
     }
 
-    private void initMapBlocks() {
-        String folder = "maps/";
-        String mappaths[] = {"blockA_A_1", "blockA_B_1", "blockB_A_1", "blockA_C_1", "blockC_A_1", "blockA_D_1",
-                "blockB_A_1", "blockB_B_1", "blockB_A_1", "blockB_C_1", "blockC_A_1", "blockB_D_1",
-                "blockC_A_1", "blockC_B_1", "blockC_A_1", "blockC_C_1", "blockC_A_1", "blockC_D_1",
-                "blockD_A_1", "blockD_B_1", "blockD_A_1", "blockD_C_1", "blockC_A_1", "blockD_D_1"};
-        String ending = ".tmx";
+    public void loadMaps() {
         for (String mbp : mappaths) {
-            String bot = mbp.substring(5, 6);
-            String top = mbp.substring(7, 8);
-            TiledMap map = new TmxMapLoader().load(folder + mbp + ending);
+            mcGame.assetManager.load(folder + mbp + sub, TiledMap.class);
+        }
+    }
+
+    private void initMapBlocks() {
+        for (String mbp : mappaths) {
+            String bot = mbp.substring(0, 1);
+            String top = mbp.substring(2, 3);
+            TiledMap map = mcGame.assetManager.get(folder + mbp + sub, TiledMap.class);
+            //TiledMap map = new TmxMapLoader().load(folder + mbp + sub);
             int index;
             switch (bot.charAt(0)) {
                 case 'A':
