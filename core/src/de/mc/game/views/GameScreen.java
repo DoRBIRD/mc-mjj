@@ -22,10 +22,6 @@ import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
 
-    public enum State {
-        GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER, WAIT_FOR_USER_INPUT
-    }
-
     private final String inputTypeAccelerometer = "ACCELEROMETER";
     private final String inputTypeTouch = "TOUCH";
     private GameOverOverlay gameOverOverlay;
@@ -34,13 +30,10 @@ public class GameScreen extends CustomScreenAdapter {
     private int lastScore;
     private State state;
     private float timerScore;
-
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private Label labelScore, labelSwipe;
-
     private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
-
 
     public GameScreen(final McGame g) {
         super(g);
@@ -79,7 +72,7 @@ public class GameScreen extends CustomScreenAdapter {
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
 
-        mapManager = new MapManager();
+        mapManager = new MapManager(mcGame);
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -133,7 +126,6 @@ public class GameScreen extends CustomScreenAdapter {
         }
         super.render(delta);
     }
-
 
     private void checkCollision() {
         for (Rectangle hb : mapManager.getHitBoxes()) {
@@ -319,5 +311,9 @@ public class GameScreen extends CustomScreenAdapter {
         super.dispose();
 
         state = null;
+    }
+
+    public enum State {
+        GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER, WAIT_FOR_USER_INPUT
     }
 }
