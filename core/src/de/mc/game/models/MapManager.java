@@ -61,13 +61,13 @@ public class MapManager {
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
         TiledMap newMap = new TiledMap();
         MapLayers layers = newMap.getLayers();
-        int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
-        int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
-        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
-        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
         TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(0);
         TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(0);
-        TiledMapTileLayer newMapLayer = new TiledMapTileLayer(((TiledMapTileLayer) tm1.getLayers().get(0)).getWidth(), newHeight, tileWidth, tileHeight);
+        int oldHeight = oldMapLayer.getHeight();
+        int newHeight = oldHeight + toAddMapLayer.getHeight();
+        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
+        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
+        TiledMapTileLayer newMapLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
 
         for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
             for (int y = 0; y < newHeight; y++) {
@@ -80,7 +80,27 @@ public class MapManager {
                 newMapLayer.setCell(x, y, cell);
             }
         }
+        /*this should add obejcts to running map
+        doesnt work yet since not all blocks have a object layer
+        MapObjects oldMapObjects = tm1.getLayers().get("Object Layer 1").getObjects();
+        MapObjects newMapObjects = tm2.getLayers().get("Object Layer 1").getObjects();
+        MapLayer newObjectLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
+        newObjectLayer.setName("Object Layer 1");
+        for (int i = 0; i < oldMapObjects.getCount(); i++) {
+            MapObject temp = oldMapObjects.get(i);
+            newObjectLayer.getObjects().add(temp);
+        }
+        int yOffset = oldHeight * tileHeight;
+        for (int i = 0; i < newMapObjects.getCount(); i++) {
+            MapObject temp = oldMapObjects.get(i);
+            int oldY =  temp.getProperties().get("y",int.class);
+            temp.getProperties().put("y", yOffset + oldY);
+            newObjectLayer.getObjects().add(temp);
+        }
+        */
+
         layers.add(newMapLayer);
+        //layers.add(newObjectLayer);
         return newMap;
     }
 
