@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import de.mc.game.Constants;
 import de.mc.game.McGame;
+import de.mc.game.TextureMapObjectRenderer;
 import de.mc.game.models.MapManager;
 import de.mc.game.models.Player;
 
@@ -32,6 +33,7 @@ public class GameScreen extends CustomScreenAdapter {
     private float timerScore;
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
+    private TextureMapObjectRenderer objectRenderer;
     private Label labelScore, labelSwipe;
     private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
 
@@ -84,6 +86,9 @@ public class GameScreen extends CustomScreenAdapter {
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+        objectRenderer = mapManager.getObjectRenderer();
+        objectRenderer.setView(camera);
+        objectRenderer.render();
         // wait for assetManager loading all sources
         if (mcGame.assetManager.update()) {
             // we are done loading, do some action!

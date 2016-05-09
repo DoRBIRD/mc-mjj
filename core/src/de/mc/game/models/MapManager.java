@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 
 import de.mc.game.McGame;
+import de.mc.game.TextureMapObjectRenderer;
 
 /**
  * Created by Jonas on 28/04/2016.
@@ -21,6 +22,9 @@ public class MapManager {
     private TiledMap tiledMap;
     private Array<Rectangle> mapHitBoxes;
     private TiledMapRenderer tiledMapRenderer;
+
+
+    private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
     private McGame mcGame;
 
@@ -49,6 +53,7 @@ public class MapManager {
         tiledMap = blocks.get(0).get(0).getMap();
         lastconnection = "A";
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        objectRenderer = new TextureMapObjectRenderer(tiledMap);
         createHitBoxArray();
     }
 
@@ -56,6 +61,7 @@ public class MapManager {
         tiledMap = addBlockToMap(tiledMap, getNextBlock());
         createHitBoxArray();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        objectRenderer = new TextureMapObjectRenderer(tiledMap);
     }
 
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
@@ -80,24 +86,26 @@ public class MapManager {
                 newMapLayer.setCell(x, y, cell);
             }
         }
-        /*this should add obejcts to running map
+        /*this should hopefully add obejcts to running map
         doesnt work yet since not all blocks have a object layer
-        MapObjects oldMapObjects = tm1.getLayers().get("Object Layer 1").getObjects();
-        MapObjects newMapObjects = tm2.getLayers().get("Object Layer 1").getObjects();
-        MapLayer newObjectLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
-        newObjectLayer.setName("Object Layer 1");
-        for (int i = 0; i < oldMapObjects.getCount(); i++) {
-            MapObject temp = oldMapObjects.get(i);
-            newObjectLayer.getObjects().add(temp);
-        }
-        int yOffset = oldHeight * tileHeight;
-        for (int i = 0; i < newMapObjects.getCount(); i++) {
-            MapObject temp = oldMapObjects.get(i);
-            int oldY =  temp.getProperties().get("y",int.class);
-            temp.getProperties().put("y", yOffset + oldY);
-            newObjectLayer.getObjects().add(temp);
-        }
-        */
+        String objectLayerName = "Eisberg";
+        if(tm1.getLayers().getIndex(objectLayerName) < 0 || tm2.getLayers().getIndex(objectLayerName) < 0 ) {
+            MapObjects oldMapObjects = tm1.getLayers().get(objectLayerName).getObjects();
+            MapObjects newMapObjects = tm2.getLayers().get(objectLayerName).getObjects();
+            MapLayer newObjectLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
+            newObjectLayer.setName(objectLayerName);
+            for (int i = 0; i < oldMapObjects.getCount(); i++) {
+                MapObject temp = oldMapObjects.get(i);
+                newObjectLayer.getObjects().add(temp);
+            }
+            int yOffset = oldHeight * tileHeight;
+            for (int i = 0; i < newMapObjects.getCount(); i++) {
+                MapObject temp = oldMapObjects.get(i);
+                int oldY = temp.getProperties().get("y", int.class);
+                temp.getProperties().put("y", yOffset + oldY);
+                newObjectLayer.getObjects().add(temp);
+            }
+        }*/
 
         layers.add(newMapLayer);
         //layers.add(newObjectLayer);
@@ -169,7 +177,7 @@ public class MapManager {
                 TiledMapTile tile = cell.getTile();
                 Object tmp = tile.getProperties().get("terrain");
                 //Wenn tile kein eis enthält -> add to hitbox array
-                if (tmp != null && !tmp.toString().contains("0")) {
+                if (tmp != null && tmp.toString().equals("0,0,0,0")) {
                     mapHitBoxes.add(new Rectangle(x * mapLayer.getTileWidth(), y * mapLayer.getTileHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight()));
                 }
             }
@@ -197,6 +205,10 @@ public class MapManager {
 
     public TiledMapRenderer getTiledMapRenderer() {
         return tiledMapRenderer;
+    }
+
+    public TextureMapObjectRenderer getObjectRenderer() {
+        return objectRenderer;
     }
 
     public int getMapHeigth() {
