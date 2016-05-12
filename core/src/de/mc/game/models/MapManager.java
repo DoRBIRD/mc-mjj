@@ -103,17 +103,20 @@ public class MapManager {
         if (oldObjectLayer != null && toAddObjectLayer != null) {
             MapObjects oldMapObjects = oldObjectLayer.getObjects();
             MapObjects newMapObjects = toAddObjectLayer.getObjects();
-            for (int i = 0; i < newMapObjects.getCount(); i++) {
-                MapObject temp = newMapObjects.get(i);
-                newObjectLayer.getObjects().add(temp);
-            }
             for (int i = 0; i < oldMapObjects.getCount(); i++) {
                 MapObject temp1 = oldMapObjects.get(i);
-                MapObject temp2 = new MapObject();
                 float oldY = temp1.getProperties().get("y", float.class);
-                temp2.getProperties().putAll(temp1.getProperties());
-                temp2.getProperties().put("y", Constants.MAP_HEIGHT + oldY);
-                newObjectLayer.getObjects().add(temp2);
+                temp1.getProperties().put("y", oldY);
+                System.out.println("Object number " + i + " moved from " + oldY);
+                newObjectLayer.getObjects().add(temp1);
+            }
+            for (int i = 0; i < newMapObjects.getCount(); i++) {
+                MapObject temp1 = newMapObjects.get(i);
+                float oldY = temp1.getProperties().get("x", float.class);
+                float newY = oldY - Constants.MAP_HEIGHT;
+                temp1.getProperties().put("x", newY);
+                System.out.println("Object number " + i + " moved from " + oldY + "to " + newY);
+                newObjectLayer.getObjects().add(temp1);
             }
         }
 
