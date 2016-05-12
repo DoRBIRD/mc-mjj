@@ -108,12 +108,12 @@ public class MapManager {
                 newObjectLayer.getObjects().add(temp);
             }
             for (int i = 0; i < oldMapObjects.getCount(); i++) {
-                MapObject temp = oldMapObjects.get(i);
-                float oldY = temp.getProperties().get("y", float.class);
-                float newY = Constants.MAP_HEIGHT + oldY;
-                temp.getProperties().put("y", newY);
-                newObjectLayer.getObjects().add(temp);
-                System.out.println("Moving object number. " + i + " from " + oldY + " to " + newY);
+                MapObject temp1 = oldMapObjects.get(i);
+                MapObject temp2 = new MapObject();
+                float oldY = temp1.getProperties().get("y", float.class);
+                temp2.getProperties().putAll(temp1.getProperties());
+                temp2.getProperties().put("y", Constants.MAP_HEIGHT + oldY);
+                newObjectLayer.getObjects().add(temp2);
             }
         }
 

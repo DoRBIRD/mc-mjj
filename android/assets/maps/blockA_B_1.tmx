@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="8">
  <tileset firstgid="1" name="Map v2" tilewidth="160" tileheight="160" tilecount="100" columns="10">
   <image source="Map v2.gif" width="1600" height="1600"/>
   <terraintypes>
@@ -65,9 +65,6 @@
   <tile id="98" terrain="1,1,2,2"/>
   <tile id="99" terrain="1,2,2,2"/>
  </tileset>
-  <tileset firstgid="101" name="Iceberg" tilewidth="160" tileheight="160" tilecount="1" columns="1">
-   <image source="Iceberg.gif" width="160" height="160"/>
-  </tileset>
  <layer name="Kachelebene 1" width="20" height="50">
   <data encoding="csv">
 12,12,42,13,43,25,14,32,32,23,56,80,60,87,37,21,15,35,42,44,
@@ -123,25 +120,11 @@
 </data>
  </layer>
  <objectgroup name="Eisberg">
-  <object id="1" gid="101" x="1376" y="4888" width="160" height="160"/>
-  <object id="2" gid="101" x="1416" y="4616" width="160" height="160"/>
-  <object id="3" gid="101" x="992" y="2984" width="160" height="160"/>
-  <object id="4" gid="101" x="864" y="3680" width="160" height="160"/>
-  <object id="5" gid="101" x="1456" y="4328" width="160" height="160"/>
-  <object id="6" gid="101" x="1352" y="2104" width="160" height="160"/>
-  <object id="7" gid="101" x="1176" y="3696" width="160" height="160"/>
-  <object id="8" gid="101" x="1144" y="3912" width="160" height="160"/>
-  <object id="14" gid="101" x="1216" y="4368" width="160" height="160"/>
-  <object id="15" gid="101" x="1368" y="5528" width="160" height="160"/>
-  <object id="16" gid="101" x="1144" y="5864" width="160" height="160"/>
-  <object id="17" gid="101" x="1288" y="6336" width="160" height="160"/>
-  <object id="18" gid="101" x="1504" y="6832" width="160" height="160"/>
-  <object id="19" gid="101" x="1784" y="5304" width="160" height="160"/>
-  <object id="20" gid="101" x="1704" y="5968" width="160" height="160"/>
-  <object id="21" gid="101" x="896" y="3064" width="160" height="160"/>
-  <object id="22" gid="101" x="1000" y="1912" width="160" height="160"/>
-  <object id="23" gid="101" x="1416" y="2688" width="160" height="160"/>
-  <object id="24" gid="101" x="1504" y="456" width="160" height="160"/>
-  <object id="25" gid="101" x="1968" y="1816" width="160" height="160"/>
+  <object id="1" gid="73" x="2416" y="5688" width="160" height="160"/>
+  <object id="2" gid="73" x="1613.82" y="1455.15" width="160" height="160"/>
+  <object id="3" gid="73" x="1142.42" y="669.818" width="160" height="160"/>
+  <object id="5" gid="73" x="816.97" y="4776.97" width="160" height="160"/>
+  <object id="6" gid="73" x="1407.88" y="6598.18" width="160" height="160"/>
+  <object id="7" gid="73" x="1738.18" y="7983.03" width="160" height="160"/>
  </objectgroup>
 </map>
