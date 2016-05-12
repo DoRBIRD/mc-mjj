@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="26">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="29">
  <tileset firstgid="1" name="Map v2" tilewidth="160" tileheight="160" tilecount="100" columns="10">
   <image source="Map v2.gif" width="1600" height="1600"/>
   <terraintypes>
@@ -60,6 +60,8 @@
   <tile id="87" terrain="1,2,1,1"/>
   <tile id="88" terrain="2,1,1,1"/>
   <tile id="89" terrain="1,2,1,2"/>
+  <tile id="90" terrain=",0,0,"/>
+  <tile id="91" terrain="0,,,0"/>
   <tile id="96" terrain="2,1,2,2"/>
   <tile id="97" terrain="1,1,2,2"/>
   <tile id="98" terrain="1,1,2,2"/>
@@ -143,5 +145,7 @@
   <object id="23" gid="101" x="1416" y="2688" width="160" height="160"/>
   <object id="24" gid="101" x="1504" y="456" width="160" height="160"/>
   <object id="25" gid="101" x="1968" y="1816" width="160" height="160"/>
+  <object id="26" gid="101" x="744" y="2352" width="160" height="160"/>
+  <object id="27" gid="101" x="3115.52" y="61.0909" width="942.061" height="1059.76"/>
  </objectgroup>
 </map>
