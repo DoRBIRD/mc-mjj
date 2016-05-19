@@ -16,14 +16,14 @@ public class MainMenuScreen extends CustomScreenAdapter {
     public MainMenuScreen(final McGame g) {
         super(g);
 
-        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(mcGame.droidSansLarge, Color.WHITE);
-        Label.LabelStyle labelStyleSmall = new Label.LabelStyle(mcGame.droidSansSmall, Color.WHITE);
+        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(Constants.DROID_SANS_LARGE, Color.WHITE);
+        Label.LabelStyle labelStyleSmall = new Label.LabelStyle(Constants.DROID_SANS_SMALL, Color.WHITE);
 
-        final Label labelAppName = new Label(mcGame.languageStrings.get("appName"), labelStyleLarge);
+        final Label labelAppName = new Label(Constants.LANGUAGE_STRINGS.get("appName"), labelStyleLarge);
         labelAppName.setPosition(Constants.WIDTH / 2 - labelAppName.getWidth() / 2, Constants.HEIGHT + 100 - labelAppName.getHeight() / 2);
         labelAppName.addAction(Actions.moveBy(0, -Constants.HEIGHT / 2, 1.5f));
 
-        final Label labelTapToStart = new Label(mcGame.languageStrings.get("tapToStart"), labelStyleSmall);
+        final Label labelTapToStart = new Label(Constants.LANGUAGE_STRINGS.get("tapToStart"), labelStyleSmall);
         labelTapToStart.setPosition(Constants.WIDTH / 2 - labelTapToStart.getWidth() / 2, -100 - labelTapToStart.getHeight() / 2);
         labelTapToStart.addAction(Actions.moveBy(0, Constants.HEIGHT / 2, 1.5f));
 
