@@ -12,13 +12,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.text.DecimalFormat;
 
 import de.mc.game.Assets;
 import de.mc.game.Constants;
+import de.mc.game.CustomTextButton;
 import de.mc.game.McGame;
 import de.mc.game.TextureMapObjectRenderer;
 import de.mc.game.models.MapManager;
@@ -44,7 +44,7 @@ public class GameScreen extends CustomScreenAdapter {
     public GameScreen(final McGame g) {
         super(g);
 
-        final TextButton btnMenu = new TextButton("Menü", mcGame.defaultTextButtonStyle);
+        final CustomTextButton btnMenu = new CustomTextButton("Menü", mcGame.defaultTextButtonStyle);
         btnMenu.setWidth(btnMenu.getWidth() + 30);
         btnMenu.setHeight(btnMenu.getHeight() + 20);
         btnMenu.setPosition(Constants.WIDTH - btnMenu.getWidth() - 20, Constants.HEIGHT - btnMenu.getHeight() - 20);
@@ -59,7 +59,7 @@ public class GameScreen extends CustomScreenAdapter {
             }
         });
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.DROID_SANS_MEDIUM, Color.BLACK);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.TONDU_BETA_MEDIUM, Color.BLACK);
         labelScore = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
         labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
 
@@ -134,8 +134,8 @@ public class GameScreen extends CustomScreenAdapter {
 
 			/* draw loading spinner or something equal
             mcGame.batch.begin();
-			mcGame.glyphLayout.setText(mcGame.DROID_SANS_MEDIUM, Constants.LANGUAGE_STRINGS.get("loading") + " " + traveledDistance * 100);
-			mcGame.DROID_SANS_LARGE.draw(mcGame.batch, mcGame.glyphLayout, mcGame.width / 2 - mcGame.glyphLayout.width / 2, mcGame.height / 2 - mcGame.glyphLayout.height / 2);
+			mcGame.glyphLayout.setText(mcGame.TONDU_BETA_MEDIUM, Constants.LANGUAGE_STRINGS.get("loading") + " " + traveledDistance * 100);
+			mcGame.TONDU_BETA_LARGE.draw(mcGame.batch, mcGame.glyphLayout, mcGame.width / 2 - mcGame.glyphLayout.width / 2, mcGame.height / 2 - mcGame.glyphLayout.height / 2);
 			mcGame.batch.end();
 			*/
         }

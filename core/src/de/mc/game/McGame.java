@@ -63,8 +63,8 @@ public class McGame extends Game implements InputProcessor {
         textButtonStyle.up = skin.getDrawable("button");
         textButtonStyle.over = skin.getDrawable("button_pressed");
         textButtonStyle.down = skin.getDrawable("button_pressed");
-        textButtonStyle.font = Constants.DROID_SANS_MEDIUM;
-        textButtonStyle.fontColor = Color.BLACK;
+        textButtonStyle.font = Constants.TONDU_BETA_MEDIUM;
+        textButtonStyle.fontColor = Color.WHITE;
 
         defaultTextButtonStyle = textButtonStyle;
     }

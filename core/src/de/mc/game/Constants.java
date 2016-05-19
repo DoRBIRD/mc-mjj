@@ -29,21 +29,21 @@ public final class Constants {
     public static final I18NBundle LANGUAGE_STRINGS = I18NBundle.createBundle(Gdx.files.internal("strings/strings"), new Locale("de", "en"));
 
     public static BitmapFont
-            DROID_SANS_SMALL,
-            DROID_SANS_MEDIUM,
-            DROID_SANS_LARGE;
+            TONDU_BETA_SMALL,
+            TONDU_BETA_MEDIUM,
+            TONDU_BETA_LARGE;
 
     public Constants() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/DroidSans.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/TonduBeta.ttf"));
 
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 50;
-        DROID_SANS_SMALL = generator.generateFont(parameter);
+        TONDU_BETA_SMALL = generator.generateFont(parameter);
 
         parameter.size = 100;
-        DROID_SANS_MEDIUM = generator.generateFont(parameter);
+        TONDU_BETA_MEDIUM = generator.generateFont(parameter);
 
         parameter.size = 150;
-        DROID_SANS_LARGE = generator.generateFont(parameter);
+        TONDU_BETA_LARGE = generator.generateFont(parameter);
     }
 }

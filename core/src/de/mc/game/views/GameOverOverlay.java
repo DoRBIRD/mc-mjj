@@ -4,12 +4,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import de.mc.game.Constants;
+import de.mc.game.CustomTextButton;
 import de.mc.game.McGame;
 
 public class GameOverOverlay {
@@ -20,14 +20,14 @@ public class GameOverOverlay {
     public GameOverOverlay(McGame mcGame, GameScreen gs, String traveledDistance) {
         gameScreen = gs;
         
-        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.DROID_SANS_MEDIUM, Color.BLACK);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.TONDU_BETA_MEDIUM, Color.BLACK);
         final Label labelTitle = new Label("Game over", labelStyle);
         labelTitle.setAlignment(Align.center);
 
         final Label labelScore = new Label("Your score: " + traveledDistance, labelStyle);
         labelScore.setAlignment(Align.center);
 
-        final TextButton btnHighScore = new TextButton("Highscores", mcGame.defaultTextButtonStyle);
+        final CustomTextButton btnHighScore = new CustomTextButton("Highscores", mcGame.defaultTextButtonStyle);
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -35,7 +35,7 @@ public class GameOverOverlay {
             }
         });
 
-        final TextButton btnPlayAgain = new TextButton("Play again", mcGame.defaultTextButtonStyle);
+        final CustomTextButton btnPlayAgain = new CustomTextButton("Play again", mcGame.defaultTextButtonStyle);
         btnPlayAgain.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

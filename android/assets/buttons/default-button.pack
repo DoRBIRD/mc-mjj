@@ -6,14 +6,14 @@ repeat: none
 button
   rotate: false
   xy: 1, 1
-  size: 97, 32
-  orig: 97, 32
+  size: 476, 175
+  orig: 476, 175
   offset: 0, 0
   index: -1
 button_pressed
   rotate: false
-  xy: 100, 4
-  size: 95, 29
-  orig: 95, 29
+  xy: 479, 1
+  size: 476, 175
+  orig: 476, 175
   offset: 0, 0
   index: -1
