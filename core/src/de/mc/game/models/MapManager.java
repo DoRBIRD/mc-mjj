@@ -109,6 +109,7 @@ public class MapManager {
             for (int i = 0; i < oldMapObjects.getCount(); i++) {
                 MapObject temp1 = oldMapObjects.get(i);
                 float oldY = temp1.getProperties().get("y", float.class);
+                oldY = oldY + 20000;
                 temp1.getProperties().put("y", oldY * Constants.MAP_SCALING);
                 newObjectLayer.getObjects().add(temp1);
             }
@@ -116,8 +117,8 @@ public class MapManager {
                 MapObject temp1 = newMapObjects.get(i);
                 float oldY = temp1.getProperties().get("y", float.class);
                 float newY = oldY + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
-                temp1.getProperties().put("y", 5000f);
-                System.out.println("Object number " + i + " moved from " + oldY + "to " + newY);
+                temp1.getProperties().put("y", newY * Constants.MAP_SCALING);
+                System.out.println(temp1.getProperties().get("y", float.class) + "Object number " + i + " moved from " + oldY + "to " + newY);
                 newObjectLayer.getObjects().add(temp1);
             }
         }

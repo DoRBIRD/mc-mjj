@@ -29,9 +29,6 @@ public class GameScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private String traveledDistance = "0.0";
-    private float
-            cameraOffsetY = Constants.HEIGHT * 1 / 3,
-            accelerometerYDefault;
     private GameOverOverlay gameOverOverlay;
     private Player player;
     private State state;
@@ -41,6 +38,7 @@ public class GameScreen extends CustomScreenAdapter {
     private Label labelScore, labelSwipe;
     private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
     private float snowSlowDown = 1f;
+    private float accelerometerYDefault;
 
     public GameScreen(final McGame g) {
         super(g);
