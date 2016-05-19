@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="50" tilewidth="160" tileheight="160" nextobjectid="9">
  <tileset firstgid="1" name="Map v2" tilewidth="160" tileheight="160" tilecount="100" columns="10">
   <image source="Map v2.gif" width="1600" height="1600"/>
   <terraintypes>
@@ -119,5 +119,14 @@
 35,44,44,46,78,100,77,41,44,12,25,36,90,60,77,21,15,14,14,44
 </data>
  </layer>
- <objectgroup name="Eisberg"/>
+ <objectgroup name="Eisberg">
+  <object id="1" gid="73" x="2048" y="7440" width="160" height="160"/>
+  <object id="2" gid="73" x="1504" y="5744" width="160" height="160"/>
+  <object id="3" gid="73" x="1088" y="4896" width="160" height="160"/>
+  <object id="4" gid="73" x="1472" y="4272" width="160" height="160"/>
+  <object id="5" gid="73" x="1632" y="3552" width="160" height="160"/>
+  <object id="6" gid="73" x="2128" y="2128" width="160" height="160"/>
+  <object id="7" gid="73" x="2304" y="1424" width="160" height="160"/>
+  <object id="8" gid="73" x="1968" y="480" width="160" height="160"/>
+ </objectgroup>
 </map>

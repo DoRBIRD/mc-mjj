@@ -1,6 +1,9 @@
 package de.mc.game.models;
 
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -11,6 +14,7 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
+import de.mc.game.Constants;
 import de.mc.game.McGame;
 import de.mc.game.TextureMapObjectRenderer;
 
@@ -72,7 +76,7 @@ public class MapManager {
         int oldHeight = oldMapLayer.getHeight();
         int newHeight = oldHeight + toAddMapLayer.getHeight();
         int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
-        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
+        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileHeight();
         TiledMapTileLayer newMapLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
 
         for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
@@ -86,29 +90,37 @@ public class MapManager {
                 newMapLayer.setCell(x, y, cell);
             }
         }
-        /*this should hopefully add obejcts to running map
-        doesnt work yet since not all blocks have a object layer
-        String objectLayerName = "Eisberg";
-        if(tm1.getLayers().getIndex(objectLayerName) < 0 || tm2.getLayers().getIndex(objectLayerName) < 0 ) {
-            MapObjects oldMapObjects = tm1.getLayers().get(objectLayerName).getObjects();
-            MapObjects newMapObjects = tm2.getLayers().get(objectLayerName).getObjects();
-            MapLayer newObjectLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
-            newObjectLayer.setName(objectLayerName);
-            for (int i = 0; i < oldMapObjects.getCount(); i++) {
-                MapObject temp = oldMapObjects.get(i);
-                newObjectLayer.getObjects().add(temp);
-            }
-            int yOffset = oldHeight * tileHeight;
-            for (int i = 0; i < newMapObjects.getCount(); i++) {
-                MapObject temp = oldMapObjects.get(i);
-                int oldY = temp.getProperties().get("y", int.class);
-                temp.getProperties().put("y", yOffset + oldY);
-                newObjectLayer.getObjects().add(temp);
-            }
-        }*/
-
         layers.add(newMapLayer);
-        //layers.add(newObjectLayer);
+
+        /*this should hopefully add obejcts to running map
+        doesnt work yet since not all blocks have a object layer*/
+        String objectLayerName = "Eisberg";
+        MapLayer newObjectLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
+        newObjectLayer.setName(objectLayerName);
+
+        MapLayer oldObjectLayer = tm1.getLayers().get(objectLayerName);
+        MapLayer toAddObjectLayer = tm2.getLayers().get(objectLayerName);
+        if (oldObjectLayer != null && toAddObjectLayer != null) {
+            MapObjects oldMapObjects = oldObjectLayer.getObjects();
+            MapObjects newMapObjects = toAddObjectLayer.getObjects();
+            for (int i = 0; i < oldMapObjects.getCount(); i++) {
+                MapObject temp1 = oldMapObjects.get(i);
+                float oldY = temp1.getProperties().get("y", float.class);
+                temp1.getProperties().put("y", oldY);
+                System.out.println("Object number " + i + " moved from " + oldY);
+                newObjectLayer.getObjects().add(temp1);
+            }
+            for (int i = 0; i < newMapObjects.getCount(); i++) {
+                MapObject temp1 = newMapObjects.get(i);
+                float oldY = temp1.getProperties().get("x", float.class);
+                float newY = oldY - Constants.MAP_HEIGHT;
+                temp1.getProperties().put("x", newY);
+                System.out.println("Object number " + i + " moved from " + oldY + "to " + newY);
+                newObjectLayer.getObjects().add(temp1);
+            }
+        }
+
+        layers.add(newObjectLayer);
         return newMap;
     }
 
