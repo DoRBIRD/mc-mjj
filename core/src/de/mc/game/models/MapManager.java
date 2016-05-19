@@ -24,7 +24,8 @@ import de.mc.game.TextureMapObjectRenderer;
 public class MapManager {
     private String lastconnection;
     private TiledMap tiledMap;
-    private Array<Rectangle> mapHitBoxes;
+    private Array<Rectangle> mapWaterHitBoxes;
+    private Array<Rectangle> mapSnowHitBoxes;
     private TiledMapRenderer tiledMapRenderer;
 
 
@@ -56,16 +57,18 @@ public class MapManager {
         tiledMap = null;
         tiledMap = blocks.get(0).get(0).getMap();
         lastconnection = "A";
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        objectRenderer = new TextureMapObjectRenderer(tiledMap);
-        createHitBoxArray();
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
+        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
+        createWaterHitBoxArray();
+        createSnowHitBoxArray();
     }
 
     public void addNextBlock() {
         tiledMap = addBlockToMap(tiledMap, getNextBlock());
-        createHitBoxArray();
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        objectRenderer = new TextureMapObjectRenderer(tiledMap);
+        createWaterHitBoxArray();
+        createSnowHitBoxArray();
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
+        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
     }
 
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
@@ -106,15 +109,14 @@ public class MapManager {
             for (int i = 0; i < oldMapObjects.getCount(); i++) {
                 MapObject temp1 = oldMapObjects.get(i);
                 float oldY = temp1.getProperties().get("y", float.class);
-                temp1.getProperties().put("y", oldY);
-                System.out.println("Object number " + i + " moved from " + oldY);
+                temp1.getProperties().put("y", oldY * Constants.MAP_SCALING);
                 newObjectLayer.getObjects().add(temp1);
             }
             for (int i = 0; i < newMapObjects.getCount(); i++) {
                 MapObject temp1 = newMapObjects.get(i);
-                float oldY = temp1.getProperties().get("x", float.class);
-                float newY = oldY - Constants.MAP_HEIGHT;
-                temp1.getProperties().put("x", newY);
+                float oldY = temp1.getProperties().get("y", float.class);
+                float newY = oldY + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
+                temp1.getProperties().put("y", 5000f);
                 System.out.println("Object number " + i + " moved from " + oldY + "to " + newY);
                 newObjectLayer.getObjects().add(temp1);
             }
@@ -179,9 +181,9 @@ public class MapManager {
         return blocks.get(index);
     }
 
-    private void createHitBoxArray() {
+    private void createWaterHitBoxArray() {
         TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        mapHitBoxes = new Array<Rectangle>();
+        mapWaterHitBoxes = new Array<Rectangle>();
         //iterrate through map
         for (int x = 0; x < mapLayer.getWidth(); x++) {
             for (int y = 0; y < mapLayer.getHeight(); y++) {
@@ -190,7 +192,24 @@ public class MapManager {
                 Object tmp = tile.getProperties().get("terrain");
                 //Wenn tile kein eis enthält -> add to hitbox array
                 if (tmp != null && tmp.toString().equals("0,0,0,0")) {
-                    mapHitBoxes.add(new Rectangle(x * mapLayer.getTileWidth(), y * mapLayer.getTileHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight()));
+                    mapWaterHitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_WIDTH));
+                }
+            }
+        }
+    }
+
+    private void createSnowHitBoxArray() {
+        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
+        mapSnowHitBoxes = new Array<Rectangle>();
+        //iterrate through map
+        for (int x = 0; x < mapLayer.getWidth(); x++) {
+            for (int y = 0; y < mapLayer.getHeight(); y++) {
+                TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
+                TiledMapTile tile = cell.getTile();
+                Object tmp = tile.getProperties().get("terrain");
+                //Wenn tile snow enthält -> add to hitbox array
+                if (tmp != null && tmp.toString().contains("2")) {
+                    mapSnowHitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_WIDTH));
                 }
             }
         }
@@ -211,8 +230,12 @@ public class MapManager {
         return tiledMap;
     }
 
-    public Array<Rectangle> getHitBoxes() {
-        return mapHitBoxes;
+    public Array<Rectangle> getWaterHitBoxes() {
+        return mapWaterHitBoxes;
+    }
+
+    public Array<Rectangle> getSnowHitBoxes() {
+        return mapSnowHitBoxes;
     }
 
     public TiledMapRenderer getTiledMapRenderer() {
