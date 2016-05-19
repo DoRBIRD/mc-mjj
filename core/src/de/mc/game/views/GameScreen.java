@@ -36,6 +36,7 @@ public class GameScreen extends CustomScreenAdapter {
     private TextureMapObjectRenderer objectRenderer;
     private Label labelScore, labelSwipe;
     private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
+    private float snowSlowDown = 1f;
 
     public GameScreen(final McGame g) {
         super(g);
@@ -106,7 +107,7 @@ public class GameScreen extends CustomScreenAdapter {
                 //TEMP
                 float yVelocity = 500 * delta;
                 player.moveBy(0, yVelocity);
-                if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
+                if (player.getY() > mapManager.getMapHeigth() * Constants.MAP_SCALING - Constants.MAP_HEIGHT) {
                     mapManager.addNextBlock();
                     System.out.println("added new block");
                 }
@@ -114,6 +115,7 @@ public class GameScreen extends CustomScreenAdapter {
                 updateScore();
 
                 checkCollision();
+                checkForSnow();
             }
 
             updateCameraPosition();
@@ -133,9 +135,22 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     private void checkCollision() {
-        for (Rectangle hb : mapManager.getHitBoxes()) {
-            if (Intersector.overlaps(hb, player.getHitBox())) gameOver();
+        for (Rectangle hb : mapManager.getWaterHitBoxes()) {
+            if (Intersector.overlaps(hb, player.getHitBox())) {
+                gameOver();
+                return;
+            }
         }
+    }
+
+    private void checkForSnow() {
+        for (Rectangle hb : mapManager.getSnowHitBoxes()) {
+            if (Intersector.overlaps(hb, player.getHitBox())) {
+                snowSlowDown = 0.5f;
+                return;
+            }
+        }
+        snowSlowDown = 1f;
     }
 
     //test
