@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.text.DecimalFormat;
 
+import de.mc.game.Assets;
 import de.mc.game.Constants;
 import de.mc.game.McGame;
 import de.mc.game.TextureMapObjectRenderer;
@@ -65,7 +66,7 @@ public class GameScreen extends CustomScreenAdapter {
         labelSwipe = new Label("Swipe up to start", labelStyle);
         labelSwipe.setPosition(Constants.WIDTH / 2 - labelSwipe.getWidth() / 2, Constants.HEIGHT / 2 - labelSwipe.getHeight() / 2);
 
-        player = new Player(g);
+        player = new Player();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
         stage.addActor(btnMenu);
@@ -77,7 +78,7 @@ public class GameScreen extends CustomScreenAdapter {
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
 
-        mapManager = new MapManager(mcGame);
+        mapManager = new MapManager();
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -92,8 +93,8 @@ public class GameScreen extends CustomScreenAdapter {
         objectRenderer = mapManager.getObjectRenderer();
         objectRenderer.setView(camera);
         objectRenderer.render();
-        // wait for assetManager loading all sources
-        if (mcGame.assetManager.update()) {
+        // wait for assets loading all sources
+        if (Assets.assetManager.update()) {
             // we are done loading, do some action!
 
             drawGameObjects();
@@ -127,7 +128,7 @@ public class GameScreen extends CustomScreenAdapter {
             updateCameraPosition();
         } else {
             // display loading information
-            float progress = mcGame.assetManager.getProgress();
+            float progress = Assets.assetManager.getProgress();
             System.out.println(progress);
 
 			/* draw loading spinner or something equal

@@ -6,14 +6,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
@@ -23,13 +19,11 @@ import de.mc.game.views.MainMenuScreen;
 public class McGame extends Game implements InputProcessor {
 
     public SpriteBatch batch;
-    public FreeTypeFontGenerator generator;
     public FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     public Screen
             currentScreen,
             mainMenuScreen,
             gameScreen;
-    public AssetManager assetManager;
     public InputMultiplexer inputMultiplexer;
 
     public TextButton.TextButtonStyle defaultTextButtonStyle;
@@ -44,11 +38,9 @@ public class McGame extends Game implements InputProcessor {
         // init Constants
         new Constants();
 
+        Assets.load();
+
         loadDefaultStyles();
-
-        assetManager = new AssetManager();
-
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
 
         mainMenuScreen = new MainMenuScreen(this);
         gameScreen = new GameScreen(this);
@@ -61,8 +53,6 @@ public class McGame extends Game implements InputProcessor {
 
     public void dispose() {
         batch.dispose();
-        generator.dispose();
-        assetManager.dispose();
     }
 
     private void loadDefaultStyles() {

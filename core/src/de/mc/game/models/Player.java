@@ -5,18 +5,16 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import de.mc.game.McGame;
+import de.mc.game.Assets;
 
 public class Player extends Actor {
     private Rectangle hitBox;
     private float hitBoxWidth;
     private float hitBoxHeight;
     private Texture playerImage;
-    private McGame mcGame;
 
-    public Player(final McGame g) {
+    public Player() {
         super();
-        mcGame = g;
         hitBox = new Rectangle();
         hitBoxWidth = 214;
         hitBoxHeight = 318;
@@ -27,10 +25,6 @@ public class Player extends Actor {
 
         hitBox.x = getX() - hitBoxWidth / 2;
         hitBox.y = getY() - hitBoxHeight / 2;
-
-        mcGame.assetManager.load("images/player.gif", Texture.class);
-        mcGame.assetManager.load("images/player-left.gif", Texture.class);
-        mcGame.assetManager.load("images/player-right.gif", Texture.class);
     }
 
     @Override
@@ -43,16 +37,16 @@ public class Player extends Actor {
     public void updateImage(Direction dir) {
         switch (dir) {
             case LEFT:
-                playerImage = mcGame.assetManager.get("images/player-left.gif", Texture.class);
+                playerImage = Assets.playerLeftTexture;
                 break;
             case RIGHT:
-                playerImage = mcGame.assetManager.get("images/player-right.gif", Texture.class);
+                playerImage = Assets.playerRightTexture;
                 break;
             case STRAIGHT:
-                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
+                playerImage = Assets.playerStraightTexture;
                 break;
             default:
-                playerImage = mcGame.assetManager.get("images/player.gif", Texture.class);
+                playerImage = Assets.playerStraightTexture;
                 break;
         }
     }
@@ -67,7 +61,7 @@ public class Player extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if (mcGame.assetManager.update() && playerImage != null) {
+        if (Assets.assetManager.update() && playerImage != null) {
             batch.draw(playerImage, hitBox.x, hitBox.y);
         }
     }

@@ -14,13 +14,10 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
+import de.mc.game.Assets;
 import de.mc.game.Constants;
-import de.mc.game.McGame;
 import de.mc.game.TextureMapObjectRenderer;
 
-/**
- * Created by Jonas on 28/04/2016.
- */
 public class MapManager {
     private String lastconnection;
     private TiledMap tiledMap;
@@ -30,24 +27,20 @@ public class MapManager {
 
     private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
-    private McGame mcGame;
 
-    private String folder = "maps/block";
-    private String mappaths[] = {"A_A_1", "A_B_1", "B_A_1", "A_C_1", "C_A_1", "A_D_1",
+    private static String folder = "maps/block";
+    private static String[] mappaths = {"A_A_1", "A_B_1", "B_A_1", "A_C_1", "C_A_1", "A_D_1",
             "B_A_1", "B_B_1", "B_A_1", "B_C_1", "C_A_1", "B_D_1",
             "C_A_1", "C_B_1", "C_A_1", "C_C_1", "C_A_1", "C_D_1",
             "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
-    private String sub = ".tmx";
+    private static String sub = ".tmx";
 
-    public MapManager(McGame g) {
-        mcGame = g;
+    public MapManager() {
         blocks = new Array<Array<MapBlock>>();
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
-        loadMaps();
-        mcGame.assetManager.finishLoading();
         initMapBlocks();
         resetMap();
     }
@@ -124,9 +117,9 @@ public class MapManager {
         return newMap;
     }
 
-    public void loadMaps() {
+    public static void loadMaps() {
         for (String mbp : mappaths) {
-            mcGame.assetManager.load(folder + mbp + sub, TiledMap.class);
+            Assets.assetManager.load(folder + mbp + sub, TiledMap.class);
         }
     }
 
@@ -134,7 +127,7 @@ public class MapManager {
         for (String mbp : mappaths) {
             String bot = mbp.substring(0, 1);
             String top = mbp.substring(2, 3);
-            TiledMap map = mcGame.assetManager.get(folder + mbp + sub, TiledMap.class);
+            TiledMap map = Assets.assetManager.get(folder + mbp + sub, TiledMap.class);
             //TiledMap map = new TmxMapLoader().load(folder + mbp + sub);
             int index;
             switch (bot.charAt(0)) {
