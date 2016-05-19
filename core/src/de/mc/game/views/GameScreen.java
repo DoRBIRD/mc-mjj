@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import java.text.DecimalFormat;
+
 import de.mc.game.Constants;
 import de.mc.game.McGame;
 import de.mc.game.TextureMapObjectRenderer;
@@ -23,14 +25,16 @@ import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
 
-    private final String inputTypeAccelerometer = "ACCELEROMETER";
-    private final String inputTypeTouch = "TOUCH";
+    private final String
+            inputTypeAccelerometer = "ACCELEROMETER",
+            inputTypeTouch = "TOUCH";
+    private String traveledDistance = "0.0";
+    private float
+            cameraOffsetY = Constants.HEIGHT * 1 / 3,
+            accelerometerYDefault;
     private GameOverOverlay gameOverOverlay;
     private Player player;
-    private int score;
-    private int lastScore;
     private State state;
-    private float timerScore;
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;
@@ -56,8 +60,8 @@ public class GameScreen extends CustomScreenAdapter {
             }
         });
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.BLACK);
-        labelScore = new Label(mcGame.languageStrings.get("score") + ": " + score, labelStyle);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.DROID_SANS_MEDIUM, Color.BLACK);
+        labelScore = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
         labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
 
         labelSwipe = new Label("Swipe up to start", labelStyle);
@@ -96,18 +100,23 @@ public class GameScreen extends CustomScreenAdapter {
 
             drawGameObjects();
 
-            if (state == State.GAME_OVER) {
-                gameOverOverlay = new GameOverOverlay(mcGame, this, lastScore);
-
-                state = State.WAIT_FOR_USER_INPUT;
-            }
-
             if (state == State.GAME_RUNNING) {
                 checkInputs();
                 //TEMP
-                float yVelocity = 500 * delta;
+                float accelY = 0;
+                if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
+                    accelY = Gdx.input.getAccelerometerY() - accelerometerYDefault;
+                    if(accelY > 1) {
+                        accelY = 1;
+                    } else if(accelY < -1) {
+                        accelY *= 2;
+                    } else {
+                        accelY = 0;
+                    }
+                }
+                float yVelocity = 500 * delta - accelY;
                 player.moveBy(0, yVelocity);
-                if (player.getY() > mapManager.getMapHeigth() * Constants.MAP_SCALING - Constants.MAP_HEIGHT) {
+                if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
                     mapManager.addNextBlock();
                     System.out.println("added new block");
                 }
@@ -126,8 +135,8 @@ public class GameScreen extends CustomScreenAdapter {
 
 			/* draw loading spinner or something equal
             mcGame.batch.begin();
-			mcGame.glyphLayout.setText(mcGame.droidSansMedium, mcGame.languageStrings.get("loading") + " " + score * 100);
-			mcGame.droidSansLarge.draw(mcGame.batch, mcGame.glyphLayout, mcGame.width / 2 - mcGame.glyphLayout.width / 2, mcGame.height / 2 - mcGame.glyphLayout.height / 2);
+			mcGame.glyphLayout.setText(mcGame.DROID_SANS_MEDIUM, Constants.LANGUAGE_STRINGS.get("loading") + " " + traveledDistance * 100);
+			mcGame.DROID_SANS_LARGE.draw(mcGame.batch, mcGame.glyphLayout, mcGame.width / 2 - mcGame.glyphLayout.width / 2, mcGame.height / 2 - mcGame.glyphLayout.height / 2);
 			mcGame.batch.end();
 			*/
         }
@@ -188,23 +197,26 @@ public class GameScreen extends CustomScreenAdapter {
 
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         mapManager.resetMap();
+        gameOverOverlay = new GameOverOverlay(mcGame, this, traveledDistance);
         resetScore();
         state = State.GAME_OVER;
     }
 
     private void resetScore() {
-        lastScore = score;
-        score = 0;
-        labelScore.setText(mcGame.languageStrings.get("score") + ": " + score);
+        traveledDistance = "0.0";
+        labelScore.setText(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
     }
 
     public void setReady() {
         state = State.GAME_READY;
         stage.addActor(labelSwipe);
+        if(gameOverOverlay != null)
+            gameOverOverlay.dispose();
     }
 
     private void startGame() {
         state = State.GAME_RUNNING;
+        accelerometerYDefault = Gdx.input.getAccelerometerY();
         labelSwipe.remove();
     }
 
@@ -245,12 +257,10 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     private void updateScore() {
-        timerScore += Gdx.graphics.getDeltaTime();
-        if (state == State.GAME_RUNNING && timerScore >= 0.1) {
-            // 1/10 second just passed
-            timerScore -= 0.1; // reset our timer
-            score++;
-            labelScore.setText(mcGame.languageStrings.get("score") + ": " + score);
+        if (state == State.GAME_RUNNING) {
+            DecimalFormat df = new DecimalFormat("#.#");
+            traveledDistance = df.format(player.getY() / 1000);
+            labelScore.setText(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
         }
     }
 
@@ -278,7 +288,7 @@ public class GameScreen extends CustomScreenAdapter {
 
             @Override
             public boolean fling(float velocityX, float velocityY, int button) {
-                if ((state == State.GAME_PAUSED || state == State.GAME_OVER || state == State.GAME_READY) && velocityY <= -1500) {
+                if ((state == State.GAME_PAUSED || state == State.GAME_READY) && velocityY <= -1500) {
                     startGame();
                     return true;
                 }
@@ -336,6 +346,6 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     public enum State {
-        GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER, WAIT_FOR_USER_INPUT
+        GAME_READY, GAME_RUNNING, GAME_PAUSED, GAME_OVER
     }
 }

@@ -17,14 +17,14 @@ public class GameOverOverlay {
     private GameScreen gameScreen;
     private Table table;
 
-    public GameOverOverlay(McGame mcGame, GameScreen gs, int endScore) {
+    public GameOverOverlay(McGame mcGame, GameScreen gs, String traveledDistance) {
         gameScreen = gs;
         
-        Label.LabelStyle labelStyle = new Label.LabelStyle(mcGame.droidSansMedium, Color.BLACK);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.DROID_SANS_MEDIUM, Color.BLACK);
         final Label labelTitle = new Label("Game over", labelStyle);
         labelTitle.setAlignment(Align.center);
 
-        final Label labelScore = new Label("Your score: " + endScore, labelStyle);
+        final Label labelScore = new Label("Your score: " + traveledDistance, labelStyle);
         labelScore.setAlignment(Align.center);
 
         final TextButton btnHighScore = new TextButton("Highscores", mcGame.defaultTextButtonStyle);
