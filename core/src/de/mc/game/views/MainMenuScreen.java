@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
+import de.mc.game.Assets;
 import de.mc.game.Constants;
 import de.mc.game.McGame;
 
@@ -16,8 +17,8 @@ public class MainMenuScreen extends CustomScreenAdapter {
     public MainMenuScreen(final McGame g) {
         super(g);
 
-        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(Constants.TONDU_BETA_LARGE, Color.WHITE);
-        Label.LabelStyle labelStyleSmall = new Label.LabelStyle(Constants.TONDU_BETA_SMALL, Color.WHITE);
+        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(Assets.TONDU_BETA_LARGE, Color.WHITE);
+        Label.LabelStyle labelStyleSmall = new Label.LabelStyle(Assets.TONDU_BETA_SMALL, Color.WHITE);
 
         final Label labelAppName = new Label(Constants.LANGUAGE_STRINGS.get("appName"), labelStyleLarge);
         labelAppName.setPosition(Constants.WIDTH / 2 - labelAppName.getWidth() / 2, Constants.HEIGHT + 100 - labelAppName.getHeight() / 2);

@@ -6,12 +6,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import de.mc.game.views.GameScreen;
 import de.mc.game.views.MainMenuScreen;
@@ -26,8 +22,6 @@ public class McGame extends Game implements InputProcessor {
             gameScreen;
     public InputMultiplexer inputMultiplexer;
 
-    public TextButton.TextButtonStyle defaultTextButtonStyle;
-
     public void create() {
         batch = new SpriteBatch();
 
@@ -35,12 +29,7 @@ public class McGame extends Game implements InputProcessor {
         Gdx.input.setInputProcessor(inputMultiplexer);
         Gdx.input.setCatchBackKey(true);
 
-        // init Constants
-        new Constants();
-
         Assets.load();
-
-        loadDefaultStyles();
 
         mainMenuScreen = new MainMenuScreen(this);
         gameScreen = new GameScreen(this);
@@ -53,20 +42,6 @@ public class McGame extends Game implements InputProcessor {
 
     public void dispose() {
         batch.dispose();
-    }
-
-    private void loadDefaultStyles() {
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        Skin skin = new Skin();
-        TextureAtlas buttonAtlas = new TextureAtlas("buttons/default-button.pack");
-        skin.addRegions(buttonAtlas);
-        textButtonStyle.up = skin.getDrawable("button");
-        textButtonStyle.over = skin.getDrawable("button_pressed");
-        textButtonStyle.down = skin.getDrawable("button_pressed");
-        textButtonStyle.font = Constants.TONDU_BETA_MEDIUM;
-        textButtonStyle.fontColor = Color.WHITE;
-
-        defaultTextButtonStyle = textButtonStyle;
     }
 
     @Override

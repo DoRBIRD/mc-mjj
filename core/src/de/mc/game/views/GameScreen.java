@@ -44,11 +44,11 @@ public class GameScreen extends CustomScreenAdapter {
     public GameScreen(final McGame g) {
         super(g);
 
-        final CustomTextButton btnMenu = new CustomTextButton("Menü", mcGame.defaultTextButtonStyle);
-        btnMenu.setWidth(btnMenu.getWidth() + 30);
-        btnMenu.setHeight(btnMenu.getHeight() + 20);
-        btnMenu.setPosition(Constants.WIDTH - btnMenu.getWidth() - 20, Constants.HEIGHT - btnMenu.getHeight() - 20);
-        btnMenu.addListener(new ClickListener() {
+        final CustomTextButton pauseButton = new CustomTextButton("\uF04C", Assets.iconButtonStyle);
+        pauseButton.setWidth(pauseButton.getLabel().getWidth() / 100 * 200);
+        pauseButton.setHeight(pauseButton.getLabel().getHeight() / 100 * 200);
+        pauseButton.setPosition(Constants.WIDTH - pauseButton.getWidth() - 20, Constants.HEIGHT - pauseButton.getHeight() - 20);
+        pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 mcGame.setScreen(mcGame.mainMenuScreen);
@@ -59,9 +59,9 @@ public class GameScreen extends CustomScreenAdapter {
             }
         });
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(Constants.TONDU_BETA_MEDIUM, Color.BLACK);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA_MEDIUM, Color.BLACK);
         labelScore = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
-        labelScore.setPosition(20, Constants.HEIGHT - btnMenu.getHeight() - 20);
+        labelScore.setPosition(20, Constants.HEIGHT - pauseButton.getHeight() - 20);
 
         labelSwipe = new Label("Swipe up to start", labelStyle);
         labelSwipe.setPosition(Constants.WIDTH / 2 - labelSwipe.getWidth() / 2, Constants.HEIGHT / 2 - labelSwipe.getHeight() / 2);
@@ -69,7 +69,7 @@ public class GameScreen extends CustomScreenAdapter {
         player = new Player();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
-        stage.addActor(btnMenu);
+        stage.addActor(pauseButton);
         stage.addActor(labelScore);
         //stage.addActor(player);
         stage.addActor(labelSwipe);

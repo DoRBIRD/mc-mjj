@@ -1,0 +1,19 @@
+
+icon-button.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+icon_button
+  rotate: false
+  xy: 0, 0
+  size: 75, 90
+  orig: 75, 106
+  offset: 0, 0
+  index: -1
+icon_button_pressed
+  rotate: false
+  xy: 76, 9
+  size: 75, 81
+  orig: 75, 106
+  offset: 0, 0
+  index: -1
