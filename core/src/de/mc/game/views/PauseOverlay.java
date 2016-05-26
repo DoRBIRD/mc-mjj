@@ -2,6 +2,7 @@ package de.mc.game.views;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,34 +14,22 @@ import de.mc.game.Assets;
 import de.mc.game.Constants;
 import de.mc.game.CustomTextButton;
 
-public class GameOverOverlay {
+public class PauseOverlay {
 
     private GameScreen gameScreen;
     private Table table;
+    private final Button btnClose;
 
-    public GameOverOverlay(GameScreen gs, String traveledDistance, int stars) {
+    public PauseOverlay(GameScreen gs) {
         gameScreen = gs;
 
-        Image background = new Image(Assets.menuTitleLargeTexture);
+        Image background = new Image(Assets.menuTitleButtonTexture);
         background.setWidth(background.getWidth() * Constants.SCALING);
         background.setHeight(background.getHeight() * Constants.SCALING);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.WHITE);
-        final Label labelTitle = new Label(Constants.LANGUAGE_STRINGS.get("GAME_OVER"), labelStyle);
+        final Label labelTitle = new Label(Constants.LANGUAGE_STRINGS.get("Pause"), labelStyle);
         labelTitle.setAlignment(Align.center);
-
-        labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
-        final Label labelMeter = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
-        labelMeter.setAlignment(Align.center);
-        labelMeter.setFontScale(1.2f);
-
-        final Label labelStarScore = new Label(Integer.toString(stars) + " Stars", labelStyle);
-        labelStarScore.setAlignment(Align.center);
-        labelStarScore.setFontScale(1.2f);
-
-        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + traveledDistance + stars * 10, labelStyle);
-        labelTotalScore.setAlignment(Align.center);
-        labelTotalScore.setFontScale(1.3f);
 
         final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("highscores"), Assets.blueButtonBackgroundStyle);
         btnHighScore.addListener(new ClickListener() {
@@ -58,8 +47,8 @@ public class GameOverOverlay {
             }
         });
 
-        final CustomTextButton btnPlayAgain = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("play_again"), Assets.blueButtonBackgroundStyle);
-        btnPlayAgain.addListener(new ClickListener() {
+        final CustomTextButton btnResume = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("resume"), Assets.blueButtonBackgroundStyle);
+        btnResume.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameScreen.setReady();
@@ -73,31 +62,38 @@ public class GameOverOverlay {
         table.setHeight(background.getHeight());
         table.setPosition(Constants.WIDTH / 2 - table.getWidth() / 2, Constants.HEIGHT / 2 - table.getHeight() / 2);
         table.defaults()
-                .padTop(20)
-                .padBottom(20)
                 .minWidth(Value.percentWidth(1.2f))
-                .prefWidth(table.getWidth() * 0.65f)
+                .prefWidth(table.getWidth() * 0.5f)
                 .minHeight(Value.minHeight)
                 .prefHeight(Value.percentHeight(1.2f));
         table.add(labelTitle)
-                .padBottom(100)
-                .colspan(2);
+                .padBottom(50);
         table.row();
-        table.add(labelMeter).padBottom(10).width(table.getWidth() / 2);
-        table.add(labelStarScore).padBottom(10).width(table.getWidth() / 2);
+        table.add(btnHighScore);
         table.row();
-        table.add(labelTotalScore).colspan(2).padBottom(30);
+        table.add(btnOptions);
         table.row();
-        table.add(btnHighScore).colspan(2);
-        table.row();
-        table.add(btnOptions).colspan(2);
-        table.row();
-        table.add(btnPlayAgain).colspan(2).padBottom(170);
+        table.add(btnResume).padBottom(50);
+
+        btnClose = new Button(Assets.menuCloseButtonStyle);
+        btnClose.setWidth(btnClose.getWidth());
+        btnClose.setHeight(btnClose.getHeight());
+        btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
+        final PauseOverlay pauseOverlay = this;
+        btnClose.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gameScreen.setReady();
+                pauseOverlay.dispose();
+            }
+        });
 
         gameScreen.stage.addActor(table);
+        gameScreen.stage.addActor(btnClose);
     }
 
     public void dispose() {
         table.remove();
+        btnClose.remove();
     }
 }

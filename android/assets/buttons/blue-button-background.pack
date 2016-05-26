@@ -1,0 +1,19 @@
+
+blue-button-background.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+blue_button_background
+  rotate: false
+  xy: 0, 1
+  size: 500, 168
+  orig: 500, 205
+  offset: 0, 0
+  index: -1
+blue_button_background_pressed
+  rotate: false
+  xy: 501, 9
+  size: 500, 160
+  orig: 500, 205
+  offset: 0, 0
+  index: -1

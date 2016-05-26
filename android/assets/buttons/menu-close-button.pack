@@ -1,0 +1,19 @@
+
+menu-close-button.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+menu_close_button
+  rotate: false
+  xy: 0, 1
+  size: 185, 211
+  orig: 185, 211
+  offset: 0, 0
+  index: -1
+menu_close_button_pressed
+  rotate: false
+  xy: 186, 18
+  size: 185, 194
+  orig: 185, 211
+  offset: 0, 0
+  index: -1

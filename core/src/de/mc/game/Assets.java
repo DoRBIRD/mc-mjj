@@ -23,17 +23,26 @@ public class Assets {
     public static Texture
             playerStraightTexture,
             playerLeftTexture,
-            playerRightTexture;
+            playerRightTexture,
+            menuTexture,
+            menuButtonTexture,
+            menuTitleTexture,
+            menuTitleButtonTexture,
+            menuLargeTexture,
+            menuButtonLargeTexture,
+            menuTitleLargeTexture,
+            menuTitleButtonLargeTexture,
+            swipeUpTexture;
 
     public static TextButton.TextButtonStyle
             defaultTextButtonStyle,
-            iconButtonStyle;
+            iconButtonStyle,
+            blueButtonBackgroundStyle,
+            menuCloseButtonStyle;
 
     public static BitmapFont
             FONT_AWESOME,
-            TONDU_BETA_SMALL,
-            TONDU_BETA_MEDIUM,
-            TONDU_BETA_LARGE;
+            TONDU_BETA;
 
     public static void load() {
         assetManager = new AssetManager();
@@ -42,6 +51,15 @@ public class Assets {
         assetManager.load("images/player.gif", Texture.class);
         assetManager.load("images/player-left.gif", Texture.class);
         assetManager.load("images/player-right.gif", Texture.class);
+        assetManager.load("menus/menu.png", Texture.class);
+        assetManager.load("menus/menu_button.png", Texture.class);
+        assetManager.load("menus/menu_title.png", Texture.class);
+        assetManager.load("menus/menu_title_button.png", Texture.class);
+        assetManager.load("menus/menu_large.png", Texture.class);
+        assetManager.load("menus/menu_button_large.png", Texture.class);
+        assetManager.load("menus/menu_title_large.png", Texture.class);
+        assetManager.load("menus/menu_title_button_large.png", Texture.class);
+        assetManager.load("images/swipe_up.png", Texture.class);
 
         MapManager.loadMaps();
 
@@ -55,13 +73,22 @@ public class Assets {
 
         loadFonts();
 
-        loadDefaultStyles();
+        loadStyles();
     }
 
     private static void init() {
         playerStraightTexture = assetManager.get("images/player.gif");
         playerLeftTexture = assetManager.get("images/player-left.gif");
         playerRightTexture = assetManager.get("images/player-right.gif");
+        menuTexture = assetManager.get("menus/menu.png");
+        menuButtonTexture = assetManager.get("menus/menu_button.png");
+        menuTitleTexture = assetManager.get("menus/menu_title.png");
+        menuTitleButtonTexture = assetManager.get("menus/menu_title_button.png");
+        menuLargeTexture = assetManager.get("menus/menu_large.png");
+        menuButtonLargeTexture = assetManager.get("menus/menu_button_large.png");
+        menuTitleLargeTexture = assetManager.get("menus/menu_title_large.png");
+        menuTitleButtonLargeTexture = assetManager.get("menus/menu_title_button_large.png");
+        swipeUpTexture = assetManager.get("images/swipe_up.png");
     }
 
     private static void loadFonts() {
@@ -69,16 +96,8 @@ public class Assets {
 
         FreeTypeFontGenerator generatorDefaultFont = new FreeTypeFontGenerator(Gdx.files.internal("fonts/TonduBeta.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.size = 50;
-        TONDU_BETA_SMALL = generatorDefaultFont.generateFont(parameter);
-
         parameter.size = 100;
-        TONDU_BETA_MEDIUM = generatorDefaultFont.generateFont(parameter);
-
-        parameter.size = 150;
-        TONDU_BETA_LARGE = generatorDefaultFont.generateFont(parameter);
-
+        TONDU_BETA = generatorDefaultFont.generateFont(parameter);
 
         FreeTypeFontGenerator generatorFontAwesome = new FreeTypeFontGenerator(Gdx.files.internal("fonts/FontAwesome.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameterFontAwesome = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -87,13 +106,13 @@ public class Assets {
         FONT_AWESOME = generatorFontAwesome.generateFont(parameterFontAwesome);
     }
 
-    private static void loadDefaultStyles() {
+    private static void loadStyles() {
         Skin defaultTextButtonSkin = new Skin(new TextureAtlas("buttons/default-button.pack"));
         defaultTextButtonStyle = new TextButton.TextButtonStyle();
         defaultTextButtonStyle.up = defaultTextButtonSkin.getDrawable("button");
         defaultTextButtonStyle.over = defaultTextButtonSkin.getDrawable("button_pressed");
         defaultTextButtonStyle.down = defaultTextButtonSkin.getDrawable("button_pressed");
-        defaultTextButtonStyle.font = TONDU_BETA_MEDIUM;
+        defaultTextButtonStyle.font = TONDU_BETA;
         defaultTextButtonStyle.fontColor = Color.WHITE;
 
         Skin iconButtonSkin = new Skin(new TextureAtlas("buttons/icon-button.pack"));
@@ -103,5 +122,19 @@ public class Assets {
         iconButtonStyle.down = iconButtonSkin.getDrawable("icon_button_pressed");
         iconButtonStyle.font = FONT_AWESOME;
         iconButtonStyle.fontColor = Color.WHITE;
+
+        Skin blueButtonBackground = new Skin(new TextureAtlas("buttons/blue-button-background.pack"));
+        blueButtonBackgroundStyle = new TextButton.TextButtonStyle();
+        blueButtonBackgroundStyle.up = blueButtonBackground.getDrawable("blue_button_background");
+        blueButtonBackgroundStyle.over = blueButtonBackground.getDrawable("blue_button_background_pressed");
+        blueButtonBackgroundStyle.down = blueButtonBackground.getDrawable("blue_button_background_pressed");
+        blueButtonBackgroundStyle.font = TONDU_BETA;
+        blueButtonBackgroundStyle.fontColor = Color.WHITE;
+
+        Skin menuCloseButton = new Skin(new TextureAtlas("buttons/menu-close-button.pack"));
+        menuCloseButtonStyle = new TextButton.TextButtonStyle();
+        menuCloseButtonStyle.up = menuCloseButton.getDrawable("menu_close_button");
+        menuCloseButtonStyle.over = menuCloseButton.getDrawable("menu_close_button_pressed");
+        menuCloseButtonStyle.down = menuCloseButton.getDrawable("menu_close_button_pressed");
     }
 }

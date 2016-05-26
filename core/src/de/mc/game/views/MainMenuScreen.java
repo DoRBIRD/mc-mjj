@@ -7,6 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 import de.mc.game.Assets;
 import de.mc.game.Constants;
@@ -16,19 +18,28 @@ public class MainMenuScreen extends CustomScreenAdapter {
     public MainMenuScreen() {
         super();
 
-        Label.LabelStyle labelStyleLarge = new Label.LabelStyle(Assets.TONDU_BETA_LARGE, Color.WHITE);
-        Label.LabelStyle labelStyleSmall = new Label.LabelStyle(Assets.TONDU_BETA_SMALL, Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.WHITE);
 
-        final Label labelAppName = new Label(Constants.LANGUAGE_STRINGS.get("appName"), labelStyleLarge);
-        labelAppName.setPosition(Constants.WIDTH / 2 - labelAppName.getWidth() / 2, Constants.HEIGHT + 100 - labelAppName.getHeight() / 2);
-        labelAppName.addAction(Actions.moveBy(0, -Constants.HEIGHT / 2, 1.5f));
+        final Label labelAppName = new Label(Constants.LANGUAGE_STRINGS.get("appName"), labelStyle);
+        labelAppName.setFontScale(1.5f);
 
-        final Label labelTapToStart = new Label(Constants.LANGUAGE_STRINGS.get("tapToStart"), labelStyleSmall);
-        labelTapToStart.setPosition(Constants.WIDTH / 2 - labelTapToStart.getWidth() / 2, -100 - labelTapToStart.getHeight() / 2);
-        labelTapToStart.addAction(Actions.moveBy(0, Constants.HEIGHT / 2, 1.5f));
+        final Label labelTapToStart = new Label(Constants.LANGUAGE_STRINGS.get("tapToStart"), labelStyle);
+        labelTapToStart.setFontScale(0.7f);
 
-        stage.addActor(labelAppName);
-        stage.addActor((labelTapToStart));
+        Table table = new Table();
+        table.setFillParent(true);
+        table.defaults()
+                .pad(20)
+                .minWidth(Value.minWidth)
+                .minHeight(Value.minHeight);
+        table.add(labelAppName).padBottom(100);
+        table.row();
+        table.add(labelTapToStart);
+
+        table.setPosition(table.getX(), Constants.HEIGHT);
+        table.addAction(Actions.moveBy(0, -Constants.HEIGHT));
+
+        stage.addActor(table);
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1.5f)));
         stage.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons){
