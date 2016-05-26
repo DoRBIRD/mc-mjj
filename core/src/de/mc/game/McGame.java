@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import de.mc.game.views.GameScreen;
 import de.mc.game.views.MainMenuScreen;
@@ -15,9 +14,7 @@ import de.mc.game.views.MainMenuScreen;
 public class McGame extends Game implements InputProcessor {
 
     public SpriteBatch batch;
-    public FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     public Screen
-            currentScreen,
             mainMenuScreen,
             gameScreen;
     public InputMultiplexer inputMultiplexer;
@@ -31,8 +28,8 @@ public class McGame extends Game implements InputProcessor {
 
         Assets.load();
 
-        mainMenuScreen = new MainMenuScreen(this);
-        gameScreen = new GameScreen(this);
+        mainMenuScreen = new MainMenuScreen();
+        gameScreen = new GameScreen();
         setScreen(mainMenuScreen);
     }
 
@@ -52,7 +49,7 @@ public class McGame extends Game implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.BACK) {
-            if (screen == gameScreen) {
+            if (screen instanceof GameScreen) {
                 setScreen(mainMenuScreen);
             } else {
                 Gdx.app.exit();

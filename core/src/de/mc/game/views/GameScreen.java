@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 import de.mc.game.Assets;
 import de.mc.game.Constants;
 import de.mc.game.CustomTextButton;
-import de.mc.game.McGame;
 import de.mc.game.TextureMapObjectRenderer;
 import de.mc.game.models.MapManager;
 import de.mc.game.models.Player;
@@ -40,8 +39,8 @@ public class GameScreen extends CustomScreenAdapter {
     private float cameraOffsetY = Constants.HEIGHT * 1 / 3;
     private float accelerometerYDefault;
 
-    public GameScreen(final McGame g) {
-        super(g);
+    public GameScreen() {
+        super();
 
         final CustomTextButton pauseButton = new CustomTextButton("\uF04C", Assets.iconButtonStyle);
         pauseButton.setWidth(pauseButton.getLabel().getWidth() / 100 * 200);

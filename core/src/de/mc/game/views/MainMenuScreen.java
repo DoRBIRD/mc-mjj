@@ -10,12 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import de.mc.game.Assets;
 import de.mc.game.Constants;
-import de.mc.game.McGame;
 
 public class MainMenuScreen extends CustomScreenAdapter {
 
-    public MainMenuScreen(final McGame g) {
-        super(g);
+    public MainMenuScreen() {
+        super();
 
         Label.LabelStyle labelStyleLarge = new Label.LabelStyle(Assets.TONDU_BETA_LARGE, Color.WHITE);
         Label.LabelStyle labelStyleSmall = new Label.LabelStyle(Assets.TONDU_BETA_SMALL, Color.WHITE);

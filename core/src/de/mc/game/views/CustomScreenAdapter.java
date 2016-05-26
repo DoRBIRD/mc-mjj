@@ -2,7 +2,6 @@ package de.mc.game.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -16,10 +15,8 @@ public class CustomScreenAdapter extends ScreenAdapter {
     protected Stage stage;
     protected OrthographicCamera camera;
 
-    public CustomScreenAdapter (McGame g) {
-        super();
-
-        mcGame = g;
+    public CustomScreenAdapter () {
+        mcGame = (McGame) Gdx.app.getApplicationListener();
 
         stage = new Stage(new FitViewport(Constants.WIDTH, Constants.HEIGHT));
 
@@ -29,15 +26,11 @@ public class CustomScreenAdapter extends ScreenAdapter {
 
     @Override
     public void show() {
-        super.show();
-
         mcGame.inputMultiplexer.addProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
-        super.render(delta);
-
         // tell the camera to update its matrices.
         camera.update();
         // tell the SpriteBatch to render in the
@@ -50,15 +43,11 @@ public class CustomScreenAdapter extends ScreenAdapter {
 
     @Override
     public void hide() {
-        super.hide();
-
         mcGame.inputMultiplexer.removeProcessor(stage);
     }
 
     @Override
     public void dispose() {
-        super.dispose();
-
         mcGame.inputMultiplexer.removeProcessor(stage);
         stage.dispose();
     }
