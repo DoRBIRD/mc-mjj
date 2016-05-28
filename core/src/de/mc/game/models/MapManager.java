@@ -32,12 +32,14 @@ public class MapManager {
     private Array<Array<MapBlock>> blocks;
 
     private static final String folder = "maps/block";
-    private static final String[] mappaths = {"A_A_1", "A_B_1", "B_A_1", "A_C_1", "C_A_1", "A_D_1",
+    private static final String[] mappaths =
+            {"A_A_1", "A_B_1", "B_A_1", "A_C_1", "C_A_1", "A_D_1",
             "B_A_1", "B_B_1", "B_A_1", "B_C_1", "C_A_1", "B_D_1",
             "C_A_1", "C_B_1", "C_A_1", "C_C_1", "C_A_1", "C_D_1",
             "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
     private static final String sub = ".tmx";
     private static final String ICE_BERGLAYER = "Eisberg";
+    private static final String WATER_ICE_SNOW_LAyer = "Kachelebene 1";
 
     public MapManager() {
         blocks = new Array<Array<MapBlock>>();
@@ -68,20 +70,21 @@ public class MapManager {
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
         TiledMap newMap = new TiledMap();
         MapLayers layers = newMap.getLayers();
-        layers.add(addTileCellLayers(tm1, tm2));
+        layers.add(addTileCellLayers("Kachelebene 1",tm1, tm2));
+        //layers.add(addTileCellLayers("PickUps",tm1, tm2));
         layers.add(addObjectLayers(ICE_BERGLAYER, tm1, tm2));
         return newMap;
     }
 
-    private MapLayer addTileCellLayers(TiledMap tm1, TiledMap tm2) {
-        TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(0);
-        TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(0);
+    private MapLayer addTileCellLayers(String layerName,TiledMap tm1, TiledMap tm2) {
+        TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(layerName);
+        TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(layerName);
         int oldHeight = oldMapLayer.getHeight();
         int newHeight = oldHeight + toAddMapLayer.getHeight();
-        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileWidth();
-        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(0)).getTileHeight();
+        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileWidth();
+        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileHeight();
         TiledMapTileLayer newMapLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
-
+        newMapLayer.setName(layerName);
         for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
             for (int y = 0; y < newHeight; y++) {
                 TiledMapTileLayer.Cell cell;
@@ -190,41 +193,25 @@ public class MapManager {
     }
 
     private void createAllHitBoxArrays() {
-        createWaterHitBoxArray();
-        createSnowHitBoxArray();
+        mapWaterHitBoxes = crateHitboxArray(WATER_ICE_SNOW_LAyer,"0,0,0,0","");
+        mapSnowHitBoxes = crateHitboxArray(WATER_ICE_SNOW_LAyer,"-","2");
     }
 
-    private void createWaterHitBoxArray() {
-        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        mapWaterHitBoxes = new Array<Rectangle>();
-        //iterrate through map
+    private Array<Rectangle> crateHitboxArray(String layerName,String contains, String equals){
+        Array<Rectangle> hitBoxes = new Array<Rectangle>();
+        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
         for (int x = 0; x < mapLayer.getWidth(); x++) {
             for (int y = 0; y < mapLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
                 TiledMapTile tile = cell.getTile();
                 Object tmp = tile.getProperties().get("terrain");
-                //Wenn tile kein eis enthält -> add to hitbox array
-                if (tmp != null && tmp.toString().equals("0,0,0,0"))
-                    mapWaterHitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
+                if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains)))
+                    hitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
             }
         }
+        return hitBoxes;
     }
 
-    private void createSnowHitBoxArray() {
-        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        mapSnowHitBoxes = new Array<Rectangle>();
-        //iterrate through map
-        for (int x = 0; x < mapLayer.getWidth(); x++) {
-            for (int y = 0; y < mapLayer.getHeight(); y++) {
-                TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
-                TiledMapTile tile = cell.getTile();
-                Object tmp = tile.getProperties().get("terrain");
-                //Wenn tile snow enthält -> add to hitbox array
-                if (tmp != null && tmp.toString().contains("2"))
-                    mapSnowHitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
-            }
-        }
-    }
 
     public void checkForCollisionWithIcebergs(Rectangle playerHitbox) {
         //something like this
