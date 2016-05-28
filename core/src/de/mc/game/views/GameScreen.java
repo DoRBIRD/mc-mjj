@@ -33,8 +33,14 @@ public class GameScreen extends CustomScreenAdapter {
     private String traveledDistance = "0.0";
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
+    private HighscoreOverlay highscoreOverlay;
     private Player player;
     private State state;
+
+    public void setHighscoreOverlay(HighscoreOverlay highscoreOverlay) {
+        this.highscoreOverlay = highscoreOverlay;
+    }
+
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;

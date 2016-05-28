@@ -10,17 +10,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
+
 import de.mc.game.Assets;
 import de.mc.game.Constants;
-import de.mc.game.CustomTextButton;
 
-public class PauseOverlay {
+public class HighscoreOverlay {
 
     private GameScreen gameScreen;
     private Table table;
     private final Button btnClose;
 
-    public PauseOverlay(GameScreen gs) {
+    public HighscoreOverlay(GameScreen gs) {
         gameScreen = gs;
 
         Image background = new Image(Assets.menuTitleButtonTexture);
@@ -28,34 +29,21 @@ public class PauseOverlay {
         background.setHeight(background.getHeight() * Constants.SCALING);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.WHITE);
-        final Label labelTitle = new Label(Constants.LANGUAGE_STRINGS.get("Pause"), labelStyle);
+        final Label labelTitle = new Label("TEST", labelStyle);
         labelTitle.setAlignment(Align.center);
 
-        final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("highscores"), Assets.blueButtonBackgroundStyle);
-        btnHighScore.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setHighscoreOverlay( new HighscoreOverlay(gameScreen));
-                dispose();
-            }
-        });
 
-        final CustomTextButton btnOptions = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("options"), Assets.blueButtonBackgroundStyle);
-        btnOptions.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
+        labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
 
-            }
-        });
 
-        final CustomTextButton btnResume = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("resume"), Assets.blueButtonBackgroundStyle);
-        btnResume.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setReady();
-                dispose();
-            }
-        });
+        ArrayList<Label> labels = new ArrayList<Label>();
+        for (String score : getScores()) {
+            final Label label = new Label(score, labelStyle);
+            label.setAlignment(Align.center);
+            label.setFontScale(1.2f);
+            labels.add(label);
+        }
+
 
         table = new Table();
         table.setBackground(background.getDrawable());
@@ -67,20 +55,20 @@ public class PauseOverlay {
                 .prefWidth(table.getWidth() * 0.5f)
                 .minHeight(Value.minHeight)
                 .prefHeight(Value.percentHeight(1.2f));
-        table.add(labelTitle)
-                .padBottom(50);
-        table.row();
-        table.add(btnHighScore);
-        table.row();
-        table.add(btnOptions);
-        table.row();
-        table.add(btnResume).padBottom(50);
+        table.add(labelTitle).padBottom(50);
+
+        for (Label label : labels) {
+            table.row();
+            table.add(label);
+        }
+
+        table.padBottom(50);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());
         btnClose.setHeight(btnClose.getHeight());
         btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
-        final PauseOverlay pauseOverlay = this;
+        final HighscoreOverlay pauseOverlay = this;
         btnClose.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -91,6 +79,11 @@ public class PauseOverlay {
 
         gameScreen.stage.addActor(table);
         gameScreen.stage.addActor(btnClose);
+    }
+
+    private String[] getScores() {
+        String[] scores = {"Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000"};
+        return scores;
     }
 
     public void dispose() {

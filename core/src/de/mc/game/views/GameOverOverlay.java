@@ -46,7 +46,8 @@ public class GameOverOverlay {
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                
+                gameScreen.setHighscoreOverlay( new HighscoreOverlay(gameScreen));
+                dispose();
             }
         });
 
