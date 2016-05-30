@@ -39,7 +39,9 @@ public class MapManager {
             "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
     private static final String sub = ".tmx";
     private static final String ICE_BERGLAYER = "Eisberg";
-    private static final String WATER_ICE_SNOW_LAyer = "Kachelebene 1";
+    private static final String FLOOR_LAYER = "Floor";
+    private static final String PICKUPS_LAYER = "PickUps";
+    private static final String OBSTACLES_LAYER = "Obstacles";
 
     public MapManager() {
         blocks = new Array<Array<MapBlock>>();
@@ -70,9 +72,10 @@ public class MapManager {
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
         TiledMap newMap = new TiledMap();
         MapLayers layers = newMap.getLayers();
-        layers.add(addTileCellLayers("Kachelebene 1",tm1, tm2));
-        //layers.add(addTileCellLayers("PickUps",tm1, tm2));
-        layers.add(addObjectLayers(ICE_BERGLAYER, tm1, tm2));
+        layers.add(addTileCellLayers(FLOOR_LAYER,tm1, tm2));
+        layers.add(addTileCellLayers(PICKUPS_LAYER,tm1, tm2));
+        layers.add(addTileCellLayers(OBSTACLES_LAYER,tm1, tm2));
+        //layers.add(addObjectLayers(ICE_BERGLAYER, tm1, tm2));
         return newMap;
     }
 
@@ -193,8 +196,8 @@ public class MapManager {
     }
 
     private void createAllHitBoxArrays() {
-        mapWaterHitBoxes = crateHitboxArray(WATER_ICE_SNOW_LAyer,"0,0,0,0","");
-        mapSnowHitBoxes = crateHitboxArray(WATER_ICE_SNOW_LAyer,"-","2");
+        mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER,"0,0,0,0","");
+        //mapSnowHitBoxes = crateHitboxArray(FLOOR_LAYER,"-","2");
     }
 
     private Array<Rectangle> crateHitboxArray(String layerName,String contains, String equals){
