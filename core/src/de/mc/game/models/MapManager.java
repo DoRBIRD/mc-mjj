@@ -15,6 +15,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import de.mc.game.Assets;
@@ -22,26 +24,34 @@ import de.mc.game.Constants;
 import de.mc.game.TextureMapObjectRenderer;
 
 public class MapManager {
-    private String lastconnection;
-    private TiledMap tiledMap;
-    private Array<Rectangle> mapWaterHitBoxes;
-    private Array<Rectangle> mapSnowHitBoxes;
-    private TiledMapRenderer tiledMapRenderer;
-
-    private TextureMapObjectRenderer objectRenderer;
-    private Array<Array<MapBlock>> blocks;
-
     private static final String folder = "maps/block";
     private static final String[] mappaths =
             {"A_A_1", "A_B_1", "B_A_1", "A_C_1", "C_A_1", "A_D_1",
-            "B_A_1", "B_B_1", "B_A_1", "B_C_1", "C_A_1", "B_D_1",
-            "C_A_1", "C_B_1", "C_A_1", "C_C_1", "C_A_1", "C_D_1",
-            "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
+                    "B_A_1", "B_B_1", "B_A_1", "B_C_1", "C_A_1", "B_D_1",
+                    "C_A_1", "C_B_1", "C_A_1", "C_C_1", "C_A_1", "C_D_1",
+                    "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
     private static final String sub = ".tmx";
     private static final String ICE_BERGLAYER = "Eisberg";
     private static final String FLOOR_LAYER = "Floor";
     private static final String PICKUPS_LAYER = "PickUps";
     private static final String OBSTACLES_LAYER = "Obstacles";
+    private static final String WATER_TERRAIN = "0";
+    private static final String ICE_TERRAIN = "1";
+    private static final String SNOW_TERRAIN = "2";
+    private static final String SHIELD_TERRAIN = "3";
+    private static final String RING_TERRAIN = "4";
+    private static final String ICEBERG_TERRAIN = "5";
+    private static final String COIN_TERRAIN = "6";
+    private String lastconnection;
+    private TiledMap tiledMap;
+    private Array<Rectangle> mapWaterHitBoxes;
+    private Array<Rectangle> mapIcebergHitBoxes;
+    private Array<Rectangle> mapSnowHitBoxes;
+    private Array<Map> coinTiles;
+    private TiledMapRenderer tiledMapRenderer;
+    private TextureMapObjectRenderer objectRenderer;
+    private Array<Array<MapBlock>> blocks;
+
 
     public MapManager() {
         blocks = new Array<Array<MapBlock>>();
@@ -51,94 +61,6 @@ public class MapManager {
         blocks.add(new Array<MapBlock>());
         initMapBlocks();
         resetMap();
-    }
-
-    public void resetMap() {
-        tiledMap = null;
-        tiledMap = blocks.get(0).get(0).getMap();
-        lastconnection = "A";
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
-        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
-        createAllHitBoxArrays();
-    }
-
-    public void addNextBlock() {
-        tiledMap = addBlockToMap(tiledMap, getNextBlock());
-        createAllHitBoxArrays();
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
-        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
-    }
-
-    private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
-        TiledMap newMap = new TiledMap();
-        MapLayers layers = newMap.getLayers();
-        layers.add(addTileCellLayers(FLOOR_LAYER,tm1, tm2));
-        layers.add(addTileCellLayers(PICKUPS_LAYER,tm1, tm2));
-        layers.add(addTileCellLayers(OBSTACLES_LAYER,tm1, tm2));
-        //layers.add(addObjectLayers(ICE_BERGLAYER, tm1, tm2));
-        return newMap;
-    }
-
-    private MapLayer addTileCellLayers(String layerName,TiledMap tm1, TiledMap tm2) {
-        TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(layerName);
-        TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(layerName);
-        int oldHeight = oldMapLayer.getHeight();
-        int newHeight = oldHeight + toAddMapLayer.getHeight();
-        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileWidth();
-        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileHeight();
-        TiledMapTileLayer newMapLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
-        newMapLayer.setName(layerName);
-        for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
-            for (int y = 0; y < newHeight; y++) {
-                TiledMapTileLayer.Cell cell;
-                if (y < oldHeight) {
-                    cell = oldMapLayer.getCell(x, y);
-                } else {
-                    cell = toAddMapLayer.getCell(x, y - oldHeight);
-                }
-                newMapLayer.setCell(x, y, cell);
-            }
-        }
-        return newMapLayer;
-    }
-
-    private MapLayer addObjectLayers(String objectLayerName, TiledMap tm1, TiledMap tm2) {
-        int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
-        int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
-        MapLayer newObjectLayer = new TiledMapTileLayer((int) Constants.MAP_WIDTH, newHeight, (int) Constants.TILE_WIDTH, (int) Constants.TILE_HEIGHT);
-        newObjectLayer.setName(objectLayerName);
-
-        MapLayer oldObjectLayer = tm1.getLayers().get(objectLayerName);
-        MapLayer toAddObjectLayer = tm2.getLayers().get(objectLayerName);
-        if (oldObjectLayer != null && toAddObjectLayer != null) {
-            MapObjects oldMapObjects = oldObjectLayer.getObjects();
-            MapObjects newMapObjects = toAddObjectLayer.getObjects();
-            for (MapObject mapObject : oldMapObjects) {
-                newObjectLayer.getObjects().add(mapObject);
-            }
-            float offsetY = (oldHeight) * Constants.TILE_HEIGHT;
-            for (MapObject mapObject : newMapObjects) {
-                if (mapObject instanceof TextureMapObject) {
-                    TextureMapObject textureObject = (TextureMapObject) mapObject;
-                    float oldY = textureObject.getY();
-                    float newY = oldY + offsetY;
-                    textureObject.setY(newY);
-                }
-                newObjectLayer.getObjects().add(mapObject);
-            }
-        }
-        return newObjectLayer;
-    }
-
-    private void updateScaling(TextureMapObject textureObject) {
-        float newY = textureObject.getY() * Constants.MAP_SCALING;
-        textureObject.setY(newY);
-        float newX = textureObject.getX() * Constants.MAP_SCALING;
-        textureObject.setX(newX);
-        float newWidth =Constants.MAP_SCALING;
-        textureObject.setScaleX(newWidth);
-        float newHeigth =  Constants.MAP_SCALING;
-        textureObject.setScaleY(newHeigth);
     }
 
     public static void loadMaps() {
@@ -195,13 +117,122 @@ public class MapManager {
         return blocks.get(index);
     }
 
+    public void resetMap() {
+        tiledMap = null;
+        tiledMap = blocks.get(0).get(0).getMap();
+        lastconnection = "A";
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
+        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
+        createAllHitBoxArrays();
+    }
+
+    public void addNextBlock() {
+        tiledMap = addBlockToMap(tiledMap, getNextBlock());
+        createAllHitBoxArrays();
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
+        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
+    }
+
+    private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
+        TiledMap newMap = new TiledMap();
+        MapLayers layers = newMap.getLayers();
+        layers.add(addTileCellLayers(FLOOR_LAYER, tm1, tm2));
+        layers.add(addTileCellLayers(PICKUPS_LAYER, tm1, tm2));
+        layers.add(addTileCellLayers(OBSTACLES_LAYER, tm1, tm2));
+        //layers.add(addObjectLayers(ICE_BERGLAYER, tm1, tm2));
+        return newMap;
+    }
+
     private void createAllHitBoxArrays() {
-        mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER,"0,0,0,0","");
+        mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER, "-", "0,0,0,0");
+        mapIcebergHitBoxes = crateHitboxArray(OBSTACLES_LAYER, "-", "5,5,5,5");
+        coinTiles = getMapTilesOfType2(PICKUPS_LAYER, COIN_TERRAIN, "-");
         //mapSnowHitBoxes = crateHitboxArray(FLOOR_LAYER,"-","2");
     }
 
-    private Array<Rectangle> crateHitboxArray(String layerName,String contains, String equals){
+    private MapLayer addTileCellLayers(String layerName, TiledMap tm1, TiledMap tm2) {
+        TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(layerName);
+        TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(layerName);
+        int oldHeight = oldMapLayer.getHeight();
+        int newHeight = oldHeight + toAddMapLayer.getHeight();
+        int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileWidth();
+        int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileHeight();
+        TiledMapTileLayer newMapLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
+        newMapLayer.setName(layerName);
+        for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
+            for (int y = 0; y < newHeight; y++) {
+                TiledMapTileLayer.Cell cell;
+                if (y < oldHeight) {
+                    cell = oldMapLayer.getCell(x, y);
+                } else {
+                    cell = toAddMapLayer.getCell(x, y - oldHeight);
+                }
+                newMapLayer.setCell(x, y, cell);
+            }
+        }
+        return newMapLayer;
+    }
+
+    private MapLayer addObjectLayers(String objectLayerName, TiledMap tm1, TiledMap tm2) {
+        int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
+        int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
+        MapLayer newObjectLayer = new TiledMapTileLayer((int) Constants.MAP_WIDTH, newHeight, (int) Constants.TILE_WIDTH, (int) Constants.TILE_HEIGHT);
+        newObjectLayer.setName(objectLayerName);
+
+        MapLayer oldObjectLayer = tm1.getLayers().get(objectLayerName);
+        MapLayer toAddObjectLayer = tm2.getLayers().get(objectLayerName);
+        if (oldObjectLayer != null && toAddObjectLayer != null) {
+            MapObjects oldMapObjects = oldObjectLayer.getObjects();
+            MapObjects newMapObjects = toAddObjectLayer.getObjects();
+            for (MapObject mapObject : oldMapObjects) {
+                newObjectLayer.getObjects().add(mapObject);
+            }
+            float offsetY = (oldHeight) * Constants.TILE_HEIGHT;
+            for (MapObject mapObject : newMapObjects) {
+                if (mapObject instanceof TextureMapObject) {
+                    TextureMapObject textureObject = (TextureMapObject) mapObject;
+                    float oldY = textureObject.getY();
+                    float newY = oldY + offsetY;
+                    textureObject.setY(newY);
+                }
+                newObjectLayer.getObjects().add(mapObject);
+            }
+        }
+        return newObjectLayer;
+    }
+
+    private void updateScaling(TextureMapObject textureObject) {
+        float newY = textureObject.getY() * Constants.MAP_SCALING;
+        textureObject.setY(newY);
+        float newX = textureObject.getX() * Constants.MAP_SCALING;
+        textureObject.setX(newX);
+        float newWidth = Constants.MAP_SCALING;
+        textureObject.setScaleX(newWidth);
+        float newHeigth = Constants.MAP_SCALING;
+        textureObject.setScaleY(newHeigth);
+    }
+
+
+    private Array<Rectangle> crateHitboxArray(String layerName, String contains, String equals) {
         Array<Rectangle> hitBoxes = new Array<Rectangle>();
+        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
+        for (int x = 0; x < mapLayer.getWidth(); x++) {
+            for (int y = 0; y < mapLayer.getHeight(); y++) {
+                TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
+                if (cell != null) { //cells wit (0,0,0,0) seem to return null pointer
+                    TiledMapTile tile = cell.getTile();
+                    Object tmp = tile.getProperties().get("terrain");
+                    if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains)))
+                        hitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
+                }
+            }
+        }
+        return hitBoxes;
+    }
+
+
+    private Array<TiledMapTile> getMapTilesOfType(String layerName, String contains, String equals) {
+        Array<TiledMapTile> hitBoxes = new Array<TiledMapTile>();
         TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
         for (int x = 0; x < mapLayer.getWidth(); x++) {
             for (int y = 0; y < mapLayer.getHeight(); y++) {
@@ -209,13 +240,49 @@ public class MapManager {
                 TiledMapTile tile = cell.getTile();
                 Object tmp = tile.getProperties().get("terrain");
                 if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains)))
-                    hitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
+                    hitBoxes.add(tile);
             }
         }
         return hitBoxes;
     }
 
+    private Array<Map> getMapTilesOfType2(String layerName, String contains, String equals) {
+        Array<Map> tiles = new Array<Map>();
+        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
+        for (int x = 0; x < mapLayer.getWidth(); x++) {
+            for (int y = 0; y < mapLayer.getHeight(); y++) {
+                TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
+                if (cell != null) {
+                    TiledMapTile tile = cell.getTile();
+                    Object tmp = tile.getProperties().get("terrain");
+                    if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains))) {
+                        Map map = new HashMap();
+                        map.put("rect", new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
+                        map.put("tile", tile);
+                        tiles.add(map);
+                    }
+                }
+            }
+        }
+        return tiles;
+    }
 
+
+    public boolean checkCollisionCoins(Rectangle playerHitbox) {
+        for (int i = 0; i < coinTiles.size; i++) {
+            TiledMapTile tile = (TiledMapTile) coinTiles.get(i).get("tile");
+            Rectangle rect = (Rectangle) coinTiles.get(i).get("rect");
+            if (rect.overlaps(playerHitbox)) {
+                tile.setId(0);
+                System.out.println("Coin");
+                coinTiles.removeIndex(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //for mapobject version
     public void checkForCollisionWithIcebergs(Rectangle playerHitbox) {
         //something like this
         MapObjects mapObjects = tiledMap.getLayers().get(ICE_BERGLAYER).getObjects();
@@ -236,6 +303,10 @@ public class MapManager {
 
     public Array<Rectangle> getWaterHitBoxes() {
         return mapWaterHitBoxes;
+    }
+
+    public Array<Rectangle> getMapIcebergHitBoxes() {
+        return mapIcebergHitBoxes;
     }
 
     public Array<Rectangle> getSnowHitBoxes() {

@@ -30,17 +30,13 @@ public class GameScreen extends CustomScreenAdapter {
     private final String
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
+    private final CustomTextButton pauseButton;
     private String traveledDistance = "0.0";
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
     private HighscoreOverlay highscoreOverlay;
     private Player player;
     private State state;
-
-    public void setHighscoreOverlay(HighscoreOverlay highscoreOverlay) {
-        this.highscoreOverlay = highscoreOverlay;
-    }
-
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;
@@ -49,8 +45,6 @@ public class GameScreen extends CustomScreenAdapter {
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
-    private final CustomTextButton pauseButton;
-
     public GameScreen() {
         super();
 
@@ -102,6 +96,10 @@ public class GameScreen extends CustomScreenAdapter {
         setReady();
     }
 
+    public void setHighscoreOverlay(HighscoreOverlay highscoreOverlay) {
+        this.highscoreOverlay = highscoreOverlay;
+    }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(119f / 255f, 202f / 255f, 228f / 255f, 1);
@@ -119,11 +117,11 @@ public class GameScreen extends CustomScreenAdapter {
             checkInputs();
             //TEMP
             float accelY = 0;
-            if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
+            if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
                 accelY = Gdx.input.getAccelerometerY() - accelerometerYDefault;
-                if(accelY > 1) {
+                if (accelY > 1) {
                     accelY = 1;
-                } else if(accelY < -1) {
+                } else if (accelY < -1) {
                     accelY *= 2;
                 } else {
                     accelY = 0;
@@ -151,6 +149,15 @@ public class GameScreen extends CustomScreenAdapter {
                 gameOver();
                 return;
             }
+        }
+        for (Rectangle hb : mapManager.getMapIcebergHitBoxes()) {
+            if (Intersector.overlaps(hb, player.getHitBox())) {
+                gameOver();
+                return;
+            }
+        }
+        if (mapManager.checkCollisionCoins(player.getHitBox())) {
+            //coins ++
         }
     }
 
@@ -204,9 +211,9 @@ public class GameScreen extends CustomScreenAdapter {
         state = State.GAME_READY;
         stage.addActor(swipeTable);
         stage.addActor(pauseButton);
-        if(gameOverOverlay != null)
+        if (gameOverOverlay != null)
             gameOverOverlay.dispose();
-        if(pauseOverlay != null)
+        if (pauseOverlay != null)
             pauseOverlay.dispose();
     }
 
