@@ -9,17 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
 import de.mc.game.Assets;
 import de.mc.game.Constants;
+import de.mc.game.models.DatabaseConnection;
 
 public class HighscoreOverlay {
 
+    private final Button btnClose;
     private GameScreen gameScreen;
     private Table table;
-    private final Button btnClose;
 
     public HighscoreOverlay(GameScreen gs) {
         gameScreen = gs;
@@ -81,9 +83,10 @@ public class HighscoreOverlay {
         gameScreen.stage.addActor(btnClose);
     }
 
-    private String[] getScores() {
-        String[] scores = {"Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000"};
-        return scores;
+    private Array<String> getScores() {
+        //String[] scores = {"Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000"};
+        DatabaseConnection db = new DatabaseConnection();
+        return db.getHighscores();
     }
 
     public void dispose() {
