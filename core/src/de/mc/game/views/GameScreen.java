@@ -261,7 +261,7 @@ public class GameScreen extends CustomScreenAdapter {
     private void updateScore() {
         if (state == State.GAME_RUNNING) {
             DecimalFormat df = new DecimalFormat("#.#");
-            traveledDistance = df.format(player.getY() / 1000);
+            traveledDistance = df.format(player.getY() / 500);
             labelScore.setText(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
         }
     }
@@ -317,6 +317,12 @@ public class GameScreen extends CustomScreenAdapter {
                 return false;
             }
         }));
+    }
+
+    //Changes from game to main menu and sets the game state to GAME_OVER
+    public void changeToMainManu() {
+        mcGame.setScreen(mcGame.mainMenuScreen);
+        gameOver();
     }
 
     @Override

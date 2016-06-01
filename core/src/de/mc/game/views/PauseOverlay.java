@@ -31,7 +31,7 @@ public class PauseOverlay {
         final Label labelTitle = new Label(Constants.LANGUAGE_STRINGS.get("Pause"), labelStyle);
         labelTitle.setAlignment(Align.center);
 
-        final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("highscores"), Assets.blueButtonBackgroundStyle);
+        final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("Highscore"), Assets.blueButtonBackgroundStyle);
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -48,11 +48,13 @@ public class PauseOverlay {
             }
         });
 
-        final CustomTextButton btnResume = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("resume"), Assets.blueButtonBackgroundStyle);
-        btnResume.addListener(new ClickListener() {
+        //Button in pause overlay for the return to the main menu
+        final CustomTextButton btnMainMenu = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("mainmenu"), Assets.blueButtonBackgroundStyle);
+        btnMainMenu.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setReady();
+                //Changes from game to main menu
+                gameScreen.changeToMainManu();
                 dispose();
             }
         });
@@ -74,7 +76,7 @@ public class PauseOverlay {
         table.row();
         table.add(btnOptions);
         table.row();
-        table.add(btnResume).padBottom(50);
+        table.add(btnMainMenu).padBottom(50);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());

@@ -29,7 +29,7 @@ public class HighscoreOverlay {
         background.setHeight(background.getHeight() * Constants.SCALING);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.WHITE);
-        final Label labelTitle = new Label("TEST", labelStyle);
+        final Label labelTitle = new Label("Highscore", labelStyle);
         labelTitle.setAlignment(Align.center);
 
 
