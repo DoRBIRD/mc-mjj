@@ -23,6 +23,9 @@ import de.mc.game.Assets;
 import de.mc.game.Constants;
 import de.mc.game.TextureMapObjectRenderer;
 
+/**
+ * this manages the map and adds new blocks when nearing current end of the map
+ */
 public class MapManager {
     private static final String folder = "maps/block";
     private static final String[] mappaths =
@@ -31,7 +34,7 @@ public class MapManager {
                     "C_A_1", "C_B_1", "C_A_1", "C_C_1", "C_A_1", "C_D_1",
                     "D_A_1", "D_B_1", "D_A_1", "D_C_1", "C_A_1", "D_D_1"};
     private static final String sub = ".tmx";
-    private static final String ICE_BERGLAYER = "Eisberg";
+    private static final String ICE_BERG_LAYER = "Eisberg";
     private static final String FLOOR_LAYER = "Floor";
     private static final String PICKUPS_LAYER = "PickUps";
     private static final String OBSTACLES_LAYER = "Obstacles";
@@ -46,13 +49,15 @@ public class MapManager {
     private TiledMap tiledMap;
     private Array<Rectangle> mapWaterHitBoxes;
     private Array<Rectangle> mapIcebergHitBoxes;
-    private Array<Rectangle> mapSnowHitBoxes;
     private Array<Map> coinTiles;
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
 
-
+    /**
+     * This the MapManages constructor.
+     * This will create the blocks array wich is used to store sorted map blocks
+     */
     public MapManager() {
         blocks = new Array<Array<MapBlock>>();
         blocks.add(new Array<MapBlock>());
@@ -63,12 +68,18 @@ public class MapManager {
         resetMap();
     }
 
+    /**
+     * This loads all maps that are defined in mappaths into the games Asset manager
+     */
     public static void loadMaps() {
         for (String mbp : mappaths) {
             Assets.assetManager.load(folder + mbp + sub, TiledMap.class);
         }
     }
 
+    /**
+     * This initialises the map blocks. It sorts the loaded maps into the right blocks array
+     */
     private void initMapBlocks() {
         for (String mbp : mappaths) {
             String bot = mbp.substring(0, 1);
@@ -96,6 +107,12 @@ public class MapManager {
         }
     }
 
+    /**
+     * This returns Array with all possible blocks that start with the last used connection
+     *
+     * @param connection This is the last connection
+     * @return Array<MapBlock>  This returns Array with all possible blocks
+     */
     private Array<MapBlock> getMapWithBotConnection(String connection) {
         int index;
         switch (connection.charAt(0)) {
@@ -117,76 +134,131 @@ public class MapManager {
         return blocks.get(index);
     }
 
+    /**
+     * This resets the map and makes sure it always starts with the same startblock also resets the renderer and the hitboxes
+     */
     public void resetMap() {
         tiledMap = null;
         tiledMap = blocks.get(0).get(0).getMap();
         lastconnection = "A";
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
-        objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
-        createAllHitBoxArrays();
+        updateHitboxesAndRenderer();
     }
 
+    /**
+     * This invokes the adding of the next map block and makes sure the hitboxes and the map renderer gets updated
+     */
     public void addNextBlock() {
         tiledMap = addBlockToMap(tiledMap, getNextBlock());
+        updateHitboxesAndRenderer();
+    }
+
+    /**
+     * This gets the next mapblock by choosing one of four with fitting connection
+     *
+     * @return TiledMap This returns next map block
+     */
+    private TiledMap getNextBlock() {
+        Array<MapBlock> tmp = getMapWithBotConnection(lastconnection);
+        Random randomGenerator = new Random();
+        MapBlock block = tmp.get(tmp.size - randomGenerator.nextInt(tmp.size) - 1);
+        lastconnection = block.getConnectionTop();
+        return block.getMap();
+    }
+
+    /**
+     * This makes sure the hitboxes and the map renderer gets updated
+     */
+    private void updateHitboxesAndRenderer() {
         createAllHitBoxArrays();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
         objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
     }
 
+    /**
+     * Returns new Tiledmap from two input maps
+     * wich layers are combine is defined by calling addTileCellLayers with each layer name and the two origin maps
+     *
+     * @param tm1 This is input map one
+     * @param tm2 This is input map two
+     * @return MapLayer This returns new combined layer
+     */
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
         TiledMap newMap = new TiledMap();
         MapLayers layers = newMap.getLayers();
         layers.add(addTileCellLayers(FLOOR_LAYER, tm1, tm2));
         layers.add(addTileCellLayers(PICKUPS_LAYER, tm1, tm2));
         layers.add(addTileCellLayers(OBSTACLES_LAYER, tm1, tm2));
-        //layers.add(addObjectLayers(ICE_BERGLAYER, tm1, tm2));
+        //layers.add(addObjectLayers(ICE_BERG_LAYER, tm1, tm2));
         return newMap;
     }
 
     private void createAllHitBoxArrays() {
         mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER, "-", "0,0,0,0");
         mapIcebergHitBoxes = crateHitboxArray(OBSTACLES_LAYER, "-", "5,5,5,5");
-        coinTiles = getMapTilesOfType2(PICKUPS_LAYER, COIN_TERRAIN, "-");
-        //mapSnowHitBoxes = crateHitboxArray(FLOOR_LAYER,"-","2");
+        coinTiles = getMapTilesOfType(PICKUPS_LAYER, COIN_TERRAIN, "-");
     }
 
+    /**
+     * Returns new Maplayer with the combine cells of the input maps
+     *
+     * @param layerName This defines wich layer to combine
+     * @param tm1       This is input map one
+     * @param tm2       This is input map two
+     * @return MapLayer This returns new combined layer
+     */
     private MapLayer addTileCellLayers(String layerName, TiledMap tm1, TiledMap tm2) {
+        //Gets the wanted layer from the tiled map and some info of height and width
         TiledMapTileLayer toAddMapLayer = (TiledMapTileLayer) tm2.getLayers().get(layerName);
         TiledMapTileLayer oldMapLayer = (TiledMapTileLayer) tm1.getLayers().get(layerName);
         int oldHeight = oldMapLayer.getHeight();
         int newHeight = oldHeight + toAddMapLayer.getHeight();
         int tileWidth = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileWidth();
         int tileHeight = (int) ((TiledMapTileLayer) tm1.getLayers().get(layerName)).getTileHeight();
+        //creates new mapLayer and make sure it has the same name as the input layers
         TiledMapTileLayer newMapLayer = new TiledMapTileLayer(oldMapLayer.getWidth(), newHeight, tileWidth, tileHeight);
         newMapLayer.setName(layerName);
+        //itterates through new map layer and adds cells from both tilemaps
         for (int x = 0; x < toAddMapLayer.getWidth(); x++) {
             for (int y = 0; y < newHeight; y++) {
                 TiledMapTileLayer.Cell cell;
-                if (y < oldHeight) {
+                if (y < oldHeight)
                     cell = oldMapLayer.getCell(x, y);
-                } else {
+                else
                     cell = toAddMapLayer.getCell(x, y - oldHeight);
-                }
                 newMapLayer.setCell(x, y, cell);
             }
         }
         return newMapLayer;
     }
 
+    /**
+     * Returns new MapObjectLayer with the combine mapobjects of the input maps
+     * currently not in use since we use the normal tile laysers at the moment
+     *
+     * @param objectLayerName This defines wich objectlayer to combine
+     * @param tm1             This is input map one
+     * @param tm2             This is input map two
+     * @return MapLayer       This returns new combined layer
+     */
     private MapLayer addObjectLayers(String objectLayerName, TiledMap tm1, TiledMap tm2) {
+        //Gets the wanted layer from the tiled map and some info of height and width
         int oldHeight = ((TiledMapTileLayer) tm1.getLayers().get(0)).getHeight();
         int newHeight = oldHeight + ((TiledMapTileLayer) tm2.getLayers().get(0)).getHeight();
+        //creates new mapLayer and make sure it has the same name as the input layers
         MapLayer newObjectLayer = new TiledMapTileLayer((int) Constants.MAP_WIDTH, newHeight, (int) Constants.TILE_WIDTH, (int) Constants.TILE_HEIGHT);
         newObjectLayer.setName(objectLayerName);
 
         MapLayer oldObjectLayer = tm1.getLayers().get(objectLayerName);
         MapLayer toAddObjectLayer = tm2.getLayers().get(objectLayerName);
         if (oldObjectLayer != null && toAddObjectLayer != null) {
+            //gets all mapobjects
             MapObjects oldMapObjects = oldObjectLayer.getObjects();
             MapObjects newMapObjects = toAddObjectLayer.getObjects();
+            //adds old objects without offset
             for (MapObject mapObject : oldMapObjects) {
                 newObjectLayer.getObjects().add(mapObject);
             }
+            //adds new objects with offset
             float offsetY = (oldHeight) * Constants.TILE_HEIGHT;
             for (MapObject mapObject : newMapObjects) {
                 if (mapObject instanceof TextureMapObject) {
@@ -201,27 +273,27 @@ public class MapManager {
         return newObjectLayer;
     }
 
-    private void updateScaling(TextureMapObject textureObject) {
-        float newY = textureObject.getY() * Constants.MAP_SCALING;
-        textureObject.setY(newY);
-        float newX = textureObject.getX() * Constants.MAP_SCALING;
-        textureObject.setX(newX);
-        float newWidth = Constants.MAP_SCALING;
-        textureObject.setScaleX(newWidth);
-        float newHeigth = Constants.MAP_SCALING;
-        textureObject.setScaleY(newHeigth);
-    }
 
-
+    /**
+     * Returns new Array with rectangles of the cells with Terrain described in "contains" and "equals".
+     * looks in the main tiled map for defined layer name then checks each sell for terrain if it is equals or contains the given parameters
+     *
+     * @param layerName This defines wich object layer to combine
+     * @param contains  This is used to check if the terrain contains gien string
+     * @param equals    This is used to check if the terrain equals gien string
+     * @return Array<Rectangle> This returns Hitboxes of defined cells
+     */
     private Array<Rectangle> crateHitboxArray(String layerName, String contains, String equals) {
         Array<Rectangle> hitBoxes = new Array<Rectangle>();
         TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
+        //iterates through map
         for (int x = 0; x < mapLayer.getWidth(); x++) {
             for (int y = 0; y < mapLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
                 if (cell != null) { //cells wit (0,0,0,0) seem to return null pointer
                     TiledMapTile tile = cell.getTile();
                     Object tmp = tile.getProperties().get("terrain");
+                    //checsks if cell has wanted terrain
                     if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains)))
                         hitBoxes.add(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
                 }
@@ -231,22 +303,16 @@ public class MapManager {
     }
 
 
-    private Array<TiledMapTile> getMapTilesOfType(String layerName, String contains, String equals) {
-        Array<TiledMapTile> hitBoxes = new Array<TiledMapTile>();
-        TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
-        for (int x = 0; x < mapLayer.getWidth(); x++) {
-            for (int y = 0; y < mapLayer.getHeight(); y++) {
-                TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
-                TiledMapTile tile = cell.getTile();
-                Object tmp = tile.getProperties().get("terrain");
-                if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains)))
-                    hitBoxes.add(tile);
-            }
-        }
-        return hitBoxes;
-    }
-
-    private Array<Map> getMapTilesOfType2(String layerName, String contains, String equals) {
+    /**
+     * This returns Array with maps wich map rect to the respective tile of the cells with Terrain described in "contains" and "equals".
+     * looks in the main tiled map for defined layer name then checks each sell for terrain if it is equals or contains the given parameters
+     *
+     * @param layerName This defines wich objectlayer to combine
+     * @param contains  This is input map one
+     * @param equals    This is input map two
+     * @return Array<Map>   This returns Array with maps wich map rect to the respective tile
+     */
+    private Array<Map> getMapTilesOfType(String layerName, String contains, String equals) {
         Array<Map> tiles = new Array<Map>();
         TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
         for (int x = 0; x < mapLayer.getWidth(); x++) {
@@ -267,7 +333,12 @@ public class MapManager {
         return tiles;
     }
 
-
+    /**
+     * Checks for overlap with coin tiles
+     *
+     * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
+     * @return boolean      This returns true if there was a overlap with a coin
+     */
     public boolean checkCollisionCoins(Rectangle playerHitbox) {
         for (int i = 0; i < coinTiles.size; i++) {
             TiledMapTile tile = (TiledMapTile) coinTiles.get(i).get("tile");
@@ -282,23 +353,19 @@ public class MapManager {
         return false;
     }
 
-    //for mapobject version
+    /**
+     * Checks for overlap with icebergs obejcts
+     * current doesnt work map objects don't seem to be rectange objects somehow
+     *
+     * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
+     */
     public void checkForCollisionWithIcebergs(Rectangle playerHitbox) {
-        //something like this
-        MapObjects mapObjects = tiledMap.getLayers().get(ICE_BERGLAYER).getObjects();
+        MapObjects mapObjects = tiledMap.getLayers().get(ICE_BERG_LAYER).getObjects();
         for (RectangleMapObject rectangleObject : mapObjects.getByType(RectangleMapObject.class)) {
             Rectangle rectangle = rectangleObject.getRectangle();
             if (Intersector.overlaps(rectangle, playerHitbox))
                 System.out.println("Crack! You hit an iceblock");
         }
-    }
-
-    private TiledMap getNextBlock() {
-        Array<MapBlock> tmp = getMapWithBotConnection(lastconnection);
-        Random randomGenerator = new Random();
-        MapBlock block = tmp.get(tmp.size - randomGenerator.nextInt(tmp.size) - 1);
-        lastconnection = block.getConnectionTop();
-        return block.getMap();
     }
 
     public Array<Rectangle> getWaterHitBoxes() {
@@ -307,10 +374,6 @@ public class MapManager {
 
     public Array<Rectangle> getMapIcebergHitBoxes() {
         return mapIcebergHitBoxes;
-    }
-
-    public Array<Rectangle> getSnowHitBoxes() {
-        return mapSnowHitBoxes;
     }
 
     public TiledMapRenderer getTiledMapRenderer() {

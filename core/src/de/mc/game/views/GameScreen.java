@@ -87,7 +87,7 @@ public class GameScreen extends CustomScreenAdapter {
         //stage.addActor(player);
         //stage.addActor(swipeTable);
 
-        //WIP MAP
+
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
 
@@ -131,7 +131,6 @@ public class GameScreen extends CustomScreenAdapter {
             player.moveBy(0, yVelocity);
             if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
                 mapManager.addNextBlock();
-                System.out.println("added new block");
             }
 
             updateScore();
