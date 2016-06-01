@@ -31,7 +31,8 @@ public class GameScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private final CustomTextButton pauseButton;
-    private String traveledDistance = "0.0";
+    private Float traveledDistance = 0.0f;
+    private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
     private HighscoreOverlay highscoreOverlay;
@@ -45,6 +46,7 @@ public class GameScreen extends CustomScreenAdapter {
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
+
     public GameScreen() {
         super();
 
@@ -156,7 +158,7 @@ public class GameScreen extends CustomScreenAdapter {
             }
         }
         if (mapManager.checkCollisionCoins(player.getHitBox())) {
-            //coins ++
+            collectedCoins++;
         }
     }
 
@@ -196,13 +198,14 @@ public class GameScreen extends CustomScreenAdapter {
         pauseButton.remove();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         mapManager.resetMap();
-        gameOverOverlay = new GameOverOverlay(this, traveledDistance, 0);
+        gameOverOverlay = new GameOverOverlay(this, traveledDistance, collectedCoins);
         resetScore();
         state = State.GAME_OVER;
     }
 
     private void resetScore() {
-        traveledDistance = "0.0";
+        traveledDistance = 0.0f;
+        collectedCoins = 0;
         labelScore.setText(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
     }
 
@@ -261,8 +264,9 @@ public class GameScreen extends CustomScreenAdapter {
     private void updateScore() {
         if (state == State.GAME_RUNNING) {
             DecimalFormat df = new DecimalFormat("#.#");
-            traveledDistance = df.format(player.getY() / 500);
-            labelScore.setText(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
+            traveledDistance = player.getY() / 160;
+            String distance = df.format(traveledDistance);
+            labelScore.setText(distance + " " + Constants.LANGUAGE_STRINGS.get("meter") + " Coins: " + collectedCoins);
         }
     }
 

@@ -15,8 +15,6 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import de.mc.game.Assets;
@@ -49,7 +47,7 @@ public class MapManager {
     private TiledMap tiledMap;
     private Array<Rectangle> mapWaterHitBoxes;
     private Array<Rectangle> mapIcebergHitBoxes;
-    private Array<Map> coinTiles;
+    private Array<RectTile> coinTiles;
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
@@ -310,27 +308,30 @@ public class MapManager {
      * @param layerName This defines wich objectlayer to combine
      * @param contains  This is input map one
      * @param equals    This is input map two
-     * @return Array<Map>   This returns Array with maps wich map rect to the respective tile
+     * @return Array<RectTile>  This returns Array with maps wich map rect to the respective tile
      */
-    private Array<Map> getMapTilesOfType(String layerName, String contains, String equals) {
-        Array<Map> tiles = new Array<Map>();
+    private Array<RectTile> getMapTilesOfType(String layerName, String contains, String equals) {
+        Array<RectTile> rectTiles = new Array<RectTile>();
         TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
         for (int x = 0; x < mapLayer.getWidth(); x++) {
             for (int y = 0; y < mapLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = mapLayer.getCell(x, y);
                 if (cell != null) {
                     TiledMapTile tile = cell.getTile();
-                    Object tmp = tile.getProperties().get("terrain");
-                    if (tmp != null && (tmp.toString().equals(equals) || tmp.toString().contains(contains))) {
-                        Map map = new HashMap();
-                        map.put("rect", new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT));
-                        map.put("tile", tile);
-                        tiles.add(map);
+                    if (tile != null) {
+                        Object terrain = tile.getProperties().get("terrain");
+                        if (terrain != null && (terrain.toString().equals(equals) || terrain.toString().contains(contains))) {
+                            RectTile rectTile = new RectTile(new Rectangle(x * Constants.TILE_WIDTH, y * Constants.TILE_WIDTH, Constants.TILE_WIDTH, Constants.TILE_HEIGHT),
+                                    tile,
+                                    x,
+                                    y);
+                            rectTiles.add(rectTile);
+                        }
                     }
                 }
             }
         }
-        return tiles;
+        return rectTiles;
     }
 
     /**
@@ -340,13 +341,14 @@ public class MapManager {
      * @return boolean      This returns true if there was a overlap with a coin
      */
     public boolean checkCollisionCoins(Rectangle playerHitbox) {
-        for (int i = 0; i < coinTiles.size; i++) {
-            TiledMapTile tile = (TiledMapTile) coinTiles.get(i).get("tile");
-            Rectangle rect = (Rectangle) coinTiles.get(i).get("rect");
+        for (RectTile rectTile : coinTiles) {
+            Rectangle rect = rectTile.getRect();
             if (rect.overlaps(playerHitbox)) {
-                tile.setId(0);
+                TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(PICKUPS_LAYER);
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                mapLayer.setCell(rectTile.getPosX(), rectTile.getPosY(), cell);
                 System.out.println("Coin");
-                coinTiles.removeIndex(i);
+                coinTiles.removeIndex(coinTiles.indexOf(rectTile, true));
                 return true;
             }
         }
@@ -355,7 +357,7 @@ public class MapManager {
 
     /**
      * Checks for overlap with icebergs obejcts
-     * current doesnt work map objects don't seem to be rectange objects somehow
+     * current doesn't work map objects don't seem to be rectange objects somehow
      *
      * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
      */

@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.text.DecimalFormat;
+
 import de.mc.game.Assets;
 import de.mc.game.Constants;
 import de.mc.game.CustomTextButton;
@@ -18,7 +20,7 @@ public class GameOverOverlay {
     private GameScreen gameScreen;
     private Table table;
 
-    public GameOverOverlay(GameScreen gs, String traveledDistance, int stars) {
+    public GameOverOverlay(GameScreen gs, Float traveledDistance, int coins) {
         gameScreen = gs;
 
         Image background = new Image(Assets.menuTitleLargeTexture);
@@ -30,15 +32,16 @@ public class GameOverOverlay {
         labelTitle.setAlignment(Align.center);
 
         labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
-        final Label labelMeter = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
+        DecimalFormat df = new DecimalFormat("#.#");
+        final Label labelMeter = new Label(df.format(traveledDistance) + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
         labelMeter.setAlignment(Align.center);
         labelMeter.setFontScale(1.2f);
 
-        final Label labelStarScore = new Label(Integer.toString(stars) + " Stars", labelStyle);
+        final Label labelStarScore = new Label(Integer.toString(coins) + " Coins", labelStyle);
         labelStarScore.setAlignment(Align.center);
         labelStarScore.setFontScale(1.2f);
 
-        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + traveledDistance + stars * 10, labelStyle);
+        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + df.format(traveledDistance + coins * 10), labelStyle);
         labelTotalScore.setAlignment(Align.center);
         labelTotalScore.setFontScale(1.3f);
 
