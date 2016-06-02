@@ -2,6 +2,7 @@ package de.mc.game.models;
 
 import com.badlogic.gdx.utils.Array;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -9,25 +10,40 @@ import java.sql.SQLException;
  * Created by Jonas on 01/06/2016.
  */
 public class DatabaseConnection {
-    public Array<String> getHighscores() {
-        Array<String> result = new Array<String>();
-        try { //doesnt find driver yet :/
+    //Needed information for the database access
+    private String url = "jdbc:mysql://dorbird.de:3306/mc-game", user = "mcgame", password ="mcgame";
+    //Connection objekt
+    private Connection connection = null;
+
+    public DatabaseConnection(){
+        try {
+            //connecting to database
             Class.forName("com.mysql.jdbc.Driver");
-            java.sql.Connection con = DriverManager.getConnection("jdbc:mysql://dorbird.de:3306/mc-game", "mcgame", "mcgame");
-            java.sql.Statement st = con.createStatement();
-            java.sql.ResultSet rs = st.executeQuery("select * from Highscore ORDER BY score LIMIT 5");
-            while (rs.next()) {
-                String user = rs.getString("user");
-                String score = rs.getString("score");
-                result.add(user + ": " + score);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+            this.connection = DriverManager.getConnection(url, user, password);
+            System.out.println("Connection established");
+        }catch (Exception e){
             e.printStackTrace();
         }
+    }
 
+    /**
+     * @return connection
+     */
+    public Connection getConnection() {
+        return connection;
+    }
 
-        return result;
+    /**
+     * if the connection is active (not null) it will be closed
+     */
+    public void close() {
+        if (connection != null) {
+            try {
+                this.connection.close();
+                System.out.println("Connection closed");
+            } catch (SQLException e) {
+                System.out.println("Logout not successfull");
+            }
+        }
     }
 }

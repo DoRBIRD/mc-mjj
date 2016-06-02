@@ -29,6 +29,12 @@ public class Assets {
             playerStraightTexture,
             playerLeftTexture,
             playerRightTexture,
+            ringStraightTexture,
+            ringLeftTexture,
+            ringRightTexture,
+            shieldStraightTexture,
+            shieldLeftTexture,
+            shieldRightTexture,
             menuTexture,
             menuButtonTexture,
             menuTitleTexture,
@@ -61,6 +67,10 @@ public class Assets {
         assetManager.load("images/player.gif", Texture.class);
         assetManager.load("images/player-left.gif", Texture.class);
         assetManager.load("images/player-right.gif", Texture.class);
+        assetManager.load("images/Ring-top.gif", Texture.class);
+        assetManager.load("images/Ring-left.gif", Texture.class);
+        assetManager.load("images/Ring-right.gif", Texture.class);
+
         assetManager.load("menus/menu.png", Texture.class);
         assetManager.load("menus/menu_button.png", Texture.class);
         assetManager.load("menus/menu_title.png", Texture.class);
@@ -91,6 +101,14 @@ public class Assets {
         playerStraightTexture = assetManager.get("images/player.gif");
         playerLeftTexture = assetManager.get("images/player-left.gif");
         playerRightTexture = assetManager.get("images/player-right.gif");
+        ringStraightTexture = assetManager.get("images/Ring-top.gif");
+        ringLeftTexture = assetManager.get("images/Ring-left.gif");
+        ringRightTexture = assetManager.get("images/Ring-right.gif");
+
+        shieldStraightTexture = assetManager.get("images/player.gif");
+        shieldLeftTexture = assetManager.get("images/player-left.gif");
+        shieldRightTexture = assetManager.get("images/player-right.gif");
+
         menuTexture = assetManager.get("menus/menu.png");
         menuButtonTexture = assetManager.get("menus/menu_button.png");
         menuTitleTexture = assetManager.get("menus/menu_title.png");

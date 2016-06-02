@@ -46,8 +46,10 @@ public class MapManager {
     private String lastconnection;
     private TiledMap tiledMap;
     private Array<Rectangle> mapWaterHitBoxes;
-    private Array<Rectangle> mapIcebergHitBoxes;
+    private Array<RectTile> icebergTiles;
     private Array<RectTile> coinTiles;
+    private Array<RectTile> shieldTiles;
+    private Array<RectTile> ringTiles;
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
@@ -192,8 +194,10 @@ public class MapManager {
 
     private void createAllHitBoxArrays() {
         mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER, "-", "0,0,0,0");
-        mapIcebergHitBoxes = crateHitboxArray(OBSTACLES_LAYER, "-", "5,5,5,5");
+        icebergTiles = getMapTilesOfType(OBSTACLES_LAYER, ICEBERG_TERRAIN, "-");
         coinTiles = getMapTilesOfType(PICKUPS_LAYER, COIN_TERRAIN, "-");
+        shieldTiles = getMapTilesOfType(PICKUPS_LAYER, SHIELD_TERRAIN, "-");
+        ringTiles = getMapTilesOfType(PICKUPS_LAYER, RING_TERRAIN, "-");
     }
 
     /**
@@ -334,6 +338,16 @@ public class MapManager {
         return rectTiles;
     }
 
+
+    /**
+     * Checks for overlap with coin tiles
+     *
+     * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
+     * @return boolean      This returns true if there was a overlap with a coin
+     */
+    public boolean checkCollisionIcebergs(Rectangle playerHitbox) {
+        return checkCollisionWith(playerHitbox, icebergTiles, OBSTACLES_LAYER);
+    }
     /**
      * Checks for overlap with coin tiles
      *
@@ -341,14 +355,45 @@ public class MapManager {
      * @return boolean      This returns true if there was a overlap with a coin
      */
     public boolean checkCollisionCoins(Rectangle playerHitbox) {
-        for (RectTile rectTile : coinTiles) {
+        return checkCollisionWith(playerHitbox, coinTiles, PICKUPS_LAYER);
+    }
+
+    /**
+     * Checks for overlap with ring tiles
+     *
+     * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
+     * @return boolean      This returns true if there was a overlap with a coin
+     */
+    public boolean checkCollisionShields(Rectangle playerHitbox) {
+        return checkCollisionWith(playerHitbox, shieldTiles, PICKUPS_LAYER);
+    }
+
+    /**
+     * Checks for overlap with ring tiles
+     *
+     * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
+     * @return boolean      This returns true if there was a overlap with a coin
+     */
+    public boolean checkCollisionRings(Rectangle playerHitbox) {
+        return checkCollisionWith(playerHitbox, ringTiles, PICKUPS_LAYER);
+    }
+
+    /**
+     * Checks for overlap with tiles then clears the tiles
+     *
+     * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
+     * @param tiles         This are the tiles to test overlap with
+     * @param layername     This is the layer where the tiles are from
+     * @return boolean      This returns true if there was a overlap with a coin
+     */
+    private boolean checkCollisionWith(Rectangle playerHitbox, Array<RectTile> tiles, String layername) {
+        for (RectTile rectTile : tiles) {
             Rectangle rect = rectTile.getRect();
             if (rect.overlaps(playerHitbox)) {
-                TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(PICKUPS_LAYER);
+                TiledMapTileLayer mapLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layername);
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 mapLayer.setCell(rectTile.getPosX(), rectTile.getPosY(), cell);
-                System.out.println("Coin");
-                coinTiles.removeIndex(coinTiles.indexOf(rectTile, true));
+                tiles.removeIndex(tiles.indexOf(rectTile, true));
                 return true;
             }
         }
@@ -372,10 +417,6 @@ public class MapManager {
 
     public Array<Rectangle> getWaterHitBoxes() {
         return mapWaterHitBoxes;
-    }
-
-    public Array<Rectangle> getMapIcebergHitBoxes() {
-        return mapIcebergHitBoxes;
     }
 
     public TiledMapRenderer getTiledMapRenderer() {
