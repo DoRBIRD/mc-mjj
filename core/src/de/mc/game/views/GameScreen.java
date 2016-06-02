@@ -47,6 +47,7 @@ public class GameScreen extends CustomScreenAdapter {
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
 
+
     public GameScreen() {
         super();
 
@@ -138,27 +139,37 @@ public class GameScreen extends CustomScreenAdapter {
             updateScore();
 
             checkCollision();
+            player.updatePowerUpsTimer(delta);
         }
 
         updateCameraPosition();
         super.render(delta);
     }
 
+
     private void checkCollision() {
         for (Rectangle hb : mapManager.getWaterHitBoxes()) {
-            if (Intersector.overlaps(hb, player.getHitBox())) {
+            if (!player.hasRing() && Intersector.overlaps(hb, player.getHitBox())) {
                 gameOver();
                 return;
             }
         }
-        for (Rectangle hb : mapManager.getMapIcebergHitBoxes()) {
-            if (Intersector.overlaps(hb, player.getHitBox())) {
-                gameOver();
-                return;
-            }
+        if (mapManager.checkCollisionIcebergs(player.getHitBox()) && !player.hasShield()) {
+            gameOver();
+            return;
         }
+
         if (mapManager.checkCollisionCoins(player.getHitBox())) {
             collectedCoins++;
+            System.out.println("Coin");
+        }
+        if (mapManager.checkCollisionShields(player.getHitBox())) {
+            player.pickupShield();
+            System.out.println("Shield");
+        }
+        if (mapManager.checkCollisionRings(player.getHitBox())) {
+            player.pickupRing();
+            System.out.println("Rings");
         }
     }
 

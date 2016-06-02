@@ -13,6 +13,11 @@ public class Player extends Actor {
     private float hitBoxHeight;
     private Texture playerImage;
 
+    private float shieldDuration = 5;
+    private float shieldCurrentDuration = shieldDuration;
+    private float ringDuration = 5;
+    private float ringCurrentDuration = ringDuration;
+
     public Player() {
         super();
         hitBox = new Rectangle();
@@ -35,19 +40,51 @@ public class Player extends Actor {
     }
 
     public void updateImage(Direction dir) {
-        switch (dir) {
-            case LEFT:
-                playerImage = Assets.playerLeftTexture;
-                break;
-            case RIGHT:
-                playerImage = Assets.playerRightTexture;
-                break;
-            case STRAIGHT:
-                playerImage = Assets.playerStraightTexture;
-                break;
-            default:
-                playerImage = Assets.playerStraightTexture;
-                break;
+        if (hasRing()) {
+            switch (dir) {
+                case LEFT:
+                    playerImage = Assets.ringLeftTexture;
+                    break;
+                case RIGHT:
+                    playerImage = Assets.ringRightTexture;
+                    break;
+                case STRAIGHT:
+                    playerImage = Assets.ringStraightTexture;
+                    break;
+                default:
+                    playerImage = Assets.ringStraightTexture;
+                    break;
+            }
+        } else if (hasShield()) {
+            switch (dir) {
+                case LEFT:
+                    playerImage = Assets.playerLeftTexture;
+                    break;
+                case RIGHT:
+                    playerImage = Assets.playerRightTexture;
+                    break;
+                case STRAIGHT:
+                    playerImage = Assets.playerStraightTexture;
+                    break;
+                default:
+                    playerImage = Assets.playerStraightTexture;
+                    break;
+            }
+        } else {
+            switch (dir) {
+                case LEFT:
+                    playerImage = Assets.playerLeftTexture;
+                    break;
+                case RIGHT:
+                    playerImage = Assets.playerRightTexture;
+                    break;
+                case STRAIGHT:
+                    playerImage = Assets.playerStraightTexture;
+                    break;
+                default:
+                    playerImage = Assets.playerStraightTexture;
+                    break;
+            }
         }
     }
 
@@ -70,6 +107,29 @@ public class Player extends Actor {
         return hitBox;
     }
 
+    public boolean hasRing() {
+        if (ringCurrentDuration < ringDuration) return true;
+        return false;
+    }
+
+    public boolean hasShield() {
+        if (shieldCurrentDuration < shieldDuration) return true;
+        return false;
+    }
+
+    public void updatePowerUpsTimer(float delta) {
+        ringCurrentDuration += delta;
+        shieldCurrentDuration += delta;
+    }
+
+    public void pickupShield() {
+        shieldCurrentDuration = 0;
+
+    }
+
+    public void pickupRing() {
+        ringCurrentDuration = 0;
+    }
 
     public enum Direction {
         STRAIGHT, LEFT, RIGHT
