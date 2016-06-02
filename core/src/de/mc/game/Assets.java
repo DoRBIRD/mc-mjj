@@ -6,19 +6,24 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import de.mc.game.models.MapManager;
 
 public class Assets {
 
     public static AssetManager assetManager;
+
+    public static Skin defaultSkin;
 
     public static Texture
             playerStraightTexture,
@@ -32,13 +37,18 @@ public class Assets {
             menuButtonLargeTexture,
             menuTitleLargeTexture,
             menuTitleButtonLargeTexture,
-            swipeUpTexture;
+            swipeUpTexture,
+            backgroundLabelGreenTexture;
 
     public static TextButton.TextButtonStyle
             defaultTextButtonStyle,
             iconButtonStyle,
             blueButtonBackgroundStyle,
             menuCloseButtonStyle;
+
+    public static TextField.TextFieldStyle defaultTextFieldStyle;
+
+    public static Slider.SliderStyle defaultSliderStyle;
 
     public static BitmapFont
             FONT_AWESOME,
@@ -60,6 +70,7 @@ public class Assets {
         assetManager.load("menus/menu_title_large.png", Texture.class);
         assetManager.load("menus/menu_title_button_large.png", Texture.class);
         assetManager.load("images/swipe_up.png", Texture.class);
+        assetManager.load("images/background_label_green.png", Texture.class);
 
         MapManager.loadMaps();
 
@@ -89,6 +100,7 @@ public class Assets {
         menuTitleLargeTexture = assetManager.get("menus/menu_title_large.png");
         menuTitleButtonLargeTexture = assetManager.get("menus/menu_title_button_large.png");
         swipeUpTexture = assetManager.get("images/swipe_up.png");
+        backgroundLabelGreenTexture = assetManager.get("images/background_label_green.png");
     }
 
     private static void loadFonts() {
@@ -136,5 +148,22 @@ public class Assets {
         menuCloseButtonStyle.up = menuCloseButton.getDrawable("menu_close_button");
         menuCloseButtonStyle.over = menuCloseButton.getDrawable("menu_close_button_pressed");
         menuCloseButtonStyle.down = menuCloseButton.getDrawable("menu_close_button_pressed");
+
+        NinePatch backgroundLabelGreen = new NinePatch(backgroundLabelGreenTexture, 0, 0, 0, 0);
+        defaultSkin = new Skin();
+        defaultSkin.add("backgroundLabelGreen", backgroundLabelGreen);
+
+        Skin textField = new Skin(new TextureAtlas("textfield/default-text-field.pack"));
+        defaultTextFieldStyle = new TextField.TextFieldStyle();
+        defaultTextFieldStyle.background = textField.getDrawable("background_text_field");
+        defaultTextFieldStyle.cursor = textField.getDrawable("cursor");
+        defaultTextFieldStyle.selection = textField.getDrawable("text_field_selection");
+        defaultTextFieldStyle.font = Assets.TONDU_BETA;
+        defaultTextFieldStyle.fontColor = Color.WHITE;
+
+        Skin slider = new Skin(new TextureAtlas("slider/default-slider.pack"));
+        defaultSliderStyle = new Slider.SliderStyle();
+        defaultSliderStyle.background = slider.getDrawable("slider_background");
+        defaultSliderStyle.knob = slider.getDrawable("slider_knob");
     }
 }

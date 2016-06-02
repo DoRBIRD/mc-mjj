@@ -31,7 +31,7 @@ public class GameScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private final CustomTextButton pauseButton;
-    private Float traveledDistance = 0.0f;
+    private float traveledDistance = 0.0f;
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
@@ -294,7 +294,7 @@ public class GameScreen extends CustomScreenAdapter {
 
             @Override
             public boolean fling(float velocityX, float velocityY, int button) {
-                if ((state == State.GAME_PAUSED || state == State.GAME_READY) && velocityY <= -1500) {
+                if (state == State.GAME_READY && velocityY <= -1500) {
                     startGame();
                     return true;
                 }

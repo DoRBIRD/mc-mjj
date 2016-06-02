@@ -1,0 +1,26 @@
+
+default-text-field.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background_text_field
+  rotate: false
+  xy: 0, 1
+  size: 501, 138
+  orig: 501, 138
+  offset: 0, 0
+  index: -1
+text_field_selection
+  rotate: false
+  xy: 502, 1
+  size: 51, 138
+  orig: 51, 138
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 554, 9
+  size: 10, 130
+  orig: 10, 130
+  offset: 0, 0
+  index: -1

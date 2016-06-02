@@ -1,0 +1,19 @@
+
+default-slider.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+slider_background
+  rotate: false
+  xy: 0, 105
+  size: 501, 21
+  orig: 501, 21
+  offset: 0, 0
+  index: -1
+slider_knob
+  rotate: false
+  xy: 0, 1
+  size: 85, 102
+  orig: 85, 102
+  offset: 0, 0
+  index: -1

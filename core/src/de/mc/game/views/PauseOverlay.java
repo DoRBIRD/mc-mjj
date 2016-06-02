@@ -19,6 +19,7 @@ public class PauseOverlay {
     private GameScreen gameScreen;
     private Table table;
     private final Button btnClose;
+    private OptionsOverlay optionsOverlay;
 
     public PauseOverlay(GameScreen gs) {
         gameScreen = gs;
@@ -44,7 +45,7 @@ public class PauseOverlay {
         btnOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                optionsOverlay = new OptionsOverlay(gameScreen);
             }
         });
 
@@ -98,5 +99,7 @@ public class PauseOverlay {
     public void dispose() {
         table.remove();
         btnClose.remove();
+        if(optionsOverlay != null)
+            optionsOverlay.dispose();
     }
 }

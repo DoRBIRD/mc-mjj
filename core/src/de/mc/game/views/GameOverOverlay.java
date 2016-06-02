@@ -19,6 +19,7 @@ public class GameOverOverlay {
 
     private GameScreen gameScreen;
     private Table table;
+    private OptionsOverlay optionsOverlay;
 
     public GameOverOverlay(GameScreen gs, Float traveledDistance, int coins) {
         gameScreen = gs;
@@ -58,7 +59,7 @@ public class GameOverOverlay {
         btnOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                optionsOverlay = new OptionsOverlay(gameScreen);
             }
         });
 
@@ -103,5 +104,7 @@ public class GameOverOverlay {
 
     public void dispose() {
         table.remove();
+        if(optionsOverlay != null)
+            optionsOverlay.dispose();
     }
 }
