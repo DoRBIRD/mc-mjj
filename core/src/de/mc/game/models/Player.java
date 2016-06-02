@@ -16,8 +16,8 @@ public class Player extends Actor {
     public Player() {
         super();
         hitBox = new Rectangle();
-        hitBoxWidth = 214;
-        hitBoxHeight = 318;
+        hitBoxWidth = 150;
+        hitBoxHeight = 280;
         hitBox.width = hitBoxWidth;
         hitBox.height = hitBoxHeight;
 
