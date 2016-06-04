@@ -1,4 +1,4 @@
-package de.mc.game;
+package de.mc.game.utils;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapObject;

@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import de.mc.game.utils.AndroidOnlyInterface;
 import de.mc.game.views.GameScreen;
 import de.mc.game.views.MainMenuScreen;
 
@@ -19,6 +20,12 @@ public class McGame extends Game implements InputProcessor {
             gameScreen;
     public InputMultiplexer inputMultiplexer;
 
+    public static AndroidOnlyInterface AOI;
+
+    public McGame(AndroidOnlyInterface androidOnlyInterface){
+        AOI = androidOnlyInterface;
+    }
+
     public void create() {
         batch = new SpriteBatch();
 
@@ -26,7 +33,7 @@ public class McGame extends Game implements InputProcessor {
         Gdx.input.setInputProcessor(inputMultiplexer);
         Gdx.input.setCatchBackKey(true);
 
-        Assets.load();
+        de.mc.game.utils.Assets.load();
 
         mainMenuScreen = new MainMenuScreen();
         gameScreen = new GameScreen();

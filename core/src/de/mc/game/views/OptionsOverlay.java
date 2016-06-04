@@ -1,5 +1,7 @@
 package de.mc.game.views;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,15 +16,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import de.mc.game.Assets;
-import de.mc.game.Constants;
-import de.mc.game.CustomTextButton;
+import de.mc.game.McGame;
+import de.mc.game.utils.Assets;
+import de.mc.game.utils.Constants;
+import de.mc.game.utils.CustomTextButton;
 
 public class OptionsOverlay {
 
     private CustomScreenAdapter currentScreen;
     private Table table;
     final private Button btnClose;
+    private Preferences prefs;
 
     public OptionsOverlay(CustomScreenAdapter cS) {
         currentScreen = cS;
@@ -35,14 +39,18 @@ public class OptionsOverlay {
         final Label labelTitle = new Label(Constants.LANGUAGE_STRINGS.get("options"), labelStyle);
         labelTitle.setAlignment(Align.center);
 
-        final TextField textFieldName = new TextField(Constants.LANGUAGE_STRINGS.get("yourname"), Assets.defaultTextFieldStyle);
+        prefs = Gdx.app.getPreferences("gamePrefs");
+        final TextField textFieldName = new TextField(prefs.getString("username", Constants.LANGUAGE_STRINGS.get("yourname")), Assets.defaultTextFieldStyle);
         textFieldName.setAlignment(Align.center);
 
         final CustomTextButton btnSubmitName = new CustomTextButton("Speichern", Assets.blueButtonBackgroundStyle);
         btnSubmitName.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println(textFieldName.getText());
+                prefs.putString("username", textFieldName.getText());
+                prefs.flush();
+                McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("saved"));
+                Gdx.input.setOnscreenKeyboardVisible(false);
             }
         });
 

@@ -11,9 +11,9 @@ import com.badlogic.gdx.utils.Align;
 
 import java.text.DecimalFormat;
 
-import de.mc.game.Assets;
-import de.mc.game.Constants;
-import de.mc.game.CustomTextButton;
+import de.mc.game.utils.Assets;
+import de.mc.game.utils.Constants;
+import de.mc.game.utils.CustomTextButton;
 
 public class GameOverOverlay {
 

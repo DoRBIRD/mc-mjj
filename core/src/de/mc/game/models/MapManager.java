@@ -17,9 +17,9 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
-import de.mc.game.Assets;
-import de.mc.game.Constants;
-import de.mc.game.TextureMapObjectRenderer;
+import de.mc.game.utils.Assets;
+import de.mc.game.utils.Constants;
+import de.mc.game.utils.TextureMapObjectRenderer;
 
 /**
  * this manages the map and adds new blocks when nearing current end of the map

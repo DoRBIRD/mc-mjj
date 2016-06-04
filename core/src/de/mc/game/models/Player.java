@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import de.mc.game.Assets;
+import de.mc.game.utils.Assets;
 
 public class Player extends Actor {
     private Rectangle hitBox;

@@ -1,4 +1,4 @@
-package de.mc.game;
+package de.mc.game.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;

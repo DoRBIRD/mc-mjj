@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import de.mc.game.Constants;
+import de.mc.game.utils.Constants;
 import de.mc.game.McGame;
 
 public class CustomScreenAdapter extends ScreenAdapter {

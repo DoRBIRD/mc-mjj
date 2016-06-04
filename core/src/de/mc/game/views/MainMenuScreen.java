@@ -10,8 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
-import de.mc.game.Assets;
-import de.mc.game.Constants;
+import de.mc.game.utils.Assets;
+import de.mc.game.utils.Constants;
 
 public class MainMenuScreen extends CustomScreenAdapter {
 

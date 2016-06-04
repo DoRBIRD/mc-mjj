@@ -9,14 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mc.game.Assets;
-import de.mc.game.Constants;
-import de.mc.game.models.DatabaseConnection;
+import de.mc.game.utils.Assets;
+import de.mc.game.utils.Constants;
 import de.mc.game.models.HighscoreDAO;
 
 public class HighscoreOverlay {
