@@ -1,4 +1,4 @@
-package de.mc.game.models;
+package de.mc.game.models.Database;
 
 import com.badlogic.gdx.utils.Array;
 

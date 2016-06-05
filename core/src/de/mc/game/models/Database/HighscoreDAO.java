@@ -1,4 +1,4 @@
-package de.mc.game.models;
+package de.mc.game.models.Database;
 
 /**
  * Created by Jenni on 02.06.2016.
@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class HighscoreDAO {
 		 * set the connection and create the prepared Statements for the
 		 * Database access
 		 */
-        connection = new DatabaseConnection().getConnection();
+        connection = new de.mc.game.models.Database.DatabaseConnection().getConnection();
         createPreparedStatements();
     }
 

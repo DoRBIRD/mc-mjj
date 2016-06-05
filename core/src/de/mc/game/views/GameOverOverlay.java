@@ -1,5 +1,7 @@
 package de.mc.game.views;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -11,6 +13,7 @@ import com.badlogic.gdx.utils.Align;
 
 import java.text.DecimalFormat;
 
+import de.mc.game.models.Database.HighscoreDAO;
 import de.mc.game.utils.Assets;
 import de.mc.game.utils.Constants;
 import de.mc.game.utils.CustomTextButton;
@@ -20,6 +23,9 @@ public class GameOverOverlay {
     private GameScreen gameScreen;
     private Table table;
     private OptionsOverlay optionsOverlay;
+    private Preferences prefs;
+    //Database connection set for inserting the scores into database
+    private HighscoreDAO database = new HighscoreDAO();
 
     public GameOverOverlay(GameScreen gs, Float traveledDistance, int coins) {
         gameScreen = gs;
@@ -45,6 +51,10 @@ public class GameOverOverlay {
         final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + df.format(traveledDistance + coins * 10), labelStyle);
         labelTotalScore.setAlignment(Align.center);
         labelTotalScore.setFontScale(1.3f);
+        //set preferences
+        this.prefs = Gdx.app.getPreferences("gamePrefs");
+        //save score into database
+        this.database.InsertScore(this.prefs.getString("username"), traveledDistance + coins * 10);
 
         final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("highscores"), Assets.blueButtonBackgroundStyle);
         btnHighScore.addListener(new ClickListener() {
