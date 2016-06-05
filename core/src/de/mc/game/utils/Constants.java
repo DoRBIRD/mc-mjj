@@ -25,4 +25,9 @@ public final class Constants {
     public static final Skin SKIN = new Skin(Gdx.files.internal("skins/uiskin.json"));
 
     public static final I18NBundle LANGUAGE_STRINGS = I18NBundle.createBundle(Gdx.files.internal("strings/strings"), new Locale("de", "en"));
+
+    public static final String DEFAULT_PREFS = "gamePrefs";
+    public static final String PREFS_USERNAME = "username";
+    public static final String PREFS_SOUND_VOL = "soundVol";
+    public static final String PREFS_MUSIC_VOL = "musicVol";
 }

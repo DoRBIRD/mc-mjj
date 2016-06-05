@@ -10,12 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.List;
 
+import de.mc.game.models.Database.HighscoreDAO;
 import de.mc.game.utils.Assets;
 import de.mc.game.utils.Constants;
-import de.mc.game.models.Database.HighscoreDAO;
 
 public class HighscoreOverlay {
 
@@ -27,7 +27,7 @@ public class HighscoreOverlay {
     public HighscoreOverlay(GameScreen gs) {
         gameScreen = gs;
 
-        Image background = new Image(Assets.menuTitleButtonTexture);
+        Image background = new Image(Assets.menuTitleButtonLargeTexture);
         background.setWidth(background.getWidth() * Constants.SCALING);
         background.setHeight(background.getHeight() * Constants.SCALING);
 
@@ -37,13 +37,6 @@ public class HighscoreOverlay {
 
         labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
 
-        ArrayList<Label> labels = new ArrayList<Label>();
-        for (String score : getScores()) {
-            final Label label = new Label(score, labelStyle);
-            label.setAlignment(Align.center);
-            label.setFontScale(1.2f);
-            labels.add(label);
-        }
 
 
         table = new Table();
@@ -52,18 +45,29 @@ public class HighscoreOverlay {
         table.setHeight(background.getHeight());
         table.setPosition(Constants.WIDTH / 2 - table.getWidth() / 2, Constants.HEIGHT / 2 - table.getHeight() / 2);
         table.defaults()
-                .minWidth(Value.percentWidth(1.2f))
+                .prefHeight(Value.percentHeight(1.1f))
                 .prefWidth(table.getWidth() * 0.5f)
-                .minHeight(Value.minHeight)
-                .prefHeight(Value.percentHeight(1.2f));
-        table.add(labelTitle).padBottom(50);
+                .minHeight(Value.minHeight);
+        table.add(labelTitle)
+                .padBottom(100)
+                .colspan(2);
 
-        for (Label label : labels) {
+        for (String score : getScores()) {
+            DecimalFormat df = new DecimalFormat("#.#");
+            String[] splittedScore = score.split(": ");
+            final Label nameLabel = new Label(splittedScore[0], labelStyle);
+            nameLabel.setAlignment(Align.right);
+            final Label scoreLabel = new Label(df.format(Float.parseFloat(splittedScore[1])), labelStyle);
             table.row();
-            table.add(label);
+            table.add(nameLabel)
+                    .prefWidth(table.getWidth() * 0.4f)
+                    .maxWidth(table.getWidth() * 0.4f);
+            table.add(scoreLabel)
+                    .prefWidth(table.getWidth() * 0.3f)
+                    .padLeft(100);
         }
 
-        table.padBottom(50);
+        table.padBottom(65);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());

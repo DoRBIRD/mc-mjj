@@ -34,7 +34,7 @@ public class HighscoreDAO {
 
     private void createPreparedStatements(){
         //Set SQL Querys
-        this.sqlGetScores = "SELECT score, user FROM Highscore ORDER BY score desc LIMIT 5;";
+        this.sqlGetScores = "SELECT score, user FROM Highscore ORDER BY score desc LIMIT 10;";
         this.sqlInsertScore = "INSERT INTO Highscore (score, user) values (?,?);";
         try{
            this.getScores = this.connection.prepareStatement(this.sqlGetScores);
@@ -56,7 +56,7 @@ public class HighscoreDAO {
             rs = this.getScores.executeQuery();
             while(rs.next()){
                 //get the results from the resultset
-                score = "" + rs.getInt(1);
+                score = "" + rs.getFloat(1);
                 user = rs.getString(2);
                 scores.add(user + ": " + score);
             }

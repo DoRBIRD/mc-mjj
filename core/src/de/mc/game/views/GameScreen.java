@@ -195,7 +195,7 @@ public class GameScreen extends CustomScreenAdapter {
             player.updateImage(Player.Direction.STRAIGHT);
         }
         mcGame.batch.begin();
-        player.draw(mcGame.batch, 0);
+        player.draw(mcGame.batch, state);
         mcGame.batch.end();
     }
 

@@ -1,10 +1,12 @@
 package de.mc.game.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -23,14 +25,12 @@ import de.mc.game.utils.CustomTextButton;
 
 public class OptionsOverlay {
 
-    private CustomScreenAdapter currentScreen;
     private Table table;
-    final private Button btnClose;
+    private final Button btnClose;
+    private final TextField textFieldName;
     private Preferences prefs;
 
-    public OptionsOverlay(CustomScreenAdapter cS) {
-        currentScreen = cS;
-
+    public OptionsOverlay(CustomScreenAdapter currentScreen) {
         Image background = new Image(Assets.menuTitleButtonLargeTexture);
         background.setWidth(background.getWidth() * Constants.SCALING);
         background.setHeight(background.getHeight() * Constants.SCALING);
@@ -39,18 +39,25 @@ public class OptionsOverlay {
         final Label labelTitle = new Label(Constants.LANGUAGE_STRINGS.get("options"), labelStyle);
         labelTitle.setAlignment(Align.center);
 
-        prefs = Gdx.app.getPreferences("gamePrefs");
-        final TextField textFieldName = new TextField(prefs.getString("username", Constants.LANGUAGE_STRINGS.get("yourname")), Assets.defaultTextFieldStyle);
+        prefs = Gdx.app.getPreferences(Constants.DEFAULT_PREFS);
+        textFieldName = new TextField(prefs.getString(Constants.PREFS_USERNAME, Constants.LANGUAGE_STRINGS.get("yourname")), Assets.defaultTextFieldStyle);
         textFieldName.setAlignment(Align.center);
+
+        textFieldName.addListener(new InputListener(){
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if(keycode == Input.Keys.ENTER) {
+                    submitUsername();
+                }
+                return true;
+            }
+        });
 
         final CustomTextButton btnSubmitName = new CustomTextButton("Speichern", Assets.blueButtonBackgroundStyle);
         btnSubmitName.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                prefs.putString("username", textFieldName.getText());
-                prefs.flush();
-                McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("saved"));
-                Gdx.input.setOnscreenKeyboardVisible(false);
+                submitUsername();
             }
         });
 
@@ -60,12 +67,22 @@ public class OptionsOverlay {
         labelSound.setAlignment(Align.center);
 
         final Slider sliderSound = new Slider(0, 100, 10, false, Assets.defaultSliderStyle);
+        sliderSound.setValue(prefs.getFloat(Constants.PREFS_SOUND_VOL));
+        sliderSound.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                prefs.putFloat(Constants.PREFS_SOUND_VOL, sliderSound.getValue());
+                prefs.flush();
+            }
+        });
 
         final Slider sliderMusic = new Slider(0, 100, 10, false, Assets.defaultSliderStyle);
+        sliderMusic.setValue(prefs.getFloat(Constants.PREFS_MUSIC_VOL));
         sliderMusic.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println(sliderMusic.getValue());
+                prefs.putFloat(Constants.PREFS_MUSIC_VOL, sliderMusic.getValue());
+                prefs.flush();
             }
         });
 
@@ -90,18 +107,23 @@ public class OptionsOverlay {
         table.row();
         table.add(textFieldName).colspan(2).height(Value.percentHeight(1.35f));
         table.row();
-        table.add(btnSubmitName).colspan(2).height(Value.percentHeight(1.35f)).padBottom(120);
+        table.add(btnSubmitName).colspan(2).height(Value.percentHeight(1.35f)).padBottom(130);
         table.row();
-        table.add(labelSound).prefWidth(table.getWidth() * 0.35f).padRight(30);
-        table.add(sliderSound).prefWidth(table.getWidth() * 0.45f);
+        table.add(labelSound)
+                .prefWidth(table.getWidth() * 0.35f)
+                .padRight(30)
+                .padBottom(50);
+        table.add(sliderSound)
+                .prefWidth(table.getWidth() * 0.45f)
+                .padBottom(50);
         table.row();
-        table.add(labelMusic).prefWidth(table.getWidth() * 0.35f).padRight(30).padBottom(400);
-        table.add(sliderMusic).prefWidth(table.getWidth() * 0.45f).padBottom(400);
+        table.add(labelMusic).prefWidth(table.getWidth() * 0.35f).padRight(30).padBottom(340);
+        table.add(sliderMusic).prefWidth(table.getWidth() * 0.45f).padBottom(340);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());
         btnClose.setHeight(btnClose.getHeight());
-        btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY() + btnClose.getHeight() * 0.3f);
+        btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
         final OptionsOverlay optionsOverlay = this;
         btnClose.addListener(new ClickListener() {
             @Override
@@ -112,6 +134,13 @@ public class OptionsOverlay {
 
         currentScreen.stage.addActor(table);
         currentScreen.stage.addActor(btnClose);
+    }
+
+    private void submitUsername() {
+        prefs.putString(Constants.PREFS_USERNAME, textFieldName.getText());
+        prefs.flush();
+        McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("saved"));
+        Gdx.input.setOnscreenKeyboardVisible(false);
     }
 
     public void dispose() {

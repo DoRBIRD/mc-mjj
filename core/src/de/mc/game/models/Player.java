@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import de.mc.game.utils.Assets;
+import de.mc.game.views.GameScreen;
 
 public class Player extends Actor {
     private Rectangle hitBox;
@@ -109,13 +110,14 @@ public class Player extends Actor {
         playerImage = newTexture;
     }
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
-        particleEffect.update(Gdx.graphics.getDeltaTime());
-        particleEffect.draw(batch);
-        if (particleEffect.isComplete())
-            particleEffect.reset();
+    public void draw(Batch batch, GameScreen.State gameState) {
+        if(gameState == GameScreen.State.GAME_RUNNING) {
+            particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
+            particleEffect.update(Gdx.graphics.getDeltaTime());
+            particleEffect.draw(batch);
+            if (particleEffect.isComplete())
+                particleEffect.reset();
+        }
         if (Assets.assetManager.update() && playerImage != null) {
             batch.draw(playerImage, hitBox.x, hitBox.y);
         }

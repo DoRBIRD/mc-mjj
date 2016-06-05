@@ -46,20 +46,19 @@ public class GameOverOverlay {
         labelStarScore.setAlignment(Align.center);
         labelStarScore.setFontScale(1.2f);
 
-        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + df.format(this.calculateHighscore(traveledDistance, coins)), labelStyle);
+        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + this.calculateHighscore(traveledDistance, coins), labelStyle);
         labelTotalScore.setAlignment(Align.center);
         labelTotalScore.setFontScale(1.3f);
         // Get preferences
-        Preferences prefs = Gdx.app.getPreferences("gamePrefs");
+        Preferences prefs = Gdx.app.getPreferences(Constants.DEFAULT_PREFS);
         // Save score into database
-        new HighscoreDAO().InsertScore(prefs.getString("username", "Unknown user"), this.calculateHighscore(traveledDistance, coins));
+        new HighscoreDAO().InsertScore(prefs.getString(Constants.PREFS_USERNAME, "Unknown user"), this.calculateHighscore(traveledDistance, coins));
 
         final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("highscores"), Assets.blueButtonBackgroundStyle);
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 highscoreOverlay = new HighscoreOverlay(gameScreen);
-                dispose();
             }
         });
 
@@ -76,7 +75,6 @@ public class GameOverOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameScreen.setReady();
-                dispose();
             }
         });
 
@@ -111,7 +109,8 @@ public class GameOverOverlay {
     }
 
     private float calculateHighscore(float traveledDistance, int coins) {
-        return traveledDistance + coins * 10;
+        DecimalFormat df = new DecimalFormat("#.#");
+        return Float.parseFloat(df.format(traveledDistance + coins * 10));
     }
 
     public void dispose() {
