@@ -41,8 +41,8 @@ public class MainMenuScreen extends CustomScreenAdapter {
 
         stage.addActor(table);
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1.5f)));
-        stage.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons){
+        stage.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int buttons) {
                 mcGame.setScreen(mcGame.gameScreen);
                 return true;
             }

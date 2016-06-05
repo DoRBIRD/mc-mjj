@@ -1,7 +1,5 @@
 package de.mc.game.models.Database;
 
-import com.badlogic.gdx.utils.Array;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,17 +9,17 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
     //Needed information for the database access
-    private String url = "jdbc:mysql://dorbird.de:3306/mc-game", user = "mcgame", password ="mcgame";
+    private String url = "jdbc:mysql://dorbird.de:3306/mc-game", user = "mcgame", password = "mcgame";
     //Connection objekt
     private Connection connection = null;
 
-    public DatabaseConnection(){
+    public DatabaseConnection() {
         try {
             //connecting to database
             Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(url, user, password);
             System.out.println("Connection established");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
