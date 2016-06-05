@@ -14,15 +14,14 @@ import de.mc.game.views.MainMenuScreen;
 
 public class McGame extends Game implements InputProcessor {
 
+    public static AndroidOnlyInterface AOI;
     public SpriteBatch batch;
     public Screen
             mainMenuScreen,
             gameScreen;
     public InputMultiplexer inputMultiplexer;
 
-    public static AndroidOnlyInterface AOI;
-
-    public McGame(AndroidOnlyInterface androidOnlyInterface){
+    public McGame(AndroidOnlyInterface androidOnlyInterface) {
         AOI = androidOnlyInterface;
     }
 
