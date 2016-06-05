@@ -1,7 +1,9 @@
 package de.mc.game.models;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -12,11 +14,15 @@ public class Player extends Actor {
     private float hitBoxWidth;
     private float hitBoxHeight;
     private Texture playerImage;
+    private Texture ringImage;
+    private Texture shieldImage;
 
     private float shieldDuration = 5;
     private float shieldCurrentDuration = shieldDuration;
     private float ringDuration = 5;
     private float ringCurrentDuration = ringDuration;
+
+    private ParticleEffect particleEffect;
 
     public Player() {
         super();
@@ -30,6 +36,12 @@ public class Player extends Actor {
 
         hitBox.x = getX() - hitBoxWidth / 2;
         hitBox.y = getY() - hitBoxHeight / 2;
+
+
+        particleEffect = new ParticleEffect();
+        particleEffect.load(Gdx.files.internal("particles/snow.particle"), Gdx.files.internal("particles"));
+        particleEffect.getEmitters().first().setPosition(getX(), getY());
+        particleEffect.start();
     }
 
     @Override
@@ -43,49 +55,50 @@ public class Player extends Actor {
         if (hasRing()) {
             switch (dir) {
                 case LEFT:
-                    playerImage = Assets.ringLeftTexture;
+                    ringImage = Assets.ringLeftTexture;
                     break;
                 case RIGHT:
-                    playerImage = Assets.ringRightTexture;
+                    ringImage = Assets.ringRightTexture;
                     break;
                 case STRAIGHT:
-                    playerImage = Assets.ringStraightTexture;
+                    ringImage = Assets.ringStraightTexture;
                     break;
                 default:
-                    playerImage = Assets.ringStraightTexture;
-                    break;
-            }
-        } else if (hasShield()) {
-            switch (dir) {
-                case LEFT:
-                    playerImage = Assets.playerLeftTexture;
-                    break;
-                case RIGHT:
-                    playerImage = Assets.playerRightTexture;
-                    break;
-                case STRAIGHT:
-                    playerImage = Assets.playerStraightTexture;
-                    break;
-                default:
-                    playerImage = Assets.playerStraightTexture;
-                    break;
-            }
-        } else {
-            switch (dir) {
-                case LEFT:
-                    playerImage = Assets.playerLeftTexture;
-                    break;
-                case RIGHT:
-                    playerImage = Assets.playerRightTexture;
-                    break;
-                case STRAIGHT:
-                    playerImage = Assets.playerStraightTexture;
-                    break;
-                default:
-                    playerImage = Assets.playerStraightTexture;
+                    ringImage = Assets.ringStraightTexture;
                     break;
             }
         }
+        if (hasShield()) {
+            switch (dir) {
+                case LEFT:
+                    shieldImage = Assets.shieldLeftTexture;
+                    break;
+                case RIGHT:
+                    shieldImage = Assets.shieldRightTexture;
+                    break;
+                case STRAIGHT:
+                    shieldImage = Assets.shieldStraightTexture;
+                    break;
+                default:
+                    shieldImage = Assets.shieldStraightTexture;
+                    break;
+            }
+        }
+        switch (dir) {
+            case LEFT:
+                playerImage = Assets.playerLeftTexture;
+                break;
+            case RIGHT:
+                playerImage = Assets.playerRightTexture;
+                break;
+            case STRAIGHT:
+                playerImage = Assets.playerStraightTexture;
+                break;
+            default:
+                playerImage = Assets.playerStraightTexture;
+                break;
+        }
+
     }
 
     public Texture getImage() {
@@ -98,8 +111,19 @@ public class Player extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
+        particleEffect.update(Gdx.graphics.getDeltaTime());
+        particleEffect.draw(batch);
+        if (particleEffect.isComplete())
+            particleEffect.reset();
         if (Assets.assetManager.update() && playerImage != null) {
             batch.draw(playerImage, hitBox.x, hitBox.y);
+        }
+        if (Assets.assetManager.update() && ringImage != null && hasRing()) {
+            batch.draw(ringImage, hitBox.x, hitBox.y);
+        }
+        if (Assets.assetManager.update() && shieldImage != null && hasShield()) {
+            batch.draw(shieldImage, hitBox.x, hitBox.y);
         }
     }
 
@@ -108,13 +132,11 @@ public class Player extends Actor {
     }
 
     public boolean hasRing() {
-        if (ringCurrentDuration < ringDuration) return true;
-        return false;
+        return ringCurrentDuration < ringDuration;
     }
 
     public boolean hasShield() {
-        if (shieldCurrentDuration < shieldDuration) return true;
-        return false;
+        return shieldCurrentDuration < shieldDuration;
     }
 
     public void updatePowerUpsTimer(float delta) {
