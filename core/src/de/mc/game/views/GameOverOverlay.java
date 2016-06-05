@@ -23,11 +23,9 @@ public class GameOverOverlay {
     private GameScreen gameScreen;
     private Table table;
     private OptionsOverlay optionsOverlay;
-    private Preferences prefs;
-    //Database connection set for inserting the scores into database
-    private HighscoreDAO database = new HighscoreDAO();
+    private HighscoreOverlay highscoreOverlay;
 
-    public GameOverOverlay(GameScreen gs, Float traveledDistance, int coins) {
+    public GameOverOverlay(GameScreen gs, float traveledDistance, int coins) {
         gameScreen = gs;
 
         Image background = new Image(Assets.menuTitleLargeTexture);
@@ -48,19 +46,19 @@ public class GameOverOverlay {
         labelStarScore.setAlignment(Align.center);
         labelStarScore.setFontScale(1.2f);
 
-        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + df.format(traveledDistance + coins * 10), labelStyle);
+        final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + df.format(this.calculateHighscore(traveledDistance, coins)), labelStyle);
         labelTotalScore.setAlignment(Align.center);
         labelTotalScore.setFontScale(1.3f);
-        //set preferences
-        this.prefs = Gdx.app.getPreferences("gamePrefs");
-        //save score into database
-        this.database.InsertScore(this.prefs.getString("username"), traveledDistance + coins * 10);
+        // Get preferences
+        Preferences prefs = Gdx.app.getPreferences("gamePrefs");
+        // Save score into database
+        new HighscoreDAO().InsertScore(prefs.getString("username", "Unknown user"), this.calculateHighscore(traveledDistance, coins));
 
         final CustomTextButton btnHighScore = new CustomTextButton(Constants.LANGUAGE_STRINGS.get("highscores"), Assets.blueButtonBackgroundStyle);
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setHighscoreOverlay( new HighscoreOverlay(gameScreen));
+                highscoreOverlay = new HighscoreOverlay(gameScreen);
                 dispose();
             }
         });
@@ -112,9 +110,15 @@ public class GameOverOverlay {
         gameScreen.stage.addActor(table);
     }
 
+    private float calculateHighscore(float traveledDistance, int coins) {
+        return traveledDistance + coins * 10;
+    }
+
     public void dispose() {
         table.remove();
         if(optionsOverlay != null)
             optionsOverlay.dispose();
+        if(highscoreOverlay != null)
+            highscoreOverlay.dispose();
     }
 }

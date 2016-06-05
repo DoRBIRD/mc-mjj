@@ -35,12 +35,10 @@ public class GameScreen extends CustomScreenAdapter {
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
-    private HighscoreOverlay highscoreOverlay;
     private Player player;
     private State state;
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
-    private TextureMapObjectRenderer objectRenderer;
     private Label labelScore;
     private Table swipeTable;
     private float
@@ -99,10 +97,6 @@ public class GameScreen extends CustomScreenAdapter {
         setReady();
     }
 
-    public void setHighscoreOverlay(HighscoreOverlay highscoreOverlay) {
-        this.highscoreOverlay = highscoreOverlay;
-    }
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(119f / 255f, 202f / 255f, 228f / 255f, 1);
@@ -110,7 +104,7 @@ public class GameScreen extends CustomScreenAdapter {
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
-        objectRenderer = mapManager.getObjectRenderer();
+        TextureMapObjectRenderer objectRenderer = mapManager.getObjectRenderer();
         objectRenderer.setView(camera);
         objectRenderer.render();
 
@@ -335,7 +329,7 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     //Changes from game to main menu and sets the game state to GAME_OVER
-    public void changeToMainManu() {
+    public void changeToMainMenu() {
         mcGame.setScreen(mcGame.mainMenuScreen);
         gameOver();
     }

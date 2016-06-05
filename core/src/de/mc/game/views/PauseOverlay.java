@@ -20,6 +20,7 @@ public class PauseOverlay {
     private Table table;
     private final Button btnClose;
     private OptionsOverlay optionsOverlay;
+    private HighscoreOverlay highscoreOverlay;
 
     public PauseOverlay(GameScreen gs) {
         gameScreen = gs;
@@ -36,8 +37,7 @@ public class PauseOverlay {
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setHighscoreOverlay( new HighscoreOverlay(gameScreen));
-                dispose();
+                highscoreOverlay = new HighscoreOverlay(gameScreen);
             }
         });
 
@@ -55,7 +55,7 @@ public class PauseOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //Changes from game to main menu
-                gameScreen.changeToMainManu();
+                gameScreen.changeToMainMenu();
                 dispose();
             }
         });
@@ -101,5 +101,7 @@ public class PauseOverlay {
         btnClose.remove();
         if(optionsOverlay != null)
             optionsOverlay.dispose();
+        if(highscoreOverlay != null)
+            highscoreOverlay.dispose();
     }
 }

@@ -35,9 +35,7 @@ public class HighscoreOverlay {
         final Label labelTitle = new Label("Highscore", labelStyle);
         labelTitle.setAlignment(Align.center);
 
-
         labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
-
 
         ArrayList<Label> labels = new ArrayList<Label>();
         for (String score : getScores()) {
@@ -71,12 +69,11 @@ public class HighscoreOverlay {
         btnClose.setWidth(btnClose.getWidth());
         btnClose.setHeight(btnClose.getHeight());
         btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
-        final HighscoreOverlay pauseOverlay = this;
+        final HighscoreOverlay highscoreOverlay = this;
         btnClose.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setReady();
-                pauseOverlay.dispose();
+                highscoreOverlay.dispose();
             }
         });
 
@@ -85,7 +82,6 @@ public class HighscoreOverlay {
     }
 
     private List<String> getScores() {
-        //String[] scores = {"Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000", "Jonas: 1000"};
         return this.dbScores.getScores();
     }
 
