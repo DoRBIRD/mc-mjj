@@ -13,9 +13,9 @@ import com.badlogic.gdx.utils.Align;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mc.game.models.Database.HighscoreDAO;
 import de.mc.game.utils.Assets;
 import de.mc.game.utils.Constants;
-import de.mc.game.models.Database.HighscoreDAO;
 
 public class HighscoreOverlay {
 

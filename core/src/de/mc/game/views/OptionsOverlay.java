@@ -23,9 +23,9 @@ import de.mc.game.utils.CustomTextButton;
 
 public class OptionsOverlay {
 
+    final private Button btnClose;
     private CustomScreenAdapter currentScreen;
     private Table table;
-    final private Button btnClose;
     private Preferences prefs;
 
     public OptionsOverlay(CustomScreenAdapter cS) {

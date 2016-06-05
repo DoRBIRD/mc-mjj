@@ -18,12 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.text.DecimalFormat;
 
+import de.mc.game.models.MapManager;
+import de.mc.game.models.Player;
 import de.mc.game.utils.Assets;
 import de.mc.game.utils.Constants;
 import de.mc.game.utils.CustomTextButton;
 import de.mc.game.utils.TextureMapObjectRenderer;
-import de.mc.game.models.MapManager;
-import de.mc.game.models.Player;
 
 public class GameScreen extends CustomScreenAdapter {
 

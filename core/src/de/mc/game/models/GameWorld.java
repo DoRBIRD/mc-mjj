@@ -8,10 +8,11 @@ public class GameWorld extends ApplicationAdapter {
 
     final McGame mcGame;
 
-    public GameWorld(final McGame g){
+    public GameWorld(final McGame g) {
         mcGame = g;
     }
 
-    public void dispose(){}
+    public void dispose() {
+    }
 
 }

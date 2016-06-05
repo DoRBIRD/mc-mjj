@@ -16,9 +16,9 @@ import de.mc.game.utils.CustomTextButton;
 
 public class PauseOverlay {
 
+    private final Button btnClose;
     private GameScreen gameScreen;
     private Table table;
-    private final Button btnClose;
     private OptionsOverlay optionsOverlay;
     private HighscoreOverlay highscoreOverlay;
 
@@ -99,9 +99,9 @@ public class PauseOverlay {
     public void dispose() {
         table.remove();
         btnClose.remove();
-        if(optionsOverlay != null)
+        if (optionsOverlay != null)
             optionsOverlay.dispose();
-        if(highscoreOverlay != null)
+        if (highscoreOverlay != null)
             highscoreOverlay.dispose();
     }
 }

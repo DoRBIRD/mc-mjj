@@ -92,7 +92,7 @@ public class Assets {
 
         assetManager.finishLoading();
 
-        if(assetManager.update()) {
+        if (assetManager.update()) {
             init();
         }
 

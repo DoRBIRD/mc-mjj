@@ -348,6 +348,7 @@ public class MapManager {
     public boolean checkCollisionIcebergs(Rectangle playerHitbox) {
         return checkCollisionWith(playerHitbox, icebergTiles, OBSTACLES_LAYER);
     }
+
     /**
      * Checks for overlap with coin tiles
      *
@@ -382,8 +383,8 @@ public class MapManager {
      * Checks for overlap with tiles then clears the tiles
      *
      * @param playerHitbox This is the players hitboxes, used to check for overlaps with coins hitboxes
-     * @param tiles         This are the tiles to test overlap with
-     * @param layername     This is the layer where the tiles are from
+     * @param tiles        This are the tiles to test overlap with
+     * @param layername    This is the layer where the tiles are from
      * @return boolean      This returns true if there was a overlap with a coin
      */
     private boolean checkCollisionWith(Rectangle playerHitbox, Array<RectTile> tiles, String layername) {

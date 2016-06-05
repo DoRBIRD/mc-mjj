@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import de.mc.game.utils.Constants;
 import de.mc.game.McGame;
+import de.mc.game.utils.Constants;
 
 public class CustomScreenAdapter extends ScreenAdapter {
 
@@ -15,7 +15,7 @@ public class CustomScreenAdapter extends ScreenAdapter {
     protected Stage stage;
     protected OrthographicCamera camera;
 
-    public CustomScreenAdapter () {
+    public CustomScreenAdapter() {
         mcGame = (McGame) Gdx.app.getApplicationListener();
 
         stage = new Stage(new FitViewport(Constants.WIDTH, Constants.HEIGHT));

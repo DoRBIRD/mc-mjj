@@ -116,9 +116,9 @@ public class GameOverOverlay {
 
     public void dispose() {
         table.remove();
-        if(optionsOverlay != null)
+        if (optionsOverlay != null)
             optionsOverlay.dispose();
-        if(highscoreOverlay != null)
+        if (highscoreOverlay != null)
             highscoreOverlay.dispose();
     }
 }
