@@ -32,6 +32,7 @@ public class GameScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private final CustomTextButton pauseButton;
+    private final ProgressBar progressBar;
     private float traveledDistance = 0.0f;
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
@@ -45,7 +46,6 @@ public class GameScreen extends CustomScreenAdapter {
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
-    private final ProgressBar progressBar;
 
     public GameScreen() {
         super();
@@ -85,7 +85,7 @@ public class GameScreen extends CustomScreenAdapter {
         player = new Player();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
-        progressBar = new ProgressBar(0, player.ringDuration, 1, false, Assets.defaultProgressBarStyle);
+        progressBar = new ProgressBar(0, player.getRingDuration(), 1, false, Assets.defaultProgressBarStyle);
         progressBar.setWidth(Constants.WIDTH - 100);
         progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
 
@@ -139,8 +139,8 @@ public class GameScreen extends CustomScreenAdapter {
             checkCollision();
             player.updatePowerUpsTimer(delta);
             if(player.hasRing()) {
-                Gdx.app.log("ringduration", player.ringCurrentDuration + "");
-                progressBar.setValue(player.ringCurrentDuration < progressBar.getMaxValue() ? player.ringCurrentDuration : progressBar.getMaxValue());
+                //Gdx.app.log("ringduration", player.ringCurrentDuration + "");
+                progressBar.setValue(player.getRingCurrentDuration() < progressBar.getMaxValue() ? player.getRingCurrentDuration() : progressBar.getMaxValue());
             }
         }
 
