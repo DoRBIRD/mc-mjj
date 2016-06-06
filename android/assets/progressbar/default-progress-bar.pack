@@ -1,0 +1,26 @@
+
+default-progress-bar.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+progressbar_background
+  rotate: false
+  xy: 1, 87
+  size: 1001, 41
+  orig: 1001, 41
+  offset: 0, 0
+  index: -1
+progressbar_knob_before_blue
+  rotate: false
+  xy: 1, 44
+  size: 1001, 41
+  orig: 1001, 41
+  offset: 0, 0
+  index: -1
+progressbar_knob_before_red
+  rotate: false
+  xy: 1, 1
+  size: 1001, 41
+  orig: 1001, 41
+  offset: 0, 0
+  index: -1

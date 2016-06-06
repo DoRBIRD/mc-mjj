@@ -20,8 +20,8 @@ public class Player extends Actor {
 
     private float shieldDuration = 5;
     private float shieldCurrentDuration = shieldDuration;
-    private float ringDuration = 5;
-    private float ringCurrentDuration = ringDuration;
+    public float ringDuration = 5;
+    public float ringCurrentDuration = ringDuration;
 
     private ParticleEffect particleEffect;
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -44,7 +45,7 @@ public class GameScreen extends CustomScreenAdapter {
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
-
+    private final ProgressBar progressBar;
 
     public GameScreen() {
         super();
@@ -84,10 +85,13 @@ public class GameScreen extends CustomScreenAdapter {
         player = new Player();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
-        stage.addActor(labelScore);
-        //stage.addActor(player);
-        //stage.addActor(swipeTable);
+        progressBar = new ProgressBar(0, player.ringDuration, 1, false, Assets.defaultProgressBarStyle);
+        progressBar.setWidth(Constants.WIDTH - 100);
+        progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
 
+        stage.addActor(labelScore);
+        stage.addActor(progressBar);
+        //stage.addActor(player);
 
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
@@ -134,6 +138,10 @@ public class GameScreen extends CustomScreenAdapter {
 
             checkCollision();
             player.updatePowerUpsTimer(delta);
+            if(player.hasRing()) {
+                Gdx.app.log("ringduration", player.ringCurrentDuration + "");
+                progressBar.setValue(player.ringCurrentDuration < progressBar.getMaxValue() ? player.ringCurrentDuration : progressBar.getMaxValue());
+            }
         }
 
         updateCameraPosition();

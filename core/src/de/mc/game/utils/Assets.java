@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -55,6 +56,8 @@ public class Assets {
     public static TextField.TextFieldStyle defaultTextFieldStyle;
 
     public static Slider.SliderStyle defaultSliderStyle;
+
+    public static ProgressBar.ProgressBarStyle defaultProgressBarStyle;
 
     public static BitmapFont
             FONT_AWESOME,
@@ -187,5 +190,10 @@ public class Assets {
         defaultSliderStyle = new Slider.SliderStyle();
         defaultSliderStyle.background = slider.getDrawable("slider_background");
         defaultSliderStyle.knob = slider.getDrawable("slider_knob");
+
+        Skin progressBar = new Skin(new TextureAtlas("progressbar/default-progress-bar.pack"));
+        defaultProgressBarStyle = new ProgressBar.ProgressBarStyle();
+        defaultProgressBarStyle.background = progressBar.getDrawable("progressbar_background");
+        defaultProgressBarStyle.knobBefore = progressBar.getDrawable("progressbar_knob_before_red");
     }
 }
