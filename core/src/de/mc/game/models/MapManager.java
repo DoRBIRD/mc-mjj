@@ -88,7 +88,6 @@ public class MapManager {
         for (String mbp : mappaths) {
             Assets.assetManager.load(folder + mbp + sub, TiledMap.class);
         }
-        Assets.assetManager.load("maps/tutorial.tmx", TiledMap.class);
     }
 
     /**
@@ -154,13 +153,13 @@ public class MapManager {
     public void resetMap() {
         if (isTutorial) {
             tiledMap = null;
+            Assets.assetManager.load("maps/tutorial.tmx", TiledMap.class);
+            Assets.assetManager.finishLoading();
             tiledMap = Assets.assetManager.get("maps/tutorial.tmx", TiledMap.class);
-            System.out.println("isTutorial loading tut map");
         } else {
             tiledMap = null;
             tiledMap = blocks.get(0).get(0).getMap();
             lastconnection = "A";
-            System.out.println("is  not Tutorial loading normal map");
         }
         updateHitboxesAndRenderer();
     }

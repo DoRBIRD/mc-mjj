@@ -51,7 +51,7 @@ public class TutorialScreen extends CustomScreenAdapter {
     private float[] popupPosList = {400f, 800f, 2000f, 3500f, 5000f, 6500f};
     private String[] popupContentList =
             {"Neige das handy zum Steuern",
-                    "Neige vorwärtz zum beschleunigen",
+                    "Neige vorwärts zum beschleunigen",
                     "Münzen erhöhen deine punkte",
                     "Ringe lassen dich über wasser rutschen",
                     "weiche eisblöcken aus!",
