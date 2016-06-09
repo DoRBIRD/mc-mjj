@@ -32,7 +32,6 @@ public class TutorialScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private final CustomTextButton pauseButton;
-    private final ProgressBar progressBar;
     private float traveledDistance = 0.0f;
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
@@ -99,13 +98,8 @@ public class TutorialScreen extends CustomScreenAdapter {
         player = new Player(stage);
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
-        progressBar = new ProgressBar(0, player.getRingDuration(), 1, false, Assets.defaultProgressBarStyle);
-        progressBar.setWidth(Constants.WIDTH - 100);
-        progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
-
         stage.addActor(labelScore);
         stage.addActor(labelTutorialPopup);
-        stage.addActor(progressBar);
 
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
@@ -156,10 +150,6 @@ public class TutorialScreen extends CustomScreenAdapter {
 
             checkCollision();
             player.updatePowerUpsTimer(delta);
-            if (player.hasRing()) {
-                //Gdx.app.log("ringduration", player.ringCurrentDuration + "");
-                progressBar.setValue(player.getRingCurrentDuration() < progressBar.getMaxValue() ? player.getRingCurrentDuration() : progressBar.getMaxValue());
-            }
         }
         checkForTutorialPopUp(player.getY());
         updateCameraPosition();

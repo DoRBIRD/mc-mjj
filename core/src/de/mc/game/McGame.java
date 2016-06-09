@@ -69,6 +69,8 @@ public class McGame extends Game implements InputProcessor {
         if (keycode == Input.Keys.BACK) {
             if (screen instanceof GameScreen) {
                 setScreen(mainMenuScreen);
+            } else if(screen instanceof TutorialScreen) {
+                setScreen(mainMenuScreen);
             } else {
                 Gdx.app.exit();
             }
