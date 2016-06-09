@@ -170,7 +170,12 @@ public class MapManager {
         return block.getMap();
     }
 
-
+    /**
+     * This makes all water tiles to animated water tiles
+     * first finds all water tiles on the tileset
+     * then sets all water tiles on the tile map to animated tiles
+     * with random animation duration
+     */
     private void makeWaterAnimated() {
         //gets all diffrent variations of water tiles
         TiledMapTileSet tileset = tiledMap.getTileSets().getTileSet(0);
@@ -193,6 +198,13 @@ public class MapManager {
         }
     }
 
+    /**
+     * Returns a random float withing given range
+     *
+     * @param min This is the start of the range (inclusive)
+     * @param max This is the end of the range (esxclusiv)
+     * @return float This returns a flaot within given range
+     */
     private float randomInRange(float min, float max) {
         Random random = new Random();
         return random.nextFloat() * (max - min) + min;
@@ -229,6 +241,9 @@ public class MapManager {
         return newMap;
     }
 
+    /**
+     * Creates or updates all Arrays used for collision detection
+     */
     private void createAllHitBoxArrays() {
         mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER, "-", "0,0,0,0");
         icebergTiles = getMapTilesOfType(OBSTACLES_LAYER, ICEBERG_TERRAIN, "-");
