@@ -91,7 +91,7 @@ public class GameScreen extends CustomScreenAdapter {
         player = new Player();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
-        progressBar = new ProgressBar(0, player.ringDuration, 0.0000001f, false, Assets.defaultProgressBarStyle);
+        progressBar = new ProgressBar(0, player.getRingDuration(), 0.0000001f, false, Assets.defaultProgressBarStyle);
         progressBar.setWidth(Constants.WIDTH - 100);
         progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
 
@@ -146,8 +146,8 @@ public class GameScreen extends CustomScreenAdapter {
             checkCollision();
             player.updatePowerUpsTimer(delta);
             if(player.hasRing()) {
-                Gdx.app.log("ringduration", progressBar.getValue() + " " + player.ringCurrentDuration + "");
-                progressBar.setValue(player.ringCurrentDuration < progressBar.getMaxValue() ? player.ringDuration - player.ringCurrentDuration : progressBar.getMaxValue());
+                Gdx.app.log("ringduration", progressBar.getValue() + " " + player.getRingCurrentDuration() + "");
+                progressBar.setValue(player.getRingCurrentDuration() < progressBar.getMaxValue() ? player.getRingDuration() - player.getRingCurrentDuration() : progressBar.getMaxValue());
             }
         }
 
