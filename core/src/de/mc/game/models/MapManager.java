@@ -10,7 +10,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -53,6 +56,8 @@ public class MapManager {
     private TiledMapRenderer tiledMapRenderer;
     private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
+
+    private Array<StaticTiledMapTile> waterTiles;
 
     /**
      * This the MapManages constructor.
@@ -165,11 +170,42 @@ public class MapManager {
         return block.getMap();
     }
 
+
+    private void makeWaterAnimated() {
+        //gets all diffrent variations of water tiles
+        TiledMapTileSet tileset = tiledMap.getTileSets().getTileSet(0);
+        waterTiles = new Array<StaticTiledMapTile>();
+        for (TiledMapTile tile : tileset) {
+            Object property = tile.getProperties().get("terrain");
+            if (property != null && property.toString().equals("0,0,0,0"))
+                waterTiles.add(new StaticTiledMapTile(tile.getTextureRegion()));
+        }
+        //animate all water tiles
+        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(FLOOR_LAYER);
+        for (int x = 0; x < layer.getWidth(); x++) {
+            for (int y = 0; y < layer.getHeight(); y++) {
+                TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+                Object property = cell.getTile().getProperties().get("terrain");
+                if (property != null && property.toString().equals("0,0,0,0")) {
+                    cell.setTile(new AnimatedTiledMapTile(randomInRange(0.2f, 1.2f), waterTiles));
+                }
+            }
+        }
+
+    }
+
+    private float randomInRange(float min, float max) {
+        Random random = new Random();
+        return random.nextFloat() * (max - min) + min;
+    }
+
+
     /**
      * This makes sure the hitboxes and the map renderer gets updated
      */
     private void updateHitboxesAndRenderer() {
         createAllHitBoxArrays();
+        makeWaterAnimated();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
         objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
     }
@@ -183,7 +219,9 @@ public class MapManager {
      * @return MapLayer This returns new combined layer
      */
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
+        tm1.getTileSets().getTileSet(0);
         TiledMap newMap = new TiledMap();
+        newMap.getTileSets().addTileSet(tm1.getTileSets().getTileSet(0));
         MapLayers layers = newMap.getLayers();
         layers.add(addTileCellLayers(FLOOR_LAYER, tm1, tm2));
         layers.add(addTileCellLayers(PICKUPS_LAYER, tm1, tm2));
