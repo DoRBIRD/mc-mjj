@@ -5,10 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.mc.game.utils.AndroidOnlyInterface;
+import de.mc.game.utils.Constants;
+import de.mc.game.utils.SaveUserNameListener;
 import de.mc.game.views.GameScreen;
 import de.mc.game.views.MainMenuScreen;
 import de.mc.game.views.TutorialScreen;
@@ -35,6 +38,12 @@ public class McGame extends Game implements InputProcessor {
         Gdx.input.setCatchBackKey(true);
 
         de.mc.game.utils.Assets.load();
+
+        Preferences preferences = Gdx.app.getPreferences(Constants.DEFAULT_PREFS);
+        if(preferences.getString(Constants.PREFS_USERNAME).equals(Constants.LANGUAGE_STRINGS.get("yourname"))) {
+            SaveUserNameListener listener = new SaveUserNameListener();
+            Gdx.input.getTextInput(listener, "Dein Spielername:", "", Constants.LANGUAGE_STRINGS.get("yourname"));
+        }
 
         mainMenuScreen = new MainMenuScreen();
         gameScreen = new GameScreen();

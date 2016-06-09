@@ -137,7 +137,9 @@ public class OptionsOverlay {
     }
 
     private void submitUsername() {
-        prefs.putString(Constants.PREFS_USERNAME, textFieldName.getText());
+        String name = textFieldName.getText().length() > 0 ? textFieldName.getText() : Constants.LANGUAGE_STRINGS.get("yourname");
+        textFieldName.setText(name);
+        prefs.putString(Constants.PREFS_USERNAME, name );
         prefs.flush();
         McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("saved"));
         Gdx.input.setOnscreenKeyboardVisible(false);

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 import java.text.DecimalFormat;
 
@@ -41,7 +42,7 @@ public class GameScreen extends CustomScreenAdapter {
     private State state;
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
-    private Label labelScore;
+    private Label labelCoins, labelScore;
     private Table swipeTable;
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
@@ -66,9 +67,14 @@ public class GameScreen extends CustomScreenAdapter {
         });
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
+        labelCoins = new Label(collectedCoins + " " + Constants.LANGUAGE_STRINGS.get("coins"), labelStyle);
+        labelCoins.setFontScale(0.9f);
+        labelCoins.setPosition(70, Constants.HEIGHT - labelCoins.getHeight() - 30);
+
         labelScore = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
-        labelScore.setHeight(pauseButton.getHeight());
-        labelScore.setPosition(70, Constants.HEIGHT - labelScore.getHeight() - 30);
+        labelScore.setFontScale(0.9f);
+        labelScore.setAlignment(Align.right);
+        labelScore.setPosition(labelCoins.getX() + labelCoins.getWidth() + 120, Constants.HEIGHT - labelScore.getHeight() - 30);
 
         final Image imageSwipe = new Image(Assets.swipeUpTexture);
 
@@ -85,11 +91,12 @@ public class GameScreen extends CustomScreenAdapter {
         player = new Player();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
-        progressBar = new ProgressBar(0, player.getRingDuration(), 1, false, Assets.defaultProgressBarStyle);
+        progressBar = new ProgressBar(0, player.ringDuration, 0.0000001f, false, Assets.defaultProgressBarStyle);
         progressBar.setWidth(Constants.WIDTH - 100);
         progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
 
         stage.addActor(labelScore);
+        stage.addActor(labelCoins);
         stage.addActor(progressBar);
         //stage.addActor(player);
 
@@ -97,7 +104,6 @@ public class GameScreen extends CustomScreenAdapter {
         camera.update();
 
         mapManager = new MapManager();
-        System.out.println("GameScreen Mapmanager created");
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -139,9 +145,9 @@ public class GameScreen extends CustomScreenAdapter {
 
             checkCollision();
             player.updatePowerUpsTimer(delta);
-            if (player.hasRing()) {
-                //Gdx.app.log("ringduration", player.ringCurrentDuration + "");
-                progressBar.setValue(player.getRingCurrentDuration() < progressBar.getMaxValue() ? player.getRingCurrentDuration() : progressBar.getMaxValue());
+            if(player.hasRing()) {
+                Gdx.app.log("ringduration", progressBar.getValue() + " " + player.ringCurrentDuration + "");
+                progressBar.setValue(player.ringCurrentDuration < progressBar.getMaxValue() ? player.ringDuration - player.ringCurrentDuration : progressBar.getMaxValue());
             }
         }
 
@@ -164,6 +170,7 @@ public class GameScreen extends CustomScreenAdapter {
 
         if (mapManager.checkCollisionCoins(player.getHitBox())) {
             collectedCoins++;
+            labelCoins.setText(collectedCoins + " " + Constants.LANGUAGE_STRINGS.get("coins"));
             System.out.println("Coin");
         }
         if (mapManager.checkCollisionShields(player.getHitBox())) {
@@ -209,6 +216,7 @@ public class GameScreen extends CustomScreenAdapter {
     }
 
     private void gameOver() {
+        Gdx.input.vibrate(new long[] { 0, 200, 200, 200}, -1);
         pauseButton.remove();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         mapManager.resetMap();
@@ -221,6 +229,7 @@ public class GameScreen extends CustomScreenAdapter {
     private void resetScore() {
         traveledDistance = 0.0f;
         collectedCoins = 0;
+        labelCoins.setText(collectedCoins + " " + Constants.LANGUAGE_STRINGS.get("coins"));
         labelScore.setText(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
     }
 
@@ -281,7 +290,7 @@ public class GameScreen extends CustomScreenAdapter {
             DecimalFormat df = new DecimalFormat("#.#");
             traveledDistance = player.getY() / 160;
             String distance = df.format(traveledDistance);
-            labelScore.setText(distance + " " + Constants.LANGUAGE_STRINGS.get("meter") + " Coins: " + collectedCoins);
+            labelScore.setText(distance + " " + Constants.LANGUAGE_STRINGS.get("meter"));
         }
     }
 

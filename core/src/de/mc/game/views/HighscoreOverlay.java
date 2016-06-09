@@ -19,57 +19,58 @@ import de.mc.game.utils.Constants;
 
 public class HighscoreOverlay {
 
-    private final Button btnClose;
+    private final Button btnClose = new Button(Assets.menuCloseButtonStyle);
     private GameScreen gameScreen;
+    private Table table = new Table();
     private TutorialScreen tutorialScreen;
-    private Table table;
     private HighscoreDAO dbScores = new HighscoreDAO();
 
     public HighscoreOverlay(GameScreen gs, TutorialScreen ts) {
         gameScreen = gs;
         tutorialScreen = ts;
 
-        Image background = new Image(Assets.menuTitleButtonLargeTexture);
-        background.setWidth(background.getWidth() * Constants.SCALING);
-        background.setHeight(background.getHeight() * Constants.SCALING);
+        if(getScores().size() != 0) {
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.WHITE);
-        final Label labelTitle = new Label("Highscore", labelStyle);
-        labelTitle.setAlignment(Align.center);
+            Image background = new Image(Assets.menuTitleButtonLargeTexture);
+            background.setWidth(background.getWidth() * Constants.SCALING);
+            background.setHeight(background.getHeight() * Constants.SCALING);
 
-        labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
+            Label.LabelStyle labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.WHITE);
+            final Label labelTitle = new Label("Highscore", labelStyle);
+            labelTitle.setAlignment(Align.center);
+
+            labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
 
 
+            table = new Table();
+            table.setBackground(background.getDrawable());
+            table.setWidth(background.getWidth() * 0.95f);
+            table.setHeight(background.getHeight());
+            table.setPosition(Constants.WIDTH / 2 - table.getWidth() / 2, Constants.HEIGHT / 2 - table.getHeight() / 2);
+            table.defaults()
+                    .prefHeight(Value.percentHeight(1.1f))
+                    .prefWidth(table.getWidth() * 0.5f)
+                    .minHeight(Value.minHeight);
+            table.add(labelTitle)
+                    .padBottom(100)
+                    .colspan(2);
 
-        table = new Table();
-        table.setBackground(background.getDrawable());
-        table.setWidth(background.getWidth() * 0.95f);
-        table.setHeight(background.getHeight());
-        table.setPosition(Constants.WIDTH / 2 - table.getWidth() / 2, Constants.HEIGHT / 2 - table.getHeight() / 2);
-        table.defaults()
-                .prefHeight(Value.percentHeight(1.1f))
-                .prefWidth(table.getWidth() * 0.5f)
-                .minHeight(Value.minHeight);
-        table.add(labelTitle)
-                .padBottom(100)
-                .colspan(2);
+            for (String score : getScores()) {
+                DecimalFormat df = new DecimalFormat("#.#");
+                String[] splittedScore = score.split(": ");
+                final Label nameLabel = new Label(splittedScore[0], labelStyle);
+                nameLabel.setAlignment(Align.right);
+                final Label scoreLabel = new Label(df.format(Float.parseFloat(splittedScore[1])), labelStyle);
+                table.row();
+                table.add(nameLabel)
+                        .prefWidth(table.getWidth() * 0.4f)
+                        .maxWidth(table.getWidth() * 0.4f);
+                table.add(scoreLabel)
+                        .prefWidth(table.getWidth() * 0.3f)
+                        .padLeft(100);
+            }
 
-        for (String score : getScores()) {
-            DecimalFormat df = new DecimalFormat("#.#");
-            String[] splittedScore = score.split(": ");
-            final Label nameLabel = new Label(splittedScore[0], labelStyle);
-            nameLabel.setAlignment(Align.right);
-            final Label scoreLabel = new Label(df.format(Float.parseFloat(splittedScore[1])), labelStyle);
-            table.row();
-            table.add(nameLabel)
-                    .prefWidth(table.getWidth() * 0.4f)
-                    .maxWidth(table.getWidth() * 0.4f);
-            table.add(scoreLabel)
-                    .prefWidth(table.getWidth() * 0.3f)
-                    .padLeft(100);
-        }
-
-        table.padBottom(65);
+            table.padBottom(65);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());
