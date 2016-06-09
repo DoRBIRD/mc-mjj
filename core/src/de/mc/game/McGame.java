@@ -14,6 +14,7 @@ import de.mc.game.utils.Constants;
 import de.mc.game.utils.SaveUserNameListener;
 import de.mc.game.views.GameScreen;
 import de.mc.game.views.MainMenuScreen;
+import de.mc.game.views.TutorialScreen;
 
 public class McGame extends Game implements InputProcessor {
 
@@ -21,7 +22,8 @@ public class McGame extends Game implements InputProcessor {
     public SpriteBatch batch;
     public Screen
             mainMenuScreen,
-            gameScreen;
+            gameScreen,
+            tutorialScreen;
     public InputMultiplexer inputMultiplexer;
 
     public McGame(AndroidOnlyInterface androidOnlyInterface) {
@@ -45,6 +47,7 @@ public class McGame extends Game implements InputProcessor {
 
         mainMenuScreen = new MainMenuScreen();
         gameScreen = new GameScreen();
+        tutorialScreen = new TutorialScreen();
         setScreen(mainMenuScreen);
     }
 

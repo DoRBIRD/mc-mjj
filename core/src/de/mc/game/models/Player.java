@@ -8,27 +8,28 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import de.mc.game.utils.Assets;
-import de.mc.game.views.GameScreen;
+import de.mc.game.views.State;
 
 public class Player extends Actor {
-    private Rectangle hitBox;
-    private float hitBoxWidth;
-    private float hitBoxHeight;
+    boolean onlyOnePickUp = false;
     private Texture playerImage;
     private Texture ringImage;
     private Texture shieldImage;
-
+    private Rectangle hitBox;
+    private float hitBoxWidth;
+    private float hitBoxHeight;
+    private float widthOffSet = 20;
     private float shieldDuration = 5;
     private float shieldCurrentDuration = shieldDuration;
-    public float ringDuration = 5;
-    public float ringCurrentDuration = ringDuration;
-
+    private float ringDuration = 5;
+    private float ringCurrentDuration = ringDuration;
     private ParticleEffect particleEffect;
 
     public Player() {
         super();
         hitBox = new Rectangle();
-        hitBoxWidth = 150;
+
+        hitBoxWidth = 150 - widthOffSet * 2;
         hitBoxHeight = 280;
         hitBox.width = hitBoxWidth;
         hitBox.height = hitBoxHeight;
@@ -45,6 +46,14 @@ public class Player extends Actor {
         particleEffect.start();
     }
 
+    public float getRingCurrentDuration() {
+        return ringCurrentDuration;
+    }
+
+    public float getRingDuration() {
+        return ringDuration;
+    }
+
     @Override
     protected void positionChanged() {
         super.positionChanged();
@@ -53,53 +62,28 @@ public class Player extends Actor {
     }
 
     public void updateImage(Direction dir) {
-        if (hasRing()) {
-            switch (dir) {
-                case LEFT:
-                    ringImage = Assets.ringLeftTexture;
-                    break;
-                case RIGHT:
-                    ringImage = Assets.ringRightTexture;
-                    break;
-                case STRAIGHT:
-                    ringImage = Assets.ringStraightTexture;
-                    break;
-                default:
-                    ringImage = Assets.ringStraightTexture;
-                    break;
-            }
-        }
-        if (hasShield()) {
-            switch (dir) {
-                case LEFT:
-                    shieldImage = Assets.shieldLeftTexture;
-                    break;
-                case RIGHT:
-                    shieldImage = Assets.shieldRightTexture;
-                    break;
-                case STRAIGHT:
-                    shieldImage = Assets.shieldStraightTexture;
-                    break;
-                default:
-                    shieldImage = Assets.shieldStraightTexture;
-                    break;
-            }
-        }
         switch (dir) {
             case LEFT:
+                ringImage = Assets.ringLeftTexture;
+                shieldImage = Assets.shieldLeftTexture;
                 playerImage = Assets.playerLeftTexture;
                 break;
             case RIGHT:
+                ringImage = Assets.ringRightTexture;
+                shieldImage = Assets.shieldRightTexture;
                 playerImage = Assets.playerRightTexture;
                 break;
             case STRAIGHT:
+                ringImage = Assets.ringStraightTexture;
+                shieldImage = Assets.shieldStraightTexture;
                 playerImage = Assets.playerStraightTexture;
                 break;
             default:
+                ringImage = Assets.ringStraightTexture;
+                shieldImage = Assets.shieldStraightTexture;
                 playerImage = Assets.playerStraightTexture;
                 break;
         }
-
     }
 
     public Texture getImage() {
@@ -110,22 +94,22 @@ public class Player extends Actor {
         playerImage = newTexture;
     }
 
-    public void draw(Batch batch, GameScreen.State gameState) {
-        if(gameState == GameScreen.State.GAME_RUNNING) {
-            particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
+    public void draw(Batch batch, State gameState) {
+        particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
+        if (gameState == State.GAME_RUNNING) {
             particleEffect.update(Gdx.graphics.getDeltaTime());
             particleEffect.draw(batch);
             if (particleEffect.isComplete())
                 particleEffect.reset();
         }
         if (Assets.assetManager.update() && playerImage != null) {
-            batch.draw(playerImage, hitBox.x, hitBox.y);
+            batch.draw(playerImage, hitBox.x - widthOffSet, hitBox.y);
         }
         if (Assets.assetManager.update() && ringImage != null && hasRing()) {
-            batch.draw(ringImage, hitBox.x, hitBox.y);
+            batch.draw(ringImage, hitBox.x - widthOffSet, hitBox.y);
         }
         if (Assets.assetManager.update() && shieldImage != null && hasShield()) {
-            batch.draw(shieldImage, hitBox.x, hitBox.y);
+            batch.draw(shieldImage, hitBox.x - widthOffSet, hitBox.y);
         }
     }
 
@@ -147,12 +131,18 @@ public class Player extends Actor {
     }
 
     public void pickupShield() {
+        if (onlyOnePickUp) resetPickups();
         shieldCurrentDuration = 0;
-
     }
 
     public void pickupRing() {
+        if (onlyOnePickUp) resetPickups();
         ringCurrentDuration = 0;
+    }
+
+    public void resetPickups() {
+        ringCurrentDuration = ringDuration;
+        shieldCurrentDuration = shieldDuration;
     }
 
     public enum Direction {

@@ -20,7 +20,7 @@ public class DatabaseConnection {
         try {
             //connecting to database
             Class.forName("com.mysql.jdbc.Driver");
-            this.connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(url, user, password);
             System.out.println("Connection established");
         } catch (Exception e) {
             McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
@@ -40,7 +40,7 @@ public class DatabaseConnection {
     public void close() {
         if (connection != null) {
             try {
-                this.connection.close();
+                connection.close();
                 System.out.println("Connection closed");
             } catch (SQLException e) {
                 System.out.println("Logout not successfull");

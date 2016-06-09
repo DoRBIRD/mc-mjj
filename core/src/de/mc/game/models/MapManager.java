@@ -10,7 +10,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -54,6 +57,8 @@ public class MapManager {
     private TextureMapObjectRenderer objectRenderer;
     private Array<Array<MapBlock>> blocks;
 
+    private Array<StaticTiledMapTile> waterTiles;
+
     /**
      * This the MapManages constructor.
      * This will create the blocks array wich is used to store sorted map blocks
@@ -75,6 +80,7 @@ public class MapManager {
         for (String mbp : mappaths) {
             Assets.assetManager.load(folder + mbp + sub, TiledMap.class);
         }
+        Assets.assetManager.load("maps/tutorial.tmx", TiledMap.class);
     }
 
     /**
@@ -144,6 +150,11 @@ public class MapManager {
         updateHitboxesAndRenderer();
     }
 
+    public void setMapToTutorial() {
+        tiledMap = Assets.assetManager.get("maps/tutorial.tmx", TiledMap.class);
+        updateHitboxesAndRenderer();
+    }
+
     /**
      * This invokes the adding of the next map block and makes sure the hitboxes and the map renderer gets updated
      */
@@ -166,10 +177,52 @@ public class MapManager {
     }
 
     /**
+     * This makes all water tiles to animated water tiles
+     * first finds all water tiles on the tileset
+     * then sets all water tiles on the tile map to animated tiles
+     * with random animation duration
+     */
+    private void makeWaterAnimated() {
+        //gets all diffrent variations of water tiles
+        TiledMapTileSet tileset = tiledMap.getTileSets().getTileSet(0);
+        waterTiles = new Array<StaticTiledMapTile>();
+        for (TiledMapTile tile : tileset) {
+            Object property = tile.getProperties().get("terrain");
+            if (property != null && property.toString().equals("0,0,0,0"))
+                waterTiles.add(new StaticTiledMapTile(tile.getTextureRegion()));
+        }
+        //animate all water tiles
+        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(FLOOR_LAYER);
+        for (int y = 0; y < layer.getHeight(); y++) {
+            for (int x = 0; x < layer.getWidth(); x++) {
+                TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+                Object property = cell.getTile().getProperties().get("terrain");
+                if (property != null && property.toString().equals("0,0,0,0")) {
+                    cell.setTile(new AnimatedTiledMapTile(randomInRange(0.5f, 2.0f), waterTiles));
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a random float withing given range
+     *
+     * @param min This is the start of the range (inclusive)
+     * @param max This is the end of the range (esxclusiv)
+     * @return float This returns a flaot within given range
+     */
+    private float randomInRange(float min, float max) {
+        Random random = new Random();
+        return random.nextFloat() * (max - min) + min;
+    }
+
+
+    /**
      * This makes sure the hitboxes and the map renderer gets updated
      */
     private void updateHitboxesAndRenderer() {
         createAllHitBoxArrays();
+        //makeWaterAnimated();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
         objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
     }
@@ -183,7 +236,9 @@ public class MapManager {
      * @return MapLayer This returns new combined layer
      */
     private TiledMap addBlockToMap(TiledMap tm1, TiledMap tm2) {
+        tm1.getTileSets().getTileSet(0);
         TiledMap newMap = new TiledMap();
+        newMap.getTileSets().addTileSet(tm1.getTileSets().getTileSet(0));
         MapLayers layers = newMap.getLayers();
         layers.add(addTileCellLayers(FLOOR_LAYER, tm1, tm2));
         layers.add(addTileCellLayers(PICKUPS_LAYER, tm1, tm2));
@@ -192,6 +247,9 @@ public class MapManager {
         return newMap;
     }
 
+    /**
+     * Creates or updates all Arrays used for collision detection
+     */
     private void createAllHitBoxArrays() {
         mapWaterHitBoxes = crateHitboxArray(FLOOR_LAYER, "-", "0,0,0,0");
         icebergTiles = getMapTilesOfType(OBSTACLES_LAYER, ICEBERG_TERRAIN, "-");
