@@ -3,24 +3,66 @@ default-progress-bar.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-progressbar_background
-  rotate: false
-  xy: 1, 87
-  size: 1001, 41
-  orig: 1001, 41
-  offset: 0, 0
-  index: -1
-progressbar_knob_before_blue
-  rotate: false
-  xy: 1, 44
-  size: 1001, 41
-  orig: 1001, 41
-  offset: 0, 0
-  index: -1
-progressbar_knob_before_red
+progress_bar_background_left
   rotate: false
   xy: 1, 1
-  size: 41, 41
-  orig: 41, 41
+  size: 21, 41
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+progress_bar_background_right
+  rotate: false
+  xy: 24, 1
+  size: 21, 41
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+progress_bar_knob_left_blue
+  rotate: false
+  xy: 47, 1
+  size: 21, 41
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+progress_bar_knob_left_red
+  rotate: false
+  xy: 70, 1
+  size: 21, 41
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+progress_bar_knob_right_blue
+  rotate: false
+  xy: 93, 1
+  size: 21, 41
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+progress_bar_knob_right_red
+  rotate: false
+  xy: 116, 1
+  size: 21, 41
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+progress_bar_background
+  rotate: false
+  xy: 139, 2
+  size: 1, 40
+  orig: 1, 40
+  offset: 0, 0
+  index: -1
+progress_bar_knob_before_blue
+  rotate: false
+  xy: 142, 2
+  size: 1, 40
+  orig: 1, 40
+  offset: 0, 0
+  index: -1
+progress_bar_knob_before_red
+  rotate: false
+  xy: 145, 2
+  size: 1, 40
+  orig: 1, 40
   offset: 0, 0
   index: -1

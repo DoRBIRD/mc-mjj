@@ -193,7 +193,8 @@ public class Assets {
 
         Skin progressBar = new Skin(new TextureAtlas("progressbar/default-progress-bar.pack"));
         defaultProgressBarStyle = new ProgressBar.ProgressBarStyle();
-        defaultProgressBarStyle.background = progressBar.getDrawable("progressbar_background");
-        defaultProgressBarStyle.knobBefore = progressBar.getDrawable("progressbar_knob_before_red");
+        defaultProgressBarStyle.background = progressBar.getDrawable("progress_bar_background");
+        defaultProgressBarStyle.knobBefore = progressBar.getDrawable("progress_bar_knob_before_red");
+        defaultProgressBarStyle.knob = progressBar.getDrawable("progress_bar_knob_right_red");
     }
 }

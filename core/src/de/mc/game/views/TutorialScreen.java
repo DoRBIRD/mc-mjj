@@ -90,7 +90,7 @@ public class TutorialScreen extends GameScreen {
         swipeTable.row();
         swipeTable.add(labelSwipe);
 
-        player = new Player();
+        player = new Player(stage);
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
         progressBar = new ProgressBar(0, player.getRingDuration(), 1, false, Assets.defaultProgressBarStyle);
@@ -99,7 +99,6 @@ public class TutorialScreen extends GameScreen {
 
         stage.addActor(labelScore);
         stage.addActor(progressBar);
-        //stage.addActor(player);
 
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();

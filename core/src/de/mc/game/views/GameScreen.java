@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -33,7 +32,6 @@ public class GameScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private final CustomTextButton pauseButton;
-    private final ProgressBar progressBar;
     private float traveledDistance = 0.0f;
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
@@ -88,17 +86,11 @@ public class GameScreen extends CustomScreenAdapter {
         swipeTable.row();
         swipeTable.add(labelSwipe);
 
-        player = new Player();
+        player = new Player(stage);
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
-
-        progressBar = new ProgressBar(0, player.ringDuration, 0.0000001f, false, Assets.defaultProgressBarStyle);
-        progressBar.setWidth(Constants.WIDTH - 100);
-        progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
 
         stage.addActor(labelScore);
         stage.addActor(labelCoins);
-        stage.addActor(progressBar);
-        //stage.addActor(player);
 
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
@@ -145,10 +137,6 @@ public class GameScreen extends CustomScreenAdapter {
 
             checkCollision();
             player.updatePowerUpsTimer(delta);
-            if(player.hasRing()) {
-                Gdx.app.log("ringduration", progressBar.getValue() + " " + player.ringCurrentDuration + "");
-                progressBar.setValue(player.ringCurrentDuration < progressBar.getMaxValue() ? player.ringDuration - player.ringCurrentDuration : progressBar.getMaxValue());
-            }
         }
 
         updateCameraPosition();

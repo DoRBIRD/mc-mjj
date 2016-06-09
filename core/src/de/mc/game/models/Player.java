@@ -4,10 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import de.mc.game.utils.Assets;
+import de.mc.game.utils.Constants;
+import de.mc.game.utils.CustomProgressBar;
 import de.mc.game.views.State;
 
 public class Player extends Actor {
@@ -24,9 +30,13 @@ public class Player extends Actor {
     private float ringDuration = 5;
     private float ringCurrentDuration = ringDuration;
     private ParticleEffect particleEffect;
+    private final CustomProgressBar progressBarRing, progressBarShield;
 
-    public Player() {
+    public Player(Stage stage) {
         super();
+
+        setStage(stage);
+
         hitBox = new Rectangle();
 
         hitBoxWidth = 150 - widthOffSet * 2;
@@ -44,6 +54,24 @@ public class Player extends Actor {
         particleEffect.load(Gdx.files.internal("particles/snow.particle"), Gdx.files.internal("particles"));
         particleEffect.getEmitters().first().setPosition(getX(), getY());
         particleEffect.start();
+
+        progressBarRing = new CustomProgressBar(getStage(), 0, ringDuration, 0.0000001f, false, Assets.defaultProgressBarStyle);
+        progressBarRing.setWidth(Constants.WIDTH - 100);
+        progressBarRing.setPosition(Constants.WIDTH / 2 - progressBarRing.getWidth() / 2, 100);
+        progressBarRing.setValue(progressBarRing.getMaxValue());
+
+        Skin progressBarSkin = new Skin(new TextureAtlas("progressbar/default-progress-bar.pack"));
+        ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle(Assets.defaultProgressBarStyle);
+        style.knobBefore = progressBarSkin.getDrawable("progress_bar_knob_before_blue");
+        style.knob = progressBarSkin.getDrawable("progress_bar_knob_right_blue");
+        progressBarShield = new CustomProgressBar(getStage(), 0, shieldDuration, 0.0000001f, false, style);
+        progressBarShield.setWidth(Constants.WIDTH - 100);
+        progressBarShield.setKnobLeftImage(progressBarSkin.getDrawable("progress_bar_knob_left_blue"));
+        progressBarShield.setPosition(Constants.WIDTH / 2 - progressBarShield.getWidth() / 2, 150);
+        progressBarShield.setValue(progressBarShield.getMaxValue());
+
+        getStage().addActor(progressBarRing);
+        getStage().addActor(progressBarShield);
     }
 
     public float getRingCurrentDuration() {
@@ -107,9 +135,15 @@ public class Player extends Actor {
         }
         if (Assets.assetManager.update() && ringImage != null && hasRing()) {
             batch.draw(ringImage, hitBox.x - widthOffSet, hitBox.y);
+            progressBarRing.setValue(ringCurrentDuration < progressBarRing.getMaxValue() ? ringDuration - ringCurrentDuration : progressBarRing.getMaxValue());
+        } else {
+            progressBarRing.setVisible(false);
         }
         if (Assets.assetManager.update() && shieldImage != null && hasShield()) {
             batch.draw(shieldImage, hitBox.x - widthOffSet, hitBox.y);
+            progressBarShield.setValue(shieldCurrentDuration < progressBarShield.getMaxValue() ? shieldDuration - shieldCurrentDuration : progressBarShield.getMaxValue());
+        } else {
+            progressBarShield.setVisible(false);
         }
     }
 
@@ -133,11 +167,13 @@ public class Player extends Actor {
     public void pickupShield() {
         if (onlyOnePickUp) resetPickups();
         shieldCurrentDuration = 0;
+        progressBarShield.setVisible(true);
     }
 
     public void pickupRing() {
         if (onlyOnePickUp) resetPickups();
         ringCurrentDuration = 0;
+        progressBarRing.setVisible(true);
     }
 
     public void resetPickups() {
