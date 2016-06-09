@@ -59,7 +59,7 @@ public class GameScreen extends CustomScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 pause();
-                pauseOverlay = new PauseOverlay(gameScreen);
+                pauseOverlay = new PauseOverlay(gameScreen, null);
                 pauseButton.remove();
             }
         });
@@ -209,7 +209,7 @@ public class GameScreen extends CustomScreenAdapter {
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         mapManager.resetMap();
         player.resetPickups();
-        gameOverOverlay = new GameOverOverlay(this, traveledDistance, collectedCoins);
+        gameOverOverlay = new GameOverOverlay(this, null, traveledDistance, collectedCoins);
         resetScore();
         state = State.GAME_OVER;
     }

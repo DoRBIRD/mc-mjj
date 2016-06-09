@@ -21,12 +21,15 @@ import de.mc.game.utils.CustomTextButton;
 public class GameOverOverlay {
 
     private GameScreen gameScreen;
+    private TutorialScreen tutorialScreen;
     private Table table;
     private OptionsOverlay optionsOverlay;
     private HighscoreOverlay highscoreOverlay;
 
-    public GameOverOverlay(GameScreen gs, float traveledDistance, int coins) {
+
+    public GameOverOverlay(GameScreen gs, TutorialScreen ts, float traveledDistance, int coins) {
         gameScreen = gs;
+        tutorialScreen = ts;
 
         Image background = new Image(Assets.menuTitleLargeTexture);
         background.setWidth(background.getWidth() * Constants.SCALING);
@@ -58,7 +61,7 @@ public class GameOverOverlay {
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                highscoreOverlay = new HighscoreOverlay(gameScreen);
+                highscoreOverlay = new HighscoreOverlay(gameScreen, tutorialScreen);
             }
         });
 
@@ -66,7 +69,9 @@ public class GameOverOverlay {
         btnOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                optionsOverlay = new OptionsOverlay(gameScreen);
+                if (gameScreen != null) optionsOverlay = new OptionsOverlay(gameScreen);
+                else if (tutorialScreen != null)
+                    optionsOverlay = new OptionsOverlay(tutorialScreen);
             }
         });
 
@@ -74,7 +79,8 @@ public class GameOverOverlay {
         btnPlayAgain.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setReady();
+                if (gameScreen != null) gameScreen.setReady();
+                else if (tutorialScreen != null) tutorialScreen.setReady();
             }
         });
 
@@ -110,7 +116,9 @@ public class GameOverOverlay {
         table.row();
         table.add(btnPlayAgain).colspan(2).padBottom(170);
 
-        gameScreen.stage.addActor(table);
+        if (gameScreen != null) gameScreen.stage.addActor(table);
+        else if (tutorialScreen != null) tutorialScreen.stage.addActor(table);
+
     }
 
     private float calculateHighscore(float traveledDistance, int coins) {

@@ -22,10 +22,12 @@ public class HighscoreOverlay {
     private final Button btnClose = new Button(Assets.menuCloseButtonStyle);
     private GameScreen gameScreen;
     private Table table = new Table();
+    private TutorialScreen tutorialScreen;
     private HighscoreDAO dbScores = new HighscoreDAO();
 
-    public HighscoreOverlay(GameScreen gs) {
+    public HighscoreOverlay(GameScreen gs, TutorialScreen ts) {
         gameScreen = gs;
+        tutorialScreen = ts;
 
         if(getScores().size() != 0) {
 
@@ -69,20 +71,23 @@ public class HighscoreOverlay {
             }
 
             table.padBottom(65);
-
-            btnClose.setWidth(btnClose.getWidth());
-            btnClose.setHeight(btnClose.getHeight());
-            btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
-            final HighscoreOverlay highscoreOverlay = this;
-            btnClose.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    highscoreOverlay.dispose();
-                }
-            });
-
+        }
+        btnClose.setWidth(btnClose.getWidth());
+        btnClose.setHeight(btnClose.getHeight());
+        btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
+        final HighscoreOverlay highscoreOverlay = this;
+        btnClose.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                highscoreOverlay.dispose();
+            }
+        });
+        if (gameScreen != null) {
             gameScreen.stage.addActor(table);
             gameScreen.stage.addActor(btnClose);
+        } else if (tutorialScreen != null) {
+            tutorialScreen.stage.addActor(table);
+            tutorialScreen.stage.addActor(btnClose);
         }
     }
 
