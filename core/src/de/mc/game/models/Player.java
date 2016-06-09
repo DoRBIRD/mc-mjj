@@ -11,22 +11,26 @@ import de.mc.game.utils.Assets;
 import de.mc.game.views.GameScreen;
 
 public class Player extends Actor {
-    private Rectangle hitBox;
-    private float hitBoxWidth;
-    private float hitBoxHeight;
     private Texture playerImage;
     private Texture ringImage;
     private Texture shieldImage;
+
+    private Rectangle hitBox;
+    private float hitBoxWidth;
+    private float hitBoxHeight;
+    private float widthOffSet = 20;
 
     private float shieldDuration = 5;
     private float shieldCurrentDuration = shieldDuration;
     private float ringDuration = 5;
     private float ringCurrentDuration = ringDuration;
     private ParticleEffect particleEffect;
+
     public Player() {
         super();
         hitBox = new Rectangle();
-        hitBoxWidth = 150;
+
+        hitBoxWidth = 150 - widthOffSet * 2;
         hitBoxHeight = 280;
         hitBox.width = hitBoxWidth;
         hitBox.height = hitBoxHeight;
@@ -100,13 +104,13 @@ public class Player extends Actor {
                 particleEffect.reset();
         }
         if (Assets.assetManager.update() && playerImage != null) {
-            batch.draw(playerImage, hitBox.x, hitBox.y);
+            batch.draw(playerImage, hitBox.x - widthOffSet, hitBox.y);
         }
         if (Assets.assetManager.update() && ringImage != null && hasRing()) {
-            batch.draw(ringImage, hitBox.x, hitBox.y);
+            batch.draw(ringImage, hitBox.x - widthOffSet, hitBox.y);
         }
         if (Assets.assetManager.update() && shieldImage != null && hasShield()) {
-            batch.draw(shieldImage, hitBox.x, hitBox.y);
+            batch.draw(shieldImage, hitBox.x - widthOffSet, hitBox.y);
         }
     }
 
@@ -129,12 +133,17 @@ public class Player extends Actor {
 
     public void pickupShield() {
         shieldCurrentDuration = 0;
-
     }
 
     public void pickupRing() {
         ringCurrentDuration = 0;
     }
+
+    public void resetPickups() {
+        ringCurrentDuration = ringDuration;
+        shieldCurrentDuration = shieldDuration;
+    }
+
 
     public enum Direction {
         STRAIGHT, LEFT, RIGHT

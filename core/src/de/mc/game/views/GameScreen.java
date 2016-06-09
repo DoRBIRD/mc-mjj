@@ -211,6 +211,7 @@ public class GameScreen extends CustomScreenAdapter {
         pauseButton.remove();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         mapManager.resetMap();
+        player.resetPickups();
         gameOverOverlay = new GameOverOverlay(this, traveledDistance, collectedCoins);
         resetScore();
         state = State.GAME_OVER;
