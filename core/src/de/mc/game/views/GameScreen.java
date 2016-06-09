@@ -60,7 +60,7 @@ public class GameScreen extends CustomScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 pause();
-                pauseOverlay = new PauseOverlay(gameScreen);
+                pauseOverlay = new PauseOverlay(gameScreen, null);
                 pauseButton.remove();
             }
         });
@@ -97,6 +97,7 @@ public class GameScreen extends CustomScreenAdapter {
         camera.update();
 
         mapManager = new MapManager();
+        System.out.println("GameScreen Mapmanager created");
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -138,7 +139,7 @@ public class GameScreen extends CustomScreenAdapter {
 
             checkCollision();
             player.updatePowerUpsTimer(delta);
-            if(player.hasRing()) {
+            if (player.hasRing()) {
                 //Gdx.app.log("ringduration", player.ringCurrentDuration + "");
                 progressBar.setValue(player.getRingCurrentDuration() < progressBar.getMaxValue() ? player.getRingCurrentDuration() : progressBar.getMaxValue());
             }
@@ -212,7 +213,7 @@ public class GameScreen extends CustomScreenAdapter {
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         mapManager.resetMap();
         player.resetPickups();
-        gameOverOverlay = new GameOverOverlay(this, traveledDistance, collectedCoins);
+        gameOverOverlay = new GameOverOverlay(this, null, traveledDistance, collectedCoins);
         resetScore();
         state = State.GAME_OVER;
     }

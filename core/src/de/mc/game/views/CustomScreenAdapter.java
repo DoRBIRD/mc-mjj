@@ -51,4 +51,6 @@ public class CustomScreenAdapter extends ScreenAdapter {
         mcGame.inputMultiplexer.removeProcessor(stage);
         stage.dispose();
     }
+
+
 }

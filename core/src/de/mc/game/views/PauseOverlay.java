@@ -18,12 +18,14 @@ public class PauseOverlay {
 
     private final Button btnClose;
     private GameScreen gameScreen;
+    private TutorialScreen tutorialScreen;
     private Table table;
     private OptionsOverlay optionsOverlay;
     private HighscoreOverlay highscoreOverlay;
 
-    public PauseOverlay(GameScreen gs) {
+    public PauseOverlay(GameScreen gs, TutorialScreen ts) {
         gameScreen = gs;
+        tutorialScreen = ts;
 
         Image background = new Image(Assets.menuTitleButtonTexture);
         background.setWidth(background.getWidth() * Constants.SCALING);
@@ -37,7 +39,7 @@ public class PauseOverlay {
         btnHighScore.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                highscoreOverlay = new HighscoreOverlay(gameScreen);
+                highscoreOverlay = new HighscoreOverlay(gameScreen, tutorialScreen);
             }
         });
 
@@ -45,7 +47,9 @@ public class PauseOverlay {
         btnOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                optionsOverlay = new OptionsOverlay(gameScreen);
+                if (gameScreen != null) optionsOverlay = new OptionsOverlay(gameScreen);
+                else if (tutorialScreen != null)
+                    optionsOverlay = new OptionsOverlay(tutorialScreen);
             }
         });
 
@@ -55,7 +59,8 @@ public class PauseOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //Changes from game to main menu
-                gameScreen.changeToMainMenu();
+                if (gameScreen != null) gameScreen.changeToMainMenu();
+                else if (tutorialScreen != null) tutorialScreen.changeToMainMenu();
                 dispose();
             }
         });
@@ -87,13 +92,20 @@ public class PauseOverlay {
         btnClose.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameScreen.setReady();
+                if (gameScreen != null) gameScreen.setReady();
+                else if (tutorialScreen != null) tutorialScreen.setReady();
                 pauseOverlay.dispose();
             }
         });
 
-        gameScreen.stage.addActor(table);
-        gameScreen.stage.addActor(btnClose);
+        if (gameScreen != null) {
+            gameScreen.stage.addActor(table);
+            gameScreen.stage.addActor(btnClose);
+        } else if (tutorialScreen != null) {
+            tutorialScreen.stage.addActor(table);
+            tutorialScreen.stage.addActor(btnClose);
+        }
+
     }
 
     public void dispose() {

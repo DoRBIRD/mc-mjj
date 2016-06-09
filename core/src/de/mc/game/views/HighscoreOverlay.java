@@ -21,11 +21,13 @@ public class HighscoreOverlay {
 
     private final Button btnClose;
     private GameScreen gameScreen;
+    private TutorialScreen tutorialScreen;
     private Table table;
     private HighscoreDAO dbScores = new HighscoreDAO();
 
-    public HighscoreOverlay(GameScreen gs) {
+    public HighscoreOverlay(GameScreen gs, TutorialScreen ts) {
         gameScreen = gs;
+        tutorialScreen = ts;
 
         Image background = new Image(Assets.menuTitleButtonLargeTexture);
         background.setWidth(background.getWidth() * Constants.SCALING);
@@ -80,9 +82,13 @@ public class HighscoreOverlay {
                 highscoreOverlay.dispose();
             }
         });
-
-        gameScreen.stage.addActor(table);
-        gameScreen.stage.addActor(btnClose);
+        if (gameScreen != null) {
+            gameScreen.stage.addActor(table);
+            gameScreen.stage.addActor(btnClose);
+        } else if (tutorialScreen != null) {
+            tutorialScreen.stage.addActor(table);
+            tutorialScreen.stage.addActor(btnClose);
+        }
     }
 
     private List<String> getScores() {

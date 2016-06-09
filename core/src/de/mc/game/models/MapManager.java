@@ -59,19 +59,27 @@ public class MapManager {
 
     private Array<StaticTiledMapTile> waterTiles;
 
+    private boolean isTutorial;
+
     /**
      * This the MapManages constructor.
      * This will create the blocks array wich is used to store sorted map blocks
      */
-    public MapManager() {
+    public MapManager(boolean isTutorialMode) {
         blocks = new Array<Array<MapBlock>>();
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
         blocks.add(new Array<MapBlock>());
+        isTutorial = isTutorialMode;
         initMapBlocks();
         resetMap();
     }
+
+    public MapManager() {
+        this(false);
+    }
+
 
     /**
      * This loads all maps that are defined in mappaths into the games Asset manager
@@ -144,16 +152,19 @@ public class MapManager {
      * This resets the map and makes sure it always starts with the same startblock also resets the renderer and the hitboxes
      */
     public void resetMap() {
-        tiledMap = null;
-        tiledMap = blocks.get(0).get(0).getMap();
-        lastconnection = "A";
+        if (isTutorial) {
+            tiledMap = null;
+            tiledMap = Assets.assetManager.get("maps/tutorial.tmx", TiledMap.class);
+            System.out.println("isTutorial loading tut map");
+        } else {
+            tiledMap = null;
+            tiledMap = blocks.get(0).get(0).getMap();
+            lastconnection = "A";
+            System.out.println("is  not Tutorial loading normal map");
+        }
         updateHitboxesAndRenderer();
     }
 
-    public void setMapToTutorial() {
-        tiledMap = Assets.assetManager.get("maps/tutorial.tmx", TiledMap.class);
-        updateHitboxesAndRenderer();
-    }
 
     /**
      * This invokes the adding of the next map block and makes sure the hitboxes and the map renderer gets updated

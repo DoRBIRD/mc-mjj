@@ -26,7 +26,7 @@ import de.mc.game.utils.Constants;
 import de.mc.game.utils.CustomTextButton;
 import de.mc.game.utils.TextureMapObjectRenderer;
 
-public class TutorialScreen extends GameScreen {
+public class TutorialScreen extends CustomScreenAdapter {
 
     private final String
             inputTypeAccelerometer = "ACCELEROMETER",
@@ -48,8 +48,14 @@ public class TutorialScreen extends GameScreen {
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
     private float lastShownPopup;
-    private float[] popupPosList = {1000f, 2000f, 3000f};
-    private String[] popupContentList = {"", "", ""};
+    private float[] popupPosList = {400f, 800f, 2000f, 3500f, 5000f, 6500f};
+    private String[] popupContentList =
+            {"Neige das handy zum Steuern",
+                    "Neige vorwärtz zum beschleunigen",
+                    "Münzen erhöhen deine punkte",
+                    "Ringe lassen dich über wasser rutschen",
+                    "weiche eisblöcken aus!",
+                    "Schilde blocken eisblöcke für dich"};
 
     public TutorialScreen() {
         super();
@@ -64,7 +70,7 @@ public class TutorialScreen extends GameScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 pause();
-                pauseOverlay = new PauseOverlay(tutorialScreen);
+                pauseOverlay = new PauseOverlay(null, tutorialScreen);
                 pauseButton.remove();
             }
         });
@@ -76,7 +82,7 @@ public class TutorialScreen extends GameScreen {
 
         labelTutorialPopup = new Label("test", labelStyle);
         labelTutorialPopup.setHeight(pauseButton.getHeight());
-        labelTutorialPopup.setPosition(70, Constants.HEIGHT - labelScore.getHeight() - 200);
+        labelTutorialPopup.setPosition(70, Constants.HEIGHT - labelTutorialPopup.getHeight() - 1500);
 
         final Image imageSwipe = new Image(Assets.swipeUpTexture);
 
@@ -98,14 +104,15 @@ public class TutorialScreen extends GameScreen {
         progressBar.setPosition(Constants.WIDTH / 2 - progressBar.getWidth() / 2, 100);
 
         stage.addActor(labelScore);
+        stage.addActor(labelTutorialPopup);
         stage.addActor(progressBar);
         //stage.addActor(player);
 
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
 
-        mapManager = new MapManager();
-        mapManager.setMapToTutorial();
+        mapManager = new MapManager(true);
+        System.out.println("Tutmapmanager created");
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -142,6 +149,9 @@ public class TutorialScreen extends GameScreen {
             if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
                 //mapManager.addNextBlock();
             }
+            if (player.getY() > mapManager.getMapHeigth()) {
+                gameOver();
+            }
 
             updateScore();
 
@@ -159,10 +169,10 @@ public class TutorialScreen extends GameScreen {
 
     private void checkForTutorialPopUp(float y) {
         for (int i = 0; i < popupPosList.length; i++) {
-            if (y > lastShownPopup && y >= popupPosList[i]) {
-                pause();
-                //showPopup(popupContentList[i]);
-                lastShownPopup = y;
+            if (lastShownPopup < popupPosList[i] && y >= popupPosList[i]) {
+                //pause();
+                showPopup(popupContentList[i]);
+                lastShownPopup = y - 1;
             }
         }
     }
@@ -232,10 +242,11 @@ public class TutorialScreen extends GameScreen {
     private void gameOver() {
         pauseButton.remove();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
-        mapManager.resetMap();
         player.resetPickups();
-        gameOverOverlay = new GameOverOverlay(this, traveledDistance, collectedCoins);
+        mapManager.resetMap();
+        gameOverOverlay = new GameOverOverlay(null, this, traveledDistance, collectedCoins);
         resetScore();
+        lastShownPopup = 0f;
         state = State.GAME_OVER;
     }
 
@@ -247,8 +258,8 @@ public class TutorialScreen extends GameScreen {
 
     public void setReady() {
         state = State.GAME_READY;
-        //       stage.addActor(swipeTable);
-//        stage.addActor(pauseButton);
+        stage.addActor(swipeTable);
+        stage.addActor(pauseButton);
         if (gameOverOverlay != null)
             gameOverOverlay.dispose();
         if (pauseOverlay != null)
