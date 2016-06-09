@@ -20,7 +20,7 @@ progressbar_knob_before_blue
 progressbar_knob_before_red
   rotate: false
   xy: 1, 1
-  size: 1001, 41
-  orig: 1001, 41
+  size: 41, 41
+  orig: 41, 41
   offset: 0, 0
   index: -1

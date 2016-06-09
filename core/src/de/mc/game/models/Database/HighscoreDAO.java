@@ -37,11 +37,13 @@ public class HighscoreDAO {
         //Set SQL Queries
         this.sqlGetScores = "SELECT score, user FROM Highscore ORDER BY score desc LIMIT 10;";
         this.sqlInsertScore = "INSERT INTO Highscore (score, user) values (?,?);";
-        try {
-            this.getScores = this.connection.prepareStatement(this.sqlGetScores);
-            this.insertScore = this.connection.prepareStatement(this.sqlInsertScore);
-        } catch (SQLException e) {
-            McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
+        if(this.connection != null) {
+            try {
+                this.getScores = this.connection.prepareStatement(this.sqlGetScores);
+                this.insertScore = this.connection.prepareStatement(this.sqlInsertScore);
+            } catch (SQLException e) {
+                McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
+            }
         }
     }
 
@@ -53,17 +55,19 @@ public class HighscoreDAO {
         float score;
         //Result set for scores
         ResultSet rs;
-        try {
-            //accessing Database
-            rs = this.getScores.executeQuery();
-            while(rs.next()) {
-                //get the results from the resultset
-                score = rs.getFloat(1);
-                user = rs.getString(2);
-                scores.add(user + ": " + score);
+        if(this.connection != null) {
+            try {
+                //accessing Database
+                rs = this.getScores.executeQuery();
+                while (rs.next()) {
+                    //get the results from the resultset
+                    score = rs.getFloat(1);
+                    user = rs.getString(2);
+                    scores.add(user + ": " + score);
+                }
+            } catch (SQLException e) {
+                McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
             }
-        } catch (SQLException e) {
-            McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
         }
         //returning top 5 scores
         return scores;
@@ -76,11 +80,15 @@ public class HighscoreDAO {
      * @param score new score
      */
     public void InsertScore(String user, float score) {
-        try {
-            this.insertScore.setString(2, user);
-            this.insertScore.setFloat(1, score);
-            this.insertScore.executeUpdate();
-        } catch (SQLException e) {
+        if(this.connection != null) {
+            try {
+                this.insertScore.setString(2, user);
+                this.insertScore.setFloat(1, score);
+                this.insertScore.executeUpdate();
+            } catch (SQLException e) {
+                McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
+            }
+        } else {
             McGame.AOI.toast(Constants.LANGUAGE_STRINGS.get("connectionerror"));
         }
     }

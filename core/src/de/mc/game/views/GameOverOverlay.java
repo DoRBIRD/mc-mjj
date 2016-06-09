@@ -40,11 +40,11 @@ public class GameOverOverlay {
         DecimalFormat df = new DecimalFormat("#.#");
         final Label labelMeter = new Label(df.format(traveledDistance) + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
         labelMeter.setAlignment(Align.center);
-        labelMeter.setFontScale(1.2f);
+        labelMeter.setFontScale(1.1f);
 
-        final Label labelStarScore = new Label(Integer.toString(coins) + " Coins", labelStyle);
-        labelStarScore.setAlignment(Align.center);
-        labelStarScore.setFontScale(1.2f);
+        final Label labelCoins = new Label(Integer.toString(coins) + " " + Constants.LANGUAGE_STRINGS.get("coins"), labelStyle);
+        labelCoins.setAlignment(Align.center);
+        labelCoins.setFontScale(1.1f);
 
         final Label labelTotalScore = new Label(Constants.LANGUAGE_STRINGS.get("total") + ": " + this.calculateHighscore(traveledDistance, coins), labelStyle);
         labelTotalScore.setAlignment(Align.center);
@@ -94,8 +94,13 @@ public class GameOverOverlay {
                 .padBottom(100)
                 .colspan(2);
         table.row();
-        table.add(labelMeter).padBottom(10).width(table.getWidth() / 2);
-        table.add(labelStarScore).padBottom(10).width(table.getWidth() / 2);
+        table.add(labelMeter)
+                .padBottom(10)
+                .padRight(50)
+                .width(table.getWidth() * 0.45f);
+        table.add(labelCoins)
+                .padBottom(10)
+                .width(table.getWidth() * 0.45f);
         table.row();
         table.add(labelTotalScore).colspan(2).padBottom(30);
         table.row();
