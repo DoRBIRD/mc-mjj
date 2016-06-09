@@ -182,16 +182,15 @@ public class MapManager {
         }
         //animate all water tiles
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(FLOOR_LAYER);
-        for (int x = 0; x < layer.getWidth(); x++) {
-            for (int y = 0; y < layer.getHeight(); y++) {
+        for (int y = 0; y < layer.getHeight(); y++) {
+            for (int x = 0; x < layer.getWidth(); x++) {
                 TiledMapTileLayer.Cell cell = layer.getCell(x, y);
                 Object property = cell.getTile().getProperties().get("terrain");
                 if (property != null && property.toString().equals("0,0,0,0")) {
-                    cell.setTile(new AnimatedTiledMapTile(randomInRange(0.2f, 1.2f), waterTiles));
+                    cell.setTile(new AnimatedTiledMapTile(randomInRange(0.5f, 2.0f), waterTiles));
                 }
             }
         }
-
     }
 
     private float randomInRange(float min, float max) {
