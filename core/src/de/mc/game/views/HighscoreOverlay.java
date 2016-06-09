@@ -71,8 +71,7 @@ public class HighscoreOverlay {
             }
 
             table.padBottom(65);
-
-        btnClose = new Button(Assets.menuCloseButtonStyle);
+        }
         btnClose.setWidth(btnClose.getWidth());
         btnClose.setHeight(btnClose.getHeight());
         btnClose.setPosition(table.getX() + table.getWidth() - btnClose.getWidth(), table.getY());
