@@ -8,18 +8,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import de.mc.game.utils.Assets;
-import de.mc.game.views.GameScreen;
+import de.mc.game.views.State;
 
 public class Player extends Actor {
+    boolean onlyOnePickUp = false;
     private Texture playerImage;
     private Texture ringImage;
     private Texture shieldImage;
-
     private Rectangle hitBox;
     private float hitBoxWidth;
     private float hitBoxHeight;
     private float widthOffSet = 20;
-
     private float shieldDuration = 5;
     private float shieldCurrentDuration = shieldDuration;
     private float ringDuration = 5;
@@ -95,9 +94,9 @@ public class Player extends Actor {
         playerImage = newTexture;
     }
 
-    public void draw(Batch batch, GameScreen.State gameState) {
-        if (gameState == GameScreen.State.GAME_RUNNING) {
-            particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
+    public void draw(Batch batch, State gameState) {
+        particleEffect.getEmitters().first().setPosition(getX() + 30, getY() - 20);
+        if (gameState == State.GAME_RUNNING) {
             particleEffect.update(Gdx.graphics.getDeltaTime());
             particleEffect.draw(batch);
             if (particleEffect.isComplete())
@@ -132,10 +131,12 @@ public class Player extends Actor {
     }
 
     public void pickupShield() {
+        if (onlyOnePickUp) resetPickups();
         shieldCurrentDuration = 0;
     }
 
     public void pickupRing() {
+        if (onlyOnePickUp) resetPickups();
         ringCurrentDuration = 0;
     }
 
@@ -143,7 +144,6 @@ public class Player extends Actor {
         ringCurrentDuration = ringDuration;
         shieldCurrentDuration = shieldDuration;
     }
-
 
     public enum Direction {
         STRAIGHT, LEFT, RIGHT

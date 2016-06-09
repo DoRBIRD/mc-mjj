@@ -26,7 +26,7 @@ import de.mc.game.utils.Constants;
 import de.mc.game.utils.CustomTextButton;
 import de.mc.game.utils.TextureMapObjectRenderer;
 
-public class GameScreen extends CustomScreenAdapter {
+public class TutorialScreen extends GameScreen {
 
     private final String
             inputTypeAccelerometer = "ACCELEROMETER",
@@ -42,15 +42,19 @@ public class GameScreen extends CustomScreenAdapter {
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private Label labelScore;
+    private Label labelTutorialPopup;
     private Table swipeTable;
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
+    private float lastShownPopup;
+    private float[] popupPosList = {1000f, 2000f, 3000f};
+    private String[] popupContentList = {"", "", ""};
 
-    public GameScreen() {
+    public TutorialScreen() {
         super();
 
-        final GameScreen gameScreen = this;
+        final TutorialScreen tutorialScreen = this;
 
         pauseButton = new CustomTextButton("\uF04C", Assets.iconButtonStyle);
         pauseButton.setWidth(pauseButton.getWidth() * 2.5f);
@@ -60,7 +64,7 @@ public class GameScreen extends CustomScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 pause();
-                pauseOverlay = new PauseOverlay(gameScreen);
+                pauseOverlay = new PauseOverlay(tutorialScreen);
                 pauseButton.remove();
             }
         });
@@ -69,6 +73,10 @@ public class GameScreen extends CustomScreenAdapter {
         labelScore = new Label(traveledDistance + " " + Constants.LANGUAGE_STRINGS.get("meter"), labelStyle);
         labelScore.setHeight(pauseButton.getHeight());
         labelScore.setPosition(70, Constants.HEIGHT - labelScore.getHeight() - 30);
+
+        labelTutorialPopup = new Label("test", labelStyle);
+        labelTutorialPopup.setHeight(pauseButton.getHeight());
+        labelTutorialPopup.setPosition(70, Constants.HEIGHT - labelScore.getHeight() - 200);
 
         final Image imageSwipe = new Image(Assets.swipeUpTexture);
 
@@ -97,6 +105,7 @@ public class GameScreen extends CustomScreenAdapter {
         camera.update();
 
         mapManager = new MapManager();
+        mapManager.setMapToTutorial();
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -131,21 +140,35 @@ public class GameScreen extends CustomScreenAdapter {
             float yVelocity = 500 * delta - accelY;
             player.moveBy(0, yVelocity);
             if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
-                mapManager.addNextBlock();
+                //mapManager.addNextBlock();
             }
 
             updateScore();
 
             checkCollision();
             player.updatePowerUpsTimer(delta);
-            if(player.hasRing()) {
+            if (player.hasRing()) {
                 //Gdx.app.log("ringduration", player.ringCurrentDuration + "");
                 progressBar.setValue(player.getRingCurrentDuration() < progressBar.getMaxValue() ? player.getRingCurrentDuration() : progressBar.getMaxValue());
             }
         }
-
+        checkForTutorialPopUp(player.getY());
         updateCameraPosition();
         super.render(delta);
+    }
+
+    private void checkForTutorialPopUp(float y) {
+        for (int i = 0; i < popupPosList.length; i++) {
+            if (y > lastShownPopup && y >= popupPosList[i]) {
+                pause();
+                //showPopup(popupContentList[i]);
+                lastShownPopup = y;
+            }
+        }
+    }
+
+    private void showPopup(String content) {
+        labelTutorialPopup.setText(content);
     }
 
 
@@ -160,7 +183,6 @@ public class GameScreen extends CustomScreenAdapter {
             gameOver();
             return;
         }
-
         if (mapManager.checkCollisionCoins(player.getHitBox())) {
             collectedCoins++;
             System.out.println("Coin");
@@ -225,8 +247,8 @@ public class GameScreen extends CustomScreenAdapter {
 
     public void setReady() {
         state = State.GAME_READY;
-        stage.addActor(swipeTable);
-        stage.addActor(pauseButton);
+        //       stage.addActor(swipeTable);
+//        stage.addActor(pauseButton);
         if (gameOverOverlay != null)
             gameOverOverlay.dispose();
         if (pauseOverlay != null)

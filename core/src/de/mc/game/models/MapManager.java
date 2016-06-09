@@ -80,6 +80,7 @@ public class MapManager {
         for (String mbp : mappaths) {
             Assets.assetManager.load(folder + mbp + sub, TiledMap.class);
         }
+        Assets.assetManager.load("maps/tutorial.tmx", TiledMap.class);
     }
 
     /**
@@ -146,6 +147,11 @@ public class MapManager {
         tiledMap = null;
         tiledMap = blocks.get(0).get(0).getMap();
         lastconnection = "A";
+        updateHitboxesAndRenderer();
+    }
+
+    public void setMapToTutorial() {
+        tiledMap = Assets.assetManager.get("maps/tutorial.tmx", TiledMap.class);
         updateHitboxesAndRenderer();
     }
 
@@ -216,7 +222,7 @@ public class MapManager {
      */
     private void updateHitboxesAndRenderer() {
         createAllHitBoxArrays();
-        makeWaterAnimated();
+        //makeWaterAnimated();
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, Constants.MAP_SCALING);
         objectRenderer = new TextureMapObjectRenderer(tiledMap, Constants.MAP_SCALING);
     }
