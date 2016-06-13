@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -36,6 +35,7 @@ public class TutorialScreen extends CustomScreenAdapter {
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
+    private TutorialOverlay tutorialOverlay;
     private Player player;
     private State state;
     private MapManager mapManager;
@@ -47,7 +47,7 @@ public class TutorialScreen extends CustomScreenAdapter {
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
     private float lastShownPopup;
-    private float[] popupPosList = {400f, 800f, 2000f, 3500f, 5000f, 6500f};
+    private float[] popupPosList = {600f, 800f, 2000f, 3500f, 5000f, 6500f};
     private String[] popupContentList =
             {"Neige das handy zum Steuern",
                     "Neige vorwärts zum beschleunigen",
@@ -167,6 +167,7 @@ public class TutorialScreen extends CustomScreenAdapter {
     }
 
     private void showPopup(String content) {
+        tutorialOverlay = new TutorialOverlay(this, content);
         labelTutorialPopup.setText(content);
     }
 
@@ -253,6 +254,8 @@ public class TutorialScreen extends CustomScreenAdapter {
             gameOverOverlay.dispose();
         if (pauseOverlay != null)
             pauseOverlay.dispose();
+        if (tutorialOverlay != null)
+            tutorialOverlay.dispose();
     }
 
     private void startGame() {
