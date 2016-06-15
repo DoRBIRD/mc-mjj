@@ -44,7 +44,7 @@ public class TutorialOverlay {
         table.setBackground(background.getDrawable());
         table.setWidth(background.getWidth() * 0.95f);
         table.setHeight(background.getHeight());
-        table.setPosition(Constants.WIDTH / 2 - table.getWidth() / 2, Constants.HEIGHT / 2 - table.getHeight() / 2);
+        table.setPosition(Constants.WIDTH / 2 - table.getWidth() / 2, Constants.HEIGHT * 4f / 6 - table.getHeight() / 2);
         table.defaults()
                 .minWidth(Value.percentWidth(1.2f))
                 .prefWidth(table.getWidth() * 0.5f)
@@ -68,6 +68,7 @@ public class TutorialOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 tutorialScreen.setReady();
+                tutorialScreen.tutorialOverlay.dispose();
                 tutorialOverlay.dispose();
             }
         });

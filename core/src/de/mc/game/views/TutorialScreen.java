@@ -31,11 +31,11 @@ public class TutorialScreen extends CustomScreenAdapter {
             inputTypeAccelerometer = "ACCELEROMETER",
             inputTypeTouch = "TOUCH";
     private final CustomTextButton pauseButton;
+    public TutorialOverlay tutorialOverlay;
     private float traveledDistance = 0.0f;
     private int collectedCoins = 0;
     private GameOverOverlay gameOverOverlay;
     private PauseOverlay pauseOverlay;
-    private TutorialOverlay tutorialOverlay;
     private Player player;
     private State state;
     private MapManager mapManager;
@@ -153,7 +153,6 @@ public class TutorialScreen extends CustomScreenAdapter {
     private void checkForTutorialPopUp(float y) {
         for (int i = 0; i < popupPosList.length; i++) {
             if (lastShownPopup < popupPosList[i] && y >= popupPosList[i]) {
-                //pause();
                 showPopup(popupContentList[i]);
                 lastShownPopup = y - 1;
             }
@@ -162,6 +161,7 @@ public class TutorialScreen extends CustomScreenAdapter {
 
     private void showPopup(String content) {
         tutorialOverlay = new TutorialOverlay(this, content);
+        //pause();
     }
 
 
