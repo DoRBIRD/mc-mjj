@@ -106,7 +106,7 @@ public class TutorialScreen extends CustomScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(119f / 255f, 202f / 255f, 228f / 255f, 1);
+        Gdx.gl.glClearColor(131f / 255f, 185f / 255f, 226f / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         tiledMapRenderer.setView(camera);
