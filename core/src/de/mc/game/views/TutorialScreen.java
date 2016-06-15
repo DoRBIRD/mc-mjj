@@ -48,8 +48,8 @@ public class TutorialScreen extends CustomScreenAdapter {
     private float lastShownPopup;
     private float[] popupPosList = {100f, 800f, 2000f, 3500f, 5000f, 6500f};
     private String[] popupContentList =
-            {"Neige das Handy zum Steuern des Spielers",
-                    "Neige Handy vorwärts zum Beschleunigen",
+            {"Neige das Handy zu den Seiten zum Steuern des Spielers",
+                    "Neige das Handy vorwärts zum Beschleunigen und zurück zum Bremsen",
                     "Münzen erhöhen deinen Score",
                     "Ringe helfen dir über Wasser zu kommen",
                     "Weiche den Eisblöcken aus!",
@@ -67,7 +67,7 @@ public class TutorialScreen extends CustomScreenAdapter {
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                pause();
+                //pause();
                 pauseOverlay = new PauseOverlay(null, tutorialScreen);
                 pauseButton.remove();
             }
@@ -117,6 +117,9 @@ public class TutorialScreen extends CustomScreenAdapter {
 
         drawGameObjects();
 
+        if (state == State.GAME_PAUSED) {
+
+        }
         if (state == State.GAME_RUNNING) {
             checkInputs();
             //TEMP
@@ -160,8 +163,11 @@ public class TutorialScreen extends CustomScreenAdapter {
     }
 
     private void showPopup(String content) {
+        pause();
+        if (tutorialOverlay != null) {
+            tutorialOverlay.dispose();
+        }
         tutorialOverlay = new TutorialOverlay(this, content);
-        //pause();
     }
 
 
@@ -223,6 +229,9 @@ public class TutorialScreen extends CustomScreenAdapter {
     }
 
     private void gameOver() {
+        if (tutorialOverlay != null) {
+            tutorialOverlay.dispose();
+        }
         pauseButton.remove();
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
         player.resetPickups();
