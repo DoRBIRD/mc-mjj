@@ -46,14 +46,14 @@ public class TutorialScreen extends CustomScreenAdapter {
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
     private float lastShownPopup;
-    private float[] popupPosList = {600f, 800f, 2000f, 3500f, 5000f, 6500f};
+    private float[] popupPosList = {100f, 800f, 2000f, 3500f, 5000f, 6500f};
     private String[] popupContentList =
-            {"Neige das handy zum Steuern",
-                    "Neige vorwärts zum beschleunigen",
-                    "Münzen erhöhen deine punkte",
-                    "Ringe lassen dich über wasser rutschen",
-                    "weiche eisblöcken aus!",
-                    "Schilde blocken eisblöcke für dich"};
+            {"Neige das Handy zum Steuern des Spielers",
+                    "Neige Handy vorwärts zum Beschleunigen",
+                    "Münzen erhöhen deinen Score",
+                    "Ringe helfen dir über Wasser zu kommen",
+                    "Weiche den Eisblöcken aus!",
+                    "Schilde schützen dich vor Eisblöcken"};
 
     public TutorialScreen() {
         super();
