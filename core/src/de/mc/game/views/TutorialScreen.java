@@ -41,7 +41,6 @@ public class TutorialScreen extends CustomScreenAdapter {
     private MapManager mapManager;
     private TiledMapRenderer tiledMapRenderer;
     private Label labelScore;
-    private Label labelTutorialPopup;
     private Table swipeTable;
     private float
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
@@ -79,10 +78,6 @@ public class TutorialScreen extends CustomScreenAdapter {
         labelScore.setHeight(pauseButton.getHeight());
         labelScore.setPosition(70, Constants.HEIGHT - labelScore.getHeight() - 30);
 
-        labelTutorialPopup = new Label("test", labelStyle);
-        labelTutorialPopup.setHeight(pauseButton.getHeight());
-        labelTutorialPopup.setPosition(70, Constants.HEIGHT - labelTutorialPopup.getHeight() - 1500);
-
         final Image imageSwipe = new Image(Assets.swipeUpTexture);
 
         final Label labelSwipe = new Label(Constants.LANGUAGE_STRINGS.get("swipe_to_start"), labelStyle);
@@ -99,7 +94,6 @@ public class TutorialScreen extends CustomScreenAdapter {
         player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
 
         stage.addActor(labelScore);
-        stage.addActor(labelTutorialPopup);
 
         camera.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
         camera.update();
@@ -168,7 +162,6 @@ public class TutorialScreen extends CustomScreenAdapter {
 
     private void showPopup(String content) {
         tutorialOverlay = new TutorialOverlay(this, content);
-        labelTutorialPopup.setText(content);
     }
 
 

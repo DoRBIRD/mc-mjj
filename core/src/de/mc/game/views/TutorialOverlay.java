@@ -32,6 +32,8 @@ public class TutorialOverlay {
         final Label labelTitle = new Label("Tipp", labelStyle);
         labelStyle = new Label.LabelStyle(Assets.TONDU_BETA, Color.BLACK);
         final Label labelTipp1 = new Label(tipp, labelStyle);
+        labelTipp1.setWrap(true);
+        labelTipp1.setWidth(200);
         labelTitle.setAlignment(Align.center);
 
         final Label labelTipp2 = new Label(" ", labelStyle);
@@ -55,7 +57,7 @@ public class TutorialOverlay {
                 .padBottom(50);
         table.row();
         table.add(labelTipp2)
-                .padBottom(500);
+                .padBottom(300);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());
