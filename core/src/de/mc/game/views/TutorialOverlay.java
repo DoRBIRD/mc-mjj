@@ -51,13 +51,15 @@ public class TutorialOverlay {
                 .minHeight(Value.minHeight)
                 .prefHeight(Value.percentHeight(1.2f));
         table.add(labelTitle)
-                .padBottom(50);
+                .padTop(40)
+                .padBottom(40);
         table.row();
         table.add(labelTipp1)
+                .padTop(50)
                 .padBottom(50);
         table.row();
         table.add(labelTipp2)
-                .padBottom(300);
+                .padBottom(50);
 
         btnClose = new Button(Assets.menuCloseButtonStyle);
         btnClose.setWidth(btnClose.getWidth());
