@@ -67,7 +67,7 @@ public class TutorialOverlay {
         btnClose.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                tutorialScreen.setReady();
+                tutorialScreen.startGame();
                 tutorialScreen.tutorialOverlay.dispose();
                 tutorialOverlay.dispose();
             }

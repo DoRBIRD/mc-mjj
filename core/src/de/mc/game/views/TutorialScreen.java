@@ -46,7 +46,7 @@ public class TutorialScreen extends CustomScreenAdapter {
             cameraOffsetY = Constants.HEIGHT * 1 / 3,
             accelerometerYDefault;
     private float lastShownPopup;
-    private float[] popupPosList = {100f, 800f, 2000f, 3500f, 5000f, 6500f};
+    private float[] popupPosList = {300f, 800f, 2000f, 3500f, 5000f, 6500f};
     private String[] popupContentList =
             {"Neige das Handy zu den Seiten zum Steuern des Spielers",
                     "Neige das Handy vorwärts zum Beschleunigen und zurück zum Bremsen",
@@ -67,7 +67,7 @@ public class TutorialScreen extends CustomScreenAdapter {
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //pause();
+                pause();
                 pauseOverlay = new PauseOverlay(null, tutorialScreen);
                 pauseButton.remove();
             }
@@ -91,7 +91,7 @@ public class TutorialScreen extends CustomScreenAdapter {
         swipeTable.add(labelSwipe);
 
         player = new Player(stage);
-        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 300);
 
         stage.addActor(labelScore);
 
@@ -155,9 +155,9 @@ public class TutorialScreen extends CustomScreenAdapter {
 
     private void checkForTutorialPopUp(float y) {
         for (int i = 0; i < popupPosList.length; i++) {
-            if (lastShownPopup < popupPosList[i] && y >= popupPosList[i]) {
+            if (lastShownPopup < popupPosList[i] && y > popupPosList[i]) {
                 showPopup(popupContentList[i]);
-                lastShownPopup = y - 1;
+                lastShownPopup = y + 1;
             }
         }
     }
@@ -233,7 +233,7 @@ public class TutorialScreen extends CustomScreenAdapter {
             tutorialOverlay.dispose();
         }
         pauseButton.remove();
-        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 400);
+        player.setPosition(Constants.MAP_WIDTH / 2 - player.getWidth() / 2, 300);
         player.resetPickups();
         mapManager.resetMap();
         gameOverOverlay = new GameOverOverlay(null, this, traveledDistance, collectedCoins);
@@ -260,7 +260,7 @@ public class TutorialScreen extends CustomScreenAdapter {
             tutorialOverlay.dispose();
     }
 
-    private void startGame() {
+    public void startGame() {
         state = State.GAME_RUNNING;
         accelerometerYDefault = Gdx.input.getAccelerometerY();
         swipeTable.remove();
