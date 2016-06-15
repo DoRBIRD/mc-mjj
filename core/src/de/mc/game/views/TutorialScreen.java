@@ -48,12 +48,12 @@ public class TutorialScreen extends CustomScreenAdapter {
     private float lastShownPopup;
     private float[] popupPosList = {300f, 800f, 2000f, 3500f, 5000f, 6500f};
     private String[] popupContentList =
-            {"Neige das Handy zu den Seiten zum Steuern des Spielers",
-                    "Neige das Handy vorwärts zum Beschleunigen und zurück zum Bremsen",
-                    "Münzen erhöhen deinen Score",
-                    "Ringe helfen dir über Wasser zu kommen",
+            {"Neige das Handy zu den Seiten um den Spieler zu steuern.",
+                    "Neige das Handy vorwärts zum Beschleunigen und zurück zum Bremsen.",
+                    "Münzen erhöhen deinen Punktestand.",
+                    "Ringe helfen dir über das Wasser zu kommen.",
                     "Weiche den Eisblöcken aus!",
-                    "Schilde schützen dich vor Eisblöcken"};
+                    "Schilde schützen dich vor den Eisblöcken."};
 
     public TutorialScreen() {
         super();
@@ -99,7 +99,6 @@ public class TutorialScreen extends CustomScreenAdapter {
         camera.update();
 
         mapManager = new MapManager(true);
-        System.out.println("Tutmapmanager created");
         tiledMapRenderer = mapManager.getTiledMapRenderer();
         setReady();
     }
@@ -136,9 +135,6 @@ public class TutorialScreen extends CustomScreenAdapter {
             }
             float yVelocity = 500 * delta - accelY;
             player.moveBy(0, yVelocity);
-            if (player.getY() > mapManager.getMapHeigth() - Constants.MAP_HEIGHT) {
-                //mapManager.addNextBlock();
-            }
             if (player.getY() > mapManager.getMapHeigth()) {
                 gameOver();
             }
@@ -239,6 +235,7 @@ public class TutorialScreen extends CustomScreenAdapter {
         gameOverOverlay = new GameOverOverlay(null, this, traveledDistance, collectedCoins);
         resetScore();
         lastShownPopup = 0f;
+        mapManager.resetMap();
         state = State.GAME_OVER;
     }
 

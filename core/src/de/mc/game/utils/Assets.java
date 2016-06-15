@@ -45,7 +45,8 @@ public class Assets {
             menuTitleLargeTexture,
             menuTitleButtonLargeTexture,
             swipeUpTexture,
-            backgroundLabelGreenTexture;
+            backgroundLabelGreenTexture,
+            backgroundStartscreen;
 
     public static TextButton.TextButtonStyle
             defaultTextButtonStyle,
@@ -88,6 +89,7 @@ public class Assets {
         assetManager.load("menus/menu_title_button_large.png", Texture.class);
         assetManager.load("images/swipe_up.png", Texture.class);
         assetManager.load("images/background_label_green.png", Texture.class);
+        assetManager.load("images/startscreen.png", Texture.class);
 
         MapManager.loadMaps();
 
@@ -126,6 +128,7 @@ public class Assets {
         menuTitleButtonLargeTexture = assetManager.get("menus/menu_title_button_large.png");
         swipeUpTexture = assetManager.get("images/swipe_up.png");
         backgroundLabelGreenTexture = assetManager.get("images/background_label_green.png");
+        backgroundStartscreen = assetManager.get("images/startscreen.png");
     }
 
     private static void loadFonts() {
