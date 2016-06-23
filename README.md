@@ -7,6 +7,7 @@ Unsere Grafiken wurden größtenteils selbst erstellt. Allerdings wurden einige 
 
 ## Funktionen der Klassen
 **McGame**.java - Erste Klasse, die aufgerufen wird. Startet das Laden der Assets und auch den Spielernamen. Verwaltet und zeigt die Screens und zeigt zum Anfang den MenuScreen.
+
 **MapBlock**.java - Objekt zur Darstellung von Puzzleteil für die Prozedural-Map-Generation. Beinhaltet jeweilige TileMap und welche Verbindungen der Baustein hat.
 **MapManager**.java - Verwaltet die Map: Übernimmt das Zusammenbauen der Bausteine, die Kollision mit dem Spielern und das Speichern der MapBausteine.
 **Player**.java - Beinhaltet das Spielerbild und dessen verschiedene Varianten (z.B. nach links gedreht oder mit Ring). Übernimmt die PowerUp Timer.
