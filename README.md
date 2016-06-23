@@ -3,9 +3,9 @@
 ## Dokumentation zum Projekt Icy Road
 Der Sourcecode kann auf GitHub ([https://github.com/mellmers/mc-mjj](https://github.com/mellmers/mc-mjj)) runtergeladen werden. Bis auf normale Android Dateien (AndroidLauncher und Manifest) sind alle Klassen unter core>java>de.mc.game. Und alle Assets liegen unter android>assets>(subfolder). Ziel Android Platform ist 23 und minimale liegt bei 8.
 
-Außerdem kann das fertige Spiel als Android application package (apk) unter folgendem Link oder QRCode heruntergeladen werden: [http://ow.ly/42la301iQvd](http://ow.ly/42la301iQvd).
+Außerdem kann das fertige Spiel als Android application package (apk) unter folgendem Link oder QRCode heruntergeladen werden: [http://ow.ly/42la301iQvd](http://ow.ly/42la301iQvd). <img src="https://s3.eu-central-1.amazonaws.com/mellmers/app-download.png" alt="QR-Code" title="QR-Code to download apk" width="150" height="150" />
 
-Unsere Grafiken wurden größtenteils selbst erstellt. Allerdings wurden einige GUI Elemente mit Hilfe des “Game GUI TwentyFive” ([http://graphicriver.net/item/game-gui-pack-twentyfive/15763210](http://graphicriver.net/item/game-gui-pack-twentyfive/15763210)) erstellt. <img src="https://s3.eu-central-1.amazonaws.com/mellmers/app-download.png" alt="QR-Code" title="QR-Code to download apk" width="100" height="100" />
+Unsere Grafiken wurden größtenteils selbst erstellt. Allerdings wurden einige GUI Elemente mit Hilfe des “Game GUI TwentyFive” ([http://graphicriver.net/item/game-gui-pack-twentyfive/15763210](http://graphicriver.net/item/game-gui-pack-twentyfive/15763210)) erstellt.
 
 ## Funktionen der Klassen
 **McGame**.java - Erste Klasse, die aufgerufen wird. Startet das Laden der Assets und auch den Spielernamen. Verwaltet und zeigt die Screens und zeigt zum Anfang den MenuScreen.
